@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\SleepController;
@@ -11,22 +10,23 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WaterController;
 use App\Http\Controllers\CalorieCalculatorController;
 use App\Http\Controllers\BiographyController;
+use App\Http\Controllers\PostController;
 
 // Главная страница
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Аутентификация (login, register, logout)
+// Аутентификация
 require __DIR__.'/auth.php';
 
-// Dashboard
+// Все маршруты, требующие авторизации
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Основная панель
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // AJAX маршруты для пагинации
+    // AJAX для пагинации
     Route::get('/meal-logs', [DashboardController::class, 'mealLogsAjax'])->name('meal.logs.ajax');
     Route::get('/sleep-logs', [DashboardController::class, 'sleepLogsAjax'])->name('sleep.logs.ajax');
     Route::get('/water-logs', [DashboardController::class, 'waterLogsAjax'])->name('water.logs.ajax');
@@ -65,7 +65,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/{progress}', [ProgressPhotoController::class, 'destroy'])->name('progress.destroy');
     });
 
-    // Цели пользователя
+    // Цели
     Route::prefix('goals')->group(function () {
         Route::get('/', [GoalController::class, 'index'])->name('goals.index');
         Route::get('/create', [GoalController::class, 'create'])->name('goals.create');
@@ -79,13 +79,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Калькулятор калорий
     Route::prefix('calories')->group(function () {
         Route::get('/', [CalorieCalculatorController::class, 'index'])->name('calories.index');
-        Route::post('/', [CalorieCalculatorController::class, 'calculate'])->name('calories.calculate'); 
+        Route::post('/', [CalorieCalculatorController::class, 'calculate'])->name('calories.calculate');
     });
 
-    // Биография пользователя
+    // Биография
     Route::prefix('biography')->group(function () {
         Route::get('/', [BiographyController::class, 'edit'])->name('biography.edit');
         Route::patch('/', [BiographyController::class, 'update'])->name('biography.update');
+    });
+
+    // Маршруты для постов
+    Route::prefix('posts')->middleware('auth')->group(function () {
+        Route::get('/', [PostController::class,'index'])->name('posts.index');
+        Route::post('/', [PostController::class,'store'])->name('posts.store');
+        Route::patch('/{post}', [PostController::class,'update'])->name('posts.update');
+        Route::delete('/{post}', [PostController::class,'destroy'])->name('posts.destroy');
+
+        Route::post('/{post}/like', [PostController::class,'like'])->name('posts.like');
+        Route::post('/{post}/dislike', [PostController::class,'dislike'])->name('posts.dislike');
+        Route::post('/{post}/comment', [PostController::class,'comment'])->name('posts.comment');
     });
 
 });
