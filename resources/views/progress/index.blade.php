@@ -1,422 +1,361 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Font Awesome CDN for Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-<div class="dashboard-main" id="dashboard-main">
-    <!-- Menu Button -->
-    <button class="menu-btn" id="menu-toggle"><i class="fas fa-bars"></i> Menu</button>
-
-    <!-- Dashboard Header -->
-    <div class="dashboard-header">
-        <h1><span>FitLife</span> Progress Photos</h1>
-        <p>Track your transformation and stay motivated!</p>
-    </div>
-
-    <!-- Add Progress Photo -->
-    <div class="biography-card">
-        <h3><i class="fas fa-plus"></i> Add New Photo</h3>
-        <form action="{{ route('progress.store') }}" method="POST" enctype="multipart/form-data" class="form-logging">
-            @csrf
-            <div class="form-group">
-                <label>Photo:</label>
-                <input type="file" name="photo" required>
-            </div>
-            <div class="form-group">
-                <label>Description:</label>
-                <input type="text" name="description" placeholder="Description">
-            </div>
-            <button type="submit" class="calculate-btn">Add Photo</button>
-        </form>
-    </div>
-
-    <!-- List Progress Photos -->
-    <div class="photos-grid">
-        @forelse($progressPhotos as $progress)
-            <div class="photo-card">
-                <img src="{{ asset('storage/' . $progress->photo) }}" alt="Progress Photo">
-                <div class="photo-description">{{ $progress->description ?? 'No description' }}</div>
-                <div class="photo-date">Uploaded: {{ $progress->created_at->format('M d, Y H:i') }}</div>
-                <form action="{{ route('progress.update', $progress->id) }}" method="POST" class="form-logging">
-                    @csrf
-                    @method('PATCH')
-                    <div class="form-group">
-                        <label>Update Description:</label>
-                        <input type="text" name="description" value="{{ $progress->description }}" placeholder="Description">
-                    </div>
-                    <button type="submit" class="calculate-btn update-btn">Update</button>
-                </form>
-                <form action="{{ route('progress.destroy', $progress->id) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="calculate-btn delete-btn">Delete</button>
-                </form>
-            </div>
-        @empty
-            <p class="no-data">No progress photos yet.</p>
-        @endforelse
-    </div>
-</div>
-
-<!-- Sidebar -->
-<div class="side-menu" id="side-menu">
-    <h3>Navigation</h3>
-    <ul>
-        <li><a href="{{ route('dashboard') }}"><i class="fas fa-home nav-icon"></i> Home</a></li>
-        <li><a href="{{ route('foods.index') }}"><i class="fas fa-utensils nav-icon"></i> Meal Tracker</a></li>
-        <li><a href="{{ route('sleep.index') }}"><i class="fas fa-bed nav-icon"></i> Sleep Tracker</a></li>
-        <li><a href="{{ route('water.index') }}"><i class="fas fa-tint nav-icon"></i> Water Tracker</a></li>
-        <li><a href="{{ route('progress.index') }}" class="active"><i class="fas fa-camera nav-icon"></i> Progress Photos</a></li>
-        <li><a href="{{ route('goals.index') }}"><i class="fas fa-bullseye nav-icon"></i> Goals</a></li>
-        <li><a href="{{ route('calories.index') }}"><i class="fas fa-calculator nav-icon"></i> Calorie Calculator</a></li>
-        <li><a href="{{ route('biography.edit') }}"><i class="fas fa-user-edit nav-icon"></i> Biography</a></li>
-        <li><a href="{{ route('profile.edit') }}"><i class="fas fa-cog nav-icon"></i> Profile</a></li>
-        <li>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit"><i class="fas fa-sign-out-alt nav-icon"></i> Log Out</button>
-            </form>
-        </li>
-    </ul>
-</div>
-
-<!-- Lightbox -->
-<div id="lightbox">
-    <div id="lightbox-content">
-        <img id="lightbox-img" src="" alt="">
-        <div id="lightbox-info">
-            <p id="lightbox-date"></p>
-            <p id="lightbox-desc"></p>
-        </div>
-    </div>
-</div>
-
 <style>
-/* --- General Reset & Base --- */
-* {
+  /* ====== Reset ====== */
+  *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
-}
-
-body {
-    background: linear-gradient(135deg, #0d1117 0%, #1c2526 100%);
-    color: #e6e6fa;
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-button {
-    cursor: pointer;
-    border: none;
-    background: none;
-    font-family: inherit;
-}
-
-/* --- Dashboard Layout --- */
-.dashboard-main {
-    padding: 2.5rem;
-    transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    z-index: 1;
-}
-
-/* --- Menu Button --- */
-.menu-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #d4af37, #b8860b);
-    color: #1c2526;
-    padding: 0.8rem 1.2rem;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 15px rgba(216, 175, 55, 0.4);
-    z-index: 1001;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.menu-btn:hover {
-    background: linear-gradient(135deg, #b8860b, #a67c00);
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(216, 175, 55, 0.6);
-}
-
-.menu-btn i {
-    margin-right: 0.5rem;
-}
-
-/* --- Sidebar --- */
-.side-menu {
-    position: fixed;
-    top: 0;
-    right: -300px;
-    width: 300px;
-    height: 100vh;
-    background: rgba(13, 17, 23, 0.95);
-    backdrop-filter: blur(12px);
-    border-left: 1px solid rgba(216, 175, 55, 0.3);
-    padding: 2rem 1.5rem;
-    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1000;
-    overflow-y: auto;
-}
-
-.side-menu.active {
-    right: 0;
-}
-
-.side-menu h3 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #48c9b0;
-    margin-bottom: 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.side-menu ul {
-    list-style: none;
-}
-
-.side-menu ul li {
-    margin-bottom: 0.5rem;
-}
-
-.side-menu ul li a,
-.side-menu ul li button {
-    display: flex;
-    align-items: center;
+  }
+  html, body, #app {
+    height: 100%;
     width: 100%;
-    padding: 1rem 1.2rem;
-    border-radius: 10px;
-    color: #e6e6fa;
-    font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-}
+    overflow-x: hidden;
+  }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: linear-gradient(180deg, #0A0C10, #1A1F26);
+    color: #E6ECEF;
+    line-height: 1.6;
+  }
 
-.side-menu ul li a:hover,
-.side-menu ul li button:hover {
-    background: rgba(72, 201, 176, 0.2);
-    color: #48c9b0;
-    transform: translateX(5px);
-    box-shadow: 0 4px 12px rgba(72, 201, 176, 0.3);
-}
+  /* ====== Palette & Variables ====== */
+  :root {
+    --bg: #0A0C10;
+    --panel: #14171C;
+    --muted: #8A94A6;
+    --neon: #00FF88;
+    --accent: #FF3D00;
+    --white: #F5F7FA;
+    --glass: rgba(255, 255, 255, 0.04);
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+    --glow: 0 0 15px rgba(0, 255, 136, 0.4);
+    --radius: 14px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-size-base: 16px;
+    --font-weight-bold: 700;
+    --font-weight-medium: 500;
+  }
 
-.side-menu ul li a.active {
-    background: rgba(216, 175, 55, 0.2);
-    color: #d4af37;
-}
+  /* ====== Layout ====== */
+  #fitlife-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background: var(--bg);
+    overflow-x: hidden;
+  }
 
-.nav-icon {
-    margin-right: 0.8rem;
-    font-size: 1.2rem;
-}
+  /* ====== Sidebar ====== */
+  aside#sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #14171C, #0C1014);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    z-index: 1200;
+  }
+  @media (max-width: 960px) {
+    aside#sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      transform: translateX(-100%);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    }
+    body.sidebar-open aside#sidebar {
+      transform: translateX(0);
+    }
+  }
 
-/* --- Dashboard Header --- */
-.dashboard-header {
+  .sidebar-header {
     text-align: center;
-    margin-bottom: 3rem;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    animation: fadeIn 0.8s ease-out;
-}
-
-.dashboard-header h1 {
-    font-size: 3rem;
-    font-weight: 800;
-    color: #48c9b0;
-    margin-bottom: 0.5rem;
-    text-shadow: 0 2px 8px rgba(72, 201, 176, 0.3);
-}
-
-.dashboard-header h1 span {
-    font-weight: 300;
-    color: #a3bffa;
-}
-
-.dashboard-header p {
-    font-size: 1.2rem;
-    color: #a3bffa;
-    font-weight: 400;
-}
-
-/* --- Form --- */
-.biography-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(72, 201, 176, 0.3);
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.biography-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 32px rgba(72, 201, 176, 0.2);
-    border-color: #48c9b0;
-}
-
-.biography-card h3 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #48c9b0;
-    margin-bottom: 1.5rem;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--glass);
+  }
+  .sidebar-header h2 {
+    font-size: 1.6rem;
+    color: var(--neon);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 1px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+  }
+  .sidebar-header p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  nav.nav-menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  nav.nav-menu a {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-}
-
-.form-logging {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.form-group label {
-    font-size: 1.1rem;
-    color: #e6e6fa;
-    font-weight: 600;
-}
-
-.form-group input {
-    padding: 0.6rem;
-    border-radius: 8px;
-    border: 1px solid rgba(216, 175, 55, 0.3);
-    background: rgba(255, 255, 255, 0.05);
-    color: #e6e6fa;
+    gap: 12px;
+    padding: 12px 16px;
+    color: var(--white);
+    text-decoration: none;
     font-size: 0.95rem;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
+    font-weight: var(--font-weight-medium);
+    border-radius: 10px;
+    background: var(--glass);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  nav.nav-menu a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+  nav.nav-menu a:hover::before {
+    left: 100%;
+  }
+  nav.nav-menu a svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: var(--neon);
+    transition: transform 0.2s ease, stroke 0.2s ease;
+  }
+  nav.nav-menu a:hover {
+    background: rgba(0, 255, 136, 0.08);
+    transform: translateX(6px);
+  }
+  nav.nav-menu a:hover svg {
+    transform: scale(1.1);
+    stroke: var(--accent);
+  }
+  nav.nav-menu a.active {
+    background: linear-gradient(90deg, rgba(0, 255, 136, 0.15), rgba(255, 61, 0, 0.1));
+    color: var(--neon);
+    box-shadow: var(--glow);
+  }
 
-.form-group input:focus {
-    outline: none;
-    border-color: #48c9b0;
-    box-shadow: 0 0 0 2px rgba(72, 201, 176, 0.3);
-}
-
-.form-group input::placeholder {
-    color: #a3bffa;
-}
-
-.calculate-btn {
-    background: linear-gradient(135deg, #d4af37, #b8860b);
-    color: #1c2526;
-    padding: 0.8rem 1.5rem;
+  /* ====== Unified Button Styles ====== */
+  button, .logout-form button, .calculate-btn, .update-btn, .delete-btn {
+    padding: 8px 12px;
+    background: linear-gradient(90deg, var(--neon), var(--accent));
+    color: var(--white);
+    border: none;
     border-radius: 8px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+    font-size: 0.85rem;
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--glow);
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+  }
+  button:hover, .logout-form button:hover, .calculate-btn:hover, .update-btn:hover, .delete-btn:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+    background: linear-gradient(90deg, var(--accent), var(--neon));
+  }
+  button::before, .logout-form button::before, .calculate-btn::before, .update-btn::before, .delete-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.4s ease;
+  }
+  button:hover::before, .logout-form button:hover::before, .calculate-btn:hover::before, .update-btn:hover::before, .delete-btn:hover::before {
+    left: 100%;
+  }
+  .update-btn {
+    background: linear-gradient(90deg, rgba(0, 255, 136, 0.7), rgba(72, 201, 176, 0.7));
+  }
+  .update-btn:hover {
+    background: linear-gradient(90deg, rgba(72, 201, 176, 0.7), rgba(0, 255, 136, 0.7));
+  }
+  .delete-btn {
+    background: linear-gradient(90deg, rgba(255, 107, 107, 0.7), rgba(230, 74, 31, 0.7));
+  }
+  .delete-btn:hover {
+    background: linear-gradient(90deg, rgba(230, 74, 31, 0.7), rgba(255, 107, 107, 0.7));
+  }
 
-.calculate-btn:hover {
-    background: linear-gradient(135deg, #b8860b, #a67c00);
-    transform: scale(1.03);
-    box-shadow: 0 4px 12px rgba(216, 175, 55, 0.3);
-}
+  /* ====== Main Content ====== */
+  main {
+    flex: 1;
+    padding: 32px;
+    background: var(--bg);
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+  #mobile-toggle {
+    display: none;
+  }
+  @media (max-width: 960px) {
+    #mobile-toggle {
+      display: inline-block;
+    }
+  }
 
-.update-btn {
-    background: linear-gradient(135deg, #48c9b0, #2e856e);
-}
+  header {
+    background: var(--panel);
+    padding: 24px;
+    border-radius: var(--radius);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .header-left h1 {
+    font-size: 1.8rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--neon);
+    margin: 0;
+  }
+  .header-left h1 span {
+    font-weight: 300;
+    color: var(--white);
+  }
+  .header-left p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin: 4px 0 0;
+  }
+  .header-info {
+    display: flex;
+    gap: 16px;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .header-info div {
+    background: var(--glass);
+    padding: 6px 12px;
+    border-radius: 8px;
+  }
 
-.update-btn:hover {
-    background: linear-gradient(135deg, #2e856e, #1a6450);
-    box-shadow: 0 4px 12px rgba(72, 201, 176, 0.3);
-}
+  /* ====== Photo Form ====== */
+  .photo-form {
+    margin-bottom: 24px;
+  }
+  .photo-card {
+    background: linear-gradient(135deg, var(--panel), #1A1F26);
+    padding: 16px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.3s ease;
+    text-align: center;
+  }
+  .photo-card:hover {
+    box-shadow: var(--glow), var(--shadow);
+  }
+  .photo-card h4 {
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .form-group {
+    margin-bottom: 12px;
+    text-align: left;
+  }
+  .form-group label {
+    font-size: 0.9rem;
+    color: var(--white);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .form-group input {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--white);
+    font-size: 0.9rem;
+    width: 100%;
+    transition: var(--transition);
+  }
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--neon);
+    box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3);
+  }
+  .form-group input::placeholder {
+    color: var(--muted);
+  }
 
-.delete-btn {
-    background: linear-gradient(135deg, #ff6b6b, #e64a1f);
-}
-
-.delete-btn:hover {
-    background: linear-gradient(135deg, #e64a1f, #cc3a1a);
-    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
-}
-
-/* --- Photos Grid --- */
-.photos-grid {
+  /* ====== Photos Grid ====== */
+  .photos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 1.5rem;
-    margin-bottom: 3rem;
-}
-
-.photo-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(216, 175, 55, 0.3);
-    border-radius: 12px;
-    padding: 1rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.photo-card:hover {
-    transform: scale(1.03);
-    box-shadow: 0 8px 20px rgba(216, 175, 55, 0.3);
-    border-color: #d4af37;
-}
-
-.photo-card img {
+    margin-bottom: 24px;
+  }
+  .photo-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .photo-card img {
     width: 100%;
     height: 200px;
-    border-radius: 8px;
     object-fit: cover;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.photo-card img:hover {
+    transition: var(--transition);
+  }
+  .photo-card img:hover {
     filter: brightness(1.1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.photo-description {
-    font-size: 0.95rem;
-    color: #a3bffa;
-    margin-top: 0.8rem;
+  }
+  .photo-description {
+    font-size: 0.9rem;
+    color: var(--muted);
     font-style: italic;
-}
-
-.photo-date {
+  }
+  .photo-date {
     font-size: 0.85rem;
-    color: #6b7280;
-    margin-top: 0.5rem;
-}
-
-.no-data {
+    color: var(--muted);
+  }
+  .photo-card .form-group {
+    margin-bottom: 8px;
+  }
+  .photo-card .calculate-btn {
+    width: 100%;
+  }
+  .no-data {
     text-align: center;
-    color: #6b7280;
+    padding: 24px;
+    color: var(--muted);
     font-size: 1rem;
-    padding: 1rem;
-}
+  }
 
-/* --- Lightbox --- */
-#lightbox {
+  /* ====== Lightbox ====== */
+  #lightbox {
     display: none;
     position: fixed;
     top: 0;
@@ -429,157 +368,254 @@ button {
     align-items: center;
     z-index: 2000;
     animation: fadeIn 0.4s ease;
-}
-
-#lightbox-content {
+  }
+  #lightbox-content {
     max-width: 90%;
     max-height: 90%;
     text-align: center;
-}
-
-#lightbox-img {
+  }
+  #lightbox-img {
     max-width: 100%;
     max-height: 70vh;
-    border: 1px solid #d4af37;
+    border: 1px solid var(--neon);
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(216, 175, 55, 0.3);
-    transition: transform 0.3s ease;
-}
-
-#lightbox-content:hover #lightbox-img {
+    box-shadow: var(--glow);
+    transition: var(--transition);
+  }
+  #lightbox-content:hover #lightbox-img {
     transform: scale(1.02);
-}
-
-#lightbox-info p {
-    color: #e6e6fa;
+  }
+  #lightbox-info p {
+    color: var(--white);
     margin: 0.5rem 0;
-    font-size: 1.1rem;
-}
-
-#lightbox-info #lightbox-desc {
-    color: #a3bffa;
+    font-size: 1rem;
+  }
+  #lightbox-info #lightbox-desc {
+    color: var(--muted);
     font-style: italic;
-}
+  }
 
-/* --- Animations --- */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* --- Responsive --- */
-@media (max-width: 768px) {
-    .dashboard-main {
-        padding: 1.5rem;
+  /* ====== Responsive Design ====== */
+  @media (max-width: 768px) {
+    main {
+      padding: 20px;
+    }
+    .photo-card {
+      padding: 12px;
     }
     .photos-grid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
     }
     .photo-card img {
-        height: 160px;
+      height: 160px;
     }
-    .side-menu {
-        width: 100%;
-        right: -100%;
+    .header-info {
+      flex-direction: column;
+      gap: 8px;
     }
-    .side-menu.active {
-        right: 0;
+  }
+  @media (max-width: 480px) {
+    header {
+      flex-direction: column;
+      text-align: center;
     }
-    .dashboard-header h1 {
-        font-size: 2.2rem;
+    .header-left h1 {
+      font-size: 1.5rem;
     }
-    .menu-btn {
-        top: 15px;
-        right: 15px;
-        padding: 0.6rem 1rem;
-        font-size: 0.9rem;
+    .photo-card {
+      min-width: 100%;
     }
-}
+  }
 
-@media (max-width: 480px) {
-    .dashboard-header {
-        padding: 1rem;
-    }
-    .biography-card, .photo-card {
-        padding: 1rem;
-    }
-}
-
-/* --- Accessibility --- */
-@media (prefers-reduced-motion: reduce) {
-    .biography-card, .photo-card, .menu-btn, .side-menu, .calculate-btn, #lightbox-img {
-        transition: none;
-    }
-}
-
-@media (prefers-contrast: high) {
-    .biography-card, .photo-card {
-        border: 2px solid #fff;
-    }
-    .side-menu ul li a.active, .calculate-btn {
-        background: #fff;
-        color: #1c2526;
-    }
-    .form-group input {
-        border: 1px solid #fff;
-    }
-}
+  /* ====== Animations ====== */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  section, .photo-card, .photos-grid, #lightbox {
+    animation: fadeIn 0.5s var(--animation-ease);
+  }
 </style>
+
+<div id="fitlife-container" role="application" aria-label="FitLife Progress Photos">
+  <!-- Sidebar -->
+  <aside id="sidebar" aria-label="Main navigation">
+    <div class="sidebar-header">
+      <h2>FitLife</h2>
+      <p>Power Your Performance</p>
+    </div>
+    <nav class="nav-menu" aria-label="Main menu">
+      <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}" {{ request()->routeIs('dashboard') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13h8V3H3z"/><path d="M13 21h8V11h-8z"/><path d="M13 3v8"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="{{ route('foods.index') }}" class="{{ request()->routeIs('foods.*') ? 'active' : '' }}" {{ request()->routeIs('foods.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21c4-4 6-11 6-17"/><path d="M20 7a4 4 0 11-8 0"/></svg>
+        <span>Nutrition</span>
+      </a>
+      <a href="{{ route('sleep.index') }}" class="{{ request()->routeIs('sleep.*') ? 'active' : '' }}" {{ request()->routeIs('sleep.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <span>Recovery</span>
+      </a>
+      <a href="{{ route('water.index') }}" class="{{ request()->routeIs('water.*') ? 'active' : '' }}" {{ request()->routeIs('water.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s4 5 4 8a4 4 0 01-8 0c0-3 4-8 4-8z"/></svg>
+        <span>Hydration</span>
+      </a>
+      <a href="{{ route('progress.index') }}" class="{{ request()->routeIs('progress.*') ? 'active' : '' }}" {{ request()->routeIs('progress.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 3v18H3V3h18z"/><path d="M7 14l3-3 2 2 5-5"/></svg>
+        <span>Progress</span>
+      </a>
+      <a href="{{ route('goals.index') }}" class="{{ request()->routeIs('goals.*') ? 'active' : '' }}" {{ request()->routeIs('goals.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <span>Goals</span>
+      </a>
+      <a href="{{ route('calories.index') }}" class="{{ request()->routeIs('calories.*') ? 'active' : '' }}" {{ request()->routeIs('calories.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20"/><path d="M5 12h14"/></svg>
+        <span>Energy</span>
+      </a>
+      <a href="{{ route('biography.edit') }}" class="{{ request()->routeIs('biography.*') ? 'active' : '' }}" {{ request()->routeIs('biography.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M6 20v-1a6 6 0 0112 0v1"/></svg>
+        <span>Bio</span>
+      </a>
+      <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}" {{ request()->routeIs('profile.edit') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg>
+        <span>Profile</span>
+      </a>
+      <form method="POST" action="{{ route('logout') }}" class="logout-form">
+        @csrf
+        <button type="submit" aria-label="Logout">Logout</button>
+      </form>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+    <button id="mobile-toggle" aria-controls="sidebar" aria-expanded="false">Menu</button>
+
+    <header>
+      <div class="header-left">
+        <h1><span>FitLife</span> Progress Photos</h1>
+        <p class="muted">Track your transformation and stay motivated!</p>
+      </div>
+      <div class="header-info">
+        <div>{{ now()->format('l, F d, Y') }}</div>
+        <div>{{ now()->format('H:i') }}</div>
+      </div>
+    </header>
+
+    <!-- Add Progress Photo -->
+    <section aria-labelledby="photo-form-heading">
+      <h3 id="photo-form-heading">Add New Photo</h3>
+      <div class="photo-card">
+        <form action="{{ route('progress.store') }}" method="POST" enctype="multipart/form-data" class="photo-form">
+          @csrf
+          <div class="form-group">
+            <label for="photo">Photo</label>
+            <input type="file" id="photo" name="photo" required>
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <input type="text" id="description" name="description" placeholder="Enter description">
+          </div>
+          <button type="submit" class="calculate-btn">Add Photo</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- List Progress Photos -->
+    <section aria-labelledby="photos-heading">
+      <h3 id="photos-heading">Your Progress Photos</h3>
+      <div class="photos-grid">
+        @forelse($progressPhotos as $progress)
+        <div class="photo-card">
+          <img src="{{ asset('storage/' . $progress->photo) }}" alt="Progress Photo">
+          <div class="photo-description">{{ $progress->description ?? 'No description' }}</div>
+          <div class="photo-date">Uploaded: {{ $progress->created_at->format('M d, Y H:i') }}</div>
+          <form action="{{ route('progress.update', $progress->id) }}" method="POST" class="photo-form">
+            @csrf
+            @method('PATCH')
+            <div class="form-group">
+              <label for="description-{{ $progress->id }}">Update Description</label>
+              <input type="text" id="description-{{ $progress->id }}" name="description" value="{{ $progress->description }}" placeholder="Enter description">
+            </div>
+            <button type="submit" class="update-btn">Update</button>
+          </form>
+          <form action="{{ route('progress.destroy', $progress->id) }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="delete-btn">Delete</button>
+          </form>
+        </div>
+        @empty
+        <div class="no-data">No progress photos yet. Start uploading your journey!</div>
+        @endforelse
+      </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div id="lightbox" aria-hidden="true">
+      <div id="lightbox-content">
+        <img id="lightbox-img" src="" alt="Enlarged Progress Photo">
+        <div id="lightbox-info">
+          <p id="lightbox-date"></p>
+          <p id="lightbox-desc"></p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // Sidebar Toggle
-    const menuBtn = document.getElementById('menu-toggle');
-    const sideMenu = document.getElementById('side-menu');
-    const dashboardMain = document.getElementById('dashboard-main');
+  /* ===== Sidebar Mobile Toggle ===== */
+  const mobileToggle = document.getElementById('mobile-toggle');
+  const body = document.body;
+  const sidebar = document.getElementById('sidebar');
 
-    menuBtn.addEventListener('click', () => {
-        sideMenu.classList.toggle('active');
-        const open = sideMenu.classList.contains('active');
-        dashboardMain.style.marginRight = open ? '300px' : '0';
-        menuBtn.style.right = open ? '320px' : '20px';
+  mobileToggle.addEventListener('click', () => {
+    const opened = body.classList.toggle('sidebar-open');
+    mobileToggle.setAttribute('aria-expanded', opened ? 'true' : 'false');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!body.classList.contains('sidebar-open')) return;
+    if (sidebar.contains(e.target) || mobileToggle.contains(e.target)) return;
+    body.classList.remove('sidebar-open');
+    mobileToggle.setAttribute('aria-expanded', 'false');
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      body.classList.remove('sidebar-open');
+      mobileToggle.setAttribute('aria-expanded', 'false');
+      lightbox.style.display = 'none';
+    }
+  });
+
+  /* ===== Lightbox ===== */
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const lightboxDate = document.getElementById('lightbox-date');
+  const lightboxDesc = document.getElementById('lightbox-desc');
+
+  document.querySelectorAll('.photo-card img').forEach(img => {
+    img.addEventListener('click', () => {
+      lightbox.style.display = 'flex';
+      lightboxImg.src = img.src;
+      const card = img.closest('.photo-card');
+      lightboxDate.textContent = card.querySelector('.photo-date')?.textContent || '';
+      lightboxDesc.textContent = card.querySelector('.photo-description')?.textContent || '';
+      lightbox.setAttribute('aria-hidden', 'false');
     });
+  });
 
-    document.addEventListener('click', (e) => {
-        if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-            sideMenu.classList.remove('active');
-            dashboardMain.style.marginRight = '0';
-            menuBtn.style.right = '20px';
-        }
-    });
-
-    // Accessibility
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            sideMenu.classList.remove('active');
-            dashboardMain.style.marginRight = '0';
-            menuBtn.style.right = '20px';
-            lightbox.style.display = 'none';
-        }
-    });
-
-    // Lightbox
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxDate = document.getElementById('lightbox-date');
-    const lightboxDesc = document.getElementById('lightbox-desc');
-
-    document.querySelectorAll('.photo-card img').forEach(img => {
-        img.addEventListener('click', () => {
-            lightbox.style.display = 'flex';
-            lightboxImg.src = img.src;
-            const card = img.closest('.photo-card');
-            lightboxDate.textContent = card.querySelector('.photo-date')?.textContent || '';
-            lightboxDesc.textContent = card.querySelector('.photo-description')?.textContent || '';
-        });
-    });
-
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) {
-            lightbox.style.display = 'none';
-        }
-    });
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) {
+      lightbox.style.display = 'none';
+      lightbox.setAttribute('aria-hidden', 'true');
+    }
+  });
 });
 </script>
 @endsection

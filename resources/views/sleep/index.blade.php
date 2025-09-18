@@ -1,525 +1,649 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Font Awesome CDN for Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-<div class="dashboard-main" id="dashboard-main">
-    <!-- Menu Button -->
-    <button class="menu-btn" id="menu-toggle"><i class="fas fa-bars"></i> Menu</button>
-
-    <!-- Dashboard Header -->
-    <div class="dashboard-header">
-        <h1><span>FitLife</span> Sleep Tracker</h1>
-        <p>Log your sleep and track your health.</p>
-    </div>
-
-    <!-- Success Alert -->
-    @if(session('success'))
-    <div class="biography-card alert success">
-        <p>{{ session('success') }}</p>
-    </div>
-    @endif
-
-    <!-- Sleep Form -->
-    <div class="biography-card">
-        <h3>Add Sleep Record</h3>
-        <form action="{{ route('sleep.store') }}" method="POST">
-            @csrf
-            <div class="form-group">
-                <label>Date:</label>
-                <input type="date" name="date" required>
-            </div>
-            <div class="form-group">
-                <label>Start Time:</label>
-                <input type="time" name="start_time" required>
-            </div>
-            <div class="form-group">
-                <label>End Time:</label>
-                <input type="time" name="end_time" required>
-            </div>
-            <button type="submit" class="calculate-btn">Add Sleep Record</button>
-        </form>
-    </div>
-
-    <!-- Sleep History Table -->
-    <div class="history-section">
-        <h2><i class="fas fa-bed"></i> Sleep History</h2>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Duration (h)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @forelse($sleeps as $sleep)
-                    <tr>
-                        <td>{{ $sleep->date }}</td>
-                        <td>{{ $sleep->start_time }}</td>
-                        <td>{{ $sleep->end_time }}</td>
-                        <td>{{ round($sleep->duration, 1) }}</td>
-                    </tr>
-                @empty
-                    <tr><td colspan="4" class="no-data">No sleep records yet.</td></tr>
-                @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Average Sleep -->
-    @if($average)
-    <div class="biography-card alert success">
-        <p>Average sleep: <strong>{{ round($average, 1) }} hours</strong></p>
-    </div>
-    @endif
-</div>
-
-<!-- Sidebar -->
-<div class="side-menu" id="side-menu">
-    <h3>Navigation</h3>
-    <ul>
-        <li><a href="{{ route('dashboard') }}"><i class="fas fa-home nav-icon"></i> Home</a></li>
-        <li><a href="{{ route('foods.index') }}"><i class="fas fa-utensils nav-icon"></i> Meal Tracker</a></li>
-        <li><a href="{{ route('sleep.index') }}" class="active"><i class="fas fa-bed nav-icon"></i> Sleep Tracker</a></li>
-        <li><a href="{{ route('water.index') }}"><i class="fas fa-tint nav-icon"></i> Water Tracker</a></li>
-        <li><a href="{{ route('progress.index') }}"><i class="fas fa-camera nav-icon"></i> Progress Photos</a></li>
-        <li><a href="{{ route('goals.index') }}"><i class="fas fa-bullseye nav-icon"></i> Goals</a></li>
-        <li><a href="{{ route('calories.index') }}"><i class="fas fa-calculator nav-icon"></i> Calorie Calculator</a></li>
-        <li><a href="{{ route('biography.edit') }}"><i class="fas fa-user-edit nav-icon"></i> Biography</a></li>
-        <li><a href="{{ route('profile.edit') }}"><i class="fas fa-cog nav-icon"></i> Profile</a></li>
-        <li>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit"><i class="fas fa-sign-out-alt nav-icon"></i> Log Out</button>
-            </form>
-        </li>
-    </ul>
-</div>
-
 <style>
-/* --- General Reset & Base --- */
-* {
+  /* ====== Reset ====== */
+  *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
-}
-
-body {
-    background: linear-gradient(135deg, #0d1117 0%, #1c2526 100%);
-    color: #e6e6fa;
-    min-height: 100vh;
+  }
+  html, body, #app {
+    height: 100%;
+    width: 100%;
     overflow-x: hidden;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-button {
-    cursor: pointer;
-    border: none;
-    background: none;
-    font-family: inherit;
-}
-
-/* --- Dashboard Layout --- */
-.dashboard-main {
-    padding: 2.5rem;
-    transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    z-index: 1;
-}
-
-/* --- Menu Button --- */
-.menu-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #d4af37, #b8860b);
-    color: #1c2526;
-    padding: 0.8rem 1.2rem;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 15px rgba(216, 175, 55, 0.4);
-    z-index: 1001;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.menu-btn:hover {
-    background: linear-gradient(135deg, #b8860b, #a67c00);
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(216, 175, 55, 0.6);
-}
-
-.menu-btn i {
-    margin-right: 0.5rem;
-}
-
-/* --- Sidebar --- */
-.side-menu {
-    position: fixed;
-    top: 0;
-    right: -300px;
-    width: 300px;
-    height: 100vh;
-    background: rgba(13, 17, 23, 0.95);
-    backdrop-filter: blur(12px);
-    border-left: 1px solid rgba(216, 175, 55, 0.3);
-    padding: 2rem 1.5rem;
-    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1000;
-    overflow-y: auto;
-}
-
-.side-menu.active {
-    right: 0;
-}
-
-.side-menu h3 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #48c9b0;
-    margin-bottom: 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.side-menu ul {
-    list-style: none;
-}
-
-.side-menu ul li {
-    margin-bottom: 0.5rem;
-}
-
-.side-menu ul li a,
-.side-menu ul li button {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: 1rem 1.2rem;
-    border-radius: 10px;
-    color: #e6e6fa;
-    font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-}
-
-.side-menu ul li a:hover,
-.side-menu ul li button:hover {
-    background: rgba(72, 201, 176, 0.2);
-    color: #48c9b0;
-    transform: translateX(5px);
-    box-shadow: 0 4px 12px rgba(72, 201, 176, 0.3);
-}
-
-.side-menu ul li a.active {
-    background: rgba(216, 175, 55, 0.2);
-    color: #d4af37;
-}
-
-.nav-icon {
-    margin-right: 0.8rem;
-    font-size: 1.2rem;
-}
-
-/* --- Dashboard Header --- */
-.dashboard-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    animation: fadeIn 0.8s ease-out;
-}
-
-.dashboard-header h1 {
-    font-size: 3rem;
-    font-weight: 800;
-    color: #48c9b0;
-    margin-bottom: 0.5rem;
-    text-shadow: 0 2px 8px rgba(72, 201, 176, 0.3);
-}
-
-.dashboard-header h1 span {
-    font-weight: 300;
-    color: #a3bffa;
-}
-
-.dashboard-header p {
-    font-size: 1.2rem;
-    color: #a3bffa;
-    font-weight: 400;
-}
-
-/* --- Alerts --- */
-.alert.success {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(72, 201, 176, 0.3);
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.alert.success:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 32px rgba(72, 201, 176, 0.2);
-    border-color: #48c9b0;
-}
-
-.alert.success p {
-    font-size: 1.1rem;
-    color: #e6e6fa;
+  }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: linear-gradient(180deg, #0A0C10, #1A1F26);
+    color: #E6ECEF;
     line-height: 1.6;
-}
+  }
 
-.alert.success strong {
-    color: #fff;
-    font-weight: 600;
-}
+  /* ====== Palette & Variables ====== */
+  :root {
+    --bg: #0A0C10;
+    --panel: #14171C;
+    --muted: #8A94A6;
+    --neon: #00FF88;
+    --accent: #FF3D00;
+    --white: #F5F7FA;
+    --glass: rgba(255, 255, 255, 0.04);
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+    --glow: 0 0 15px rgba(0, 255, 136, 0.4);
+    --radius: 14px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-size-base: 16px;
+    --font-weight-bold: 700;
+    --font-weight-medium: 500;
+  }
 
-/* --- Form --- */
-.biography-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(72, 201, 176, 0.3);
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.biography-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 32px rgba(72, 201, 176, 0.2);
-    border-color: #48c9b0;
-}
-
-.biography-card h3 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #48c9b0;
-    margin-bottom: 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-group label {
-    font-size: 1.1rem;
-    color: #e6e6fa;
-    font-weight: 600;
-    display: block;
-    margin-bottom: 0.5rem;
-}
-
-.form-group input {
-    padding: 0.6rem;
-    border-radius: 8px;
-    border: 1px solid rgba(216, 175, 55, 0.3);
-    background: rgba(255, 255, 255, 0.05);
-    color: #e6e6fa;
-    font-size: 0.95rem;
+  /* ====== Layout ====== */
+  #fitlife-container {
+    display: flex;
+    min-height: 100vh;
     width: 100%;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
+    background: var(--bg);
+    overflow-x: hidden;
+  }
 
-.form-group input:focus {
-    outline: none;
-    border-color: #48c9b0;
-    box-shadow: 0 0 0 2px rgba(72, 201, 176, 0.3);
-}
+  /* ====== Sidebar ====== */
+  aside#sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #14171C, #0C1014);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    z-index: 1200;
+  }
+  @media (max-width: 960px) {
+    aside#sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      transform: translateX(-100%);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    }
+    body.sidebar-open aside#sidebar {
+      transform: translateX(0);
+    }
+  }
 
-.calculate-btn {
-    background: linear-gradient(135deg, #d4af37, #b8860b);
-    color: #1c2526;
-    padding: 0.8rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
+  .sidebar-header {
+    text-align: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--glass);
+  }
+  .sidebar-header h2 {
+    font-size: 1.6rem;
+    color: var(--neon);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 1px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+  }
+  .sidebar-header p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
 
-.calculate-btn:hover {
-    background: linear-gradient(135deg, #b8860b, #a67c00);
-    transform: scale(1.03);
-    box-shadow: 0 4px 12px rgba(216, 175, 55, 0.3);
-}
-
-/* --- History Section --- */
-.history-section {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(72, 201, 176, 0.3);
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.history-section:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(72, 201, 176, 0.2);
-}
-
-.history-section h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #48c9b0;
-    margin-bottom: 1.5rem;
+  nav.nav-menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  nav.nav-menu a {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-}
+    gap: 12px;
+    padding: 12px 16px;
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: var(--font-weight-medium);
+    border-radius: 10px;
+    background: var(--glass);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  nav.nav-menu a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+  nav.nav-menu a:hover::before {
+    left: 100%;
+  }
+  nav.nav-menu a svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: var(--neon);
+    transition: transform 0.2s ease, stroke 0.2s ease;
+  }
+  nav.nav-menu a:hover {
+    background: rgba(0, 255, 136, 0.08);
+    transform: translateX(6px);
+  }
+  nav.nav-menu a:hover svg {
+    transform: scale(1.1);
+    stroke: var(--accent);
+  }
+  nav.nav-menu a.active {
+    background: linear-gradient(90deg, rgba(0, 255, 136, 0.15), rgba(255, 61, 0, 0.1));
+    color: var(--neon);
+    box-shadow: var(--glow);
+  }
 
-.table-wrapper {
-    overflow-x: auto;
-}
+  /* ====== Unified Button Styles ====== */
+  button, .logout-form button, .calculate-btn {
+    padding: 8px 12px;
+    background: linear-gradient(90deg, var(--neon), var(--accent));
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--glow);
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+  }
+  button:hover, .logout-form button:hover, .calculate-btn:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+    background: linear-gradient(90deg, var(--accent), var(--neon));
+  }
+  button::before, .logout-form button::before, .calculate-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.4s ease;
+  }
+  button:hover::before, .logout-form button:hover::before, .calculate-btn:hover::before {
+    left: 100%;
+  }
 
-table {
+  /* ====== Main Content ====== */
+  main {
+    flex: 1;
+    padding: 32px;
+    background: var(--bg);
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+  #mobile-toggle {
+    display: none;
+  }
+  @media (max-width: 960px) {
+    #mobile-toggle {
+      display: inline-block;
+    }
+  }
+
+  header {
+    background: var(--panel);
+    padding: 24px;
+    border-radius: var(--radius);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .header-left h1 {
+    font-size: 1.8rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--neon);
+    margin: 0;
+  }
+  .header-left h1 span {
+    font-weight: 300;
+    color: var(--white);
+  }
+  .header-left p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin: 4px 0 0;
+  }
+  .header-info {
+    display: flex;
+    gap: 16px;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .header-info div {
+    background: var(--glass);
+    padding: 6px 12px;
+    border-radius: 8px;
+  }
+
+  /* ====== Result Widget ====== */
+  .result-card {
+    background: linear-gradient(135deg, var(--panel), #1A1F26);
+    padding: 16px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: box-shadow 0.3s ease;
+    margin-bottom: 24px;
+  }
+  .result-card:hover {
+    box-shadow: var(--glow), var(--shadow);
+  }
+  .result-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(255, 61, 0, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .result-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--neon);
+    transition: transform 0.3s ease;
+  }
+  .result-card:hover .result-icon svg {
+    transform: rotate(10deg);
+  }
+  .result-body {
+    flex: 1;
+  }
+  .result-body h4 {
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: var(--font-weight-medium);
+    margin: 0;
+  }
+  .result-body .value {
+    font-size: 1.4rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--neon);
+    margin-top: 4px;
+  }
+  .result-body .muted {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* ====== Sleep Form ====== */
+  .sleep-form {
+    margin-bottom: 24px;
+  }
+  .sleep-card {
+    background: linear-gradient(135deg, var(--panel), #1A1F26);
+    padding: 16px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.3s ease;
+    text-align: center;
+  }
+  .sleep-card:hover {
+    box-shadow: var(--glow), var(--shadow);
+  }
+  .sleep-card h4 {
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: 8px;
+  }
+  .form-group {
+    margin-bottom: 12px;
+    text-align: left;
+  }
+  .form-group label {
+    font-size: 0.9rem;
+    color: var(--white);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .form-group input {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--white);
+    font-size: 0.9rem;
+    width: 100%;
+    transition: var(--transition);
+  }
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--neon);
+    box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3);
+  }
+
+  /* ====== Sleep History Table ====== */
+  .history-table {
     width: 100%;
     border-collapse: collapse;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 10px;
+    background: linear-gradient(135deg, var(--panel), #1A1F26);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
     overflow: hidden;
-}
-
-table th,
-table td {
-    padding: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .history-table th,
+  .history-table td {
+    padding: 12px;
     text-align: left;
-}
-
-table th {
-    background: rgba(72, 201, 176, 0.1);
-    color: #48c9b0;
-    font-weight: 600;
+    border-bottom: 1px solid var(--glass);
     font-size: 0.9rem;
+    color: var(--white);
+  }
+  .history-table th {
+    background: rgba(0, 255, 136, 0.1);
+    color: var(--neon);
+    font-weight: var(--font-weight-bold);
     text-transform: uppercase;
-}
-
-table tr:hover {
-    background: rgba(72, 201, 176, 0.1);
-}
-
-.no-data {
+    letter-spacing: 1px;
+  }
+  .history-table tr:hover {
+    background: rgba(0, 255, 136, 0.08);
+    box-shadow: var(--glow);
+  }
+  .history-table td {
+    color: var(--muted);
+  }
+  .history-table td:first-child {
+    color: var(--neon);
+  }
+  .history-table .no-data {
     text-align: center;
-    color: #6b7280;
+    padding: 24px;
+    color: var(--muted);
     font-size: 1rem;
-    padding: 1rem;
-}
+  }
 
-/* --- Animations --- */
-@keyframes fadeIn {
+  /* ====== Responsive Design ====== */
+  @media (max-width: 768px) {
+    main {
+      padding: 20px;
+    }
+    .sleep-card, .result-card {
+      padding: 12px;
+    }
+    .header-info {
+      flex-direction: column;
+      gap: 8px;
+    }
+    .history-table {
+      font-size: 0.85rem;
+      display: block;
+      overflow-x: auto;
+    }
+    .history-table th,
+    .history-table td {
+      padding: 8px;
+      min-width: 120px;
+    }
+  }
+  @media (max-width: 480px) {
+    header {
+      flex-direction: column;
+      text-align: center;
+    }
+    .header-left h1 {
+      font-size: 1.5rem;
+    }
+    .sleep-card, .result-card {
+      min-width: 100%;
+    }
+  }
+
+  /* ====== Animations ====== */
+  @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
-}
-
-/* --- Responsive --- */
-@media (max-width: 768px) {
-    .dashboard-main {
-        padding: 1.5rem;
-    }
-    .side-menu {
-        width: 100%;
-        right: -100%;
-    }
-    .side-menu.active {
-        right: 0;
-    }
-    .dashboard-header h1 {
-        font-size: 2.2rem;
-    }
-    .menu-btn {
-        top: 15px;
-        right: 15px;
-        padding: 0.6rem 1rem;
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .dashboard-header {
-        padding: 1rem;
-    }
-    .biography-card, .history-section {
-        padding: 1rem;
-    }
-}
-
-/* --- Accessibility --- */
-@media (prefers-reduced-motion: reduce) {
-    .biography-card, .history-section, .menu-btn, .side-menu, .calculate-btn {
-        transition: none;
-    }
-}
-
-@media (prefers-contrast: high) {
-    .biography-card, .history-section {
-        border: 2px solid #fff;
-    }
-    .side-menu ul li a.active, .calculate-btn {
-        background: #fff;
-        color: #1c2526;
-    }
-    .form-group input {
-        border: 1px solid #fff;
-    }
-}
+  }
+  section, .result-card, .sleep-card, .history-table {
+    animation: fadeIn 0.5s var(--animation-ease);
+  }
 </style>
+
+<div id="fitlife-container" role="application" aria-label="FitLife Sleep Tracker">
+  <!-- Sidebar -->
+  <aside id="sidebar" aria-label="Main navigation">
+    <div class="sidebar-header">
+      <h2>FitLife</h2>
+      <p>Power Your Performance</p>
+    </div>
+    <nav class="nav-menu" aria-label="Main menu">
+      <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}" {{ request()->routeIs('dashboard') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13h8V3H3z"/><path d="M13 21h8V11h-8z"/><path d="M13 3v8"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="{{ route('foods.index') }}" class="{{ request()->routeIs('foods.*') ? 'active' : '' }}" {{ request()->routeIs('foods.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21c4-4 6-11 6-17"/><path d="M20 7a4 4 0 11-8 0"/></svg>
+        <span>Nutrition</span>
+      </a>
+      <a href="{{ route('sleep.index') }}" class="{{ request()->routeIs('sleep.*') ? 'active' : '' }}" {{ request()->routeIs('sleep.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <span>Recovery</span>
+      </a>
+      <a href="{{ route('water.index') }}" class="{{ request()->routeIs('water.*') ? 'active' : '' }}" {{ request()->routeIs('water.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s4 5 4 8a4 4 0 01-8 0c0-3 4-8 4-8z"/></svg>
+        <span>Hydration</span>
+      </a>
+      <a href="{{ route('progress.index') }}" class="{{ request()->routeIs('progress.*') ? 'active' : '' }}" {{ request()->routeIs('progress.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 3v18H3V3h18z"/><path d="M7 14l3-3 2 2 5-5"/></svg>
+        <span>Progress</span>
+      </a>
+      <a href="{{ route('goals.index') }}" class="{{ request()->routeIs('goals.*') ? 'active' : '' }}" {{ request()->routeIs('goals.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <span>Goals</span>
+      </a>
+      <a href="{{ route('calories.index') }}" class="{{ request()->routeIs('calories.*') ? 'active' : '' }}" {{ request()->routeIs('calories.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20"/><path d="M5 12h14"/></svg>
+        <span>Energy</span>
+      </a>
+      <a href="{{ route('biography.edit') }}" class="{{ request()->routeIs('biography.*') ? 'active' : '' }}" {{ request()->routeIs('biography.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M6 20v-1a6 6 0 0112 0v1"/></svg>
+        <span>Bio</span>
+      </a>
+      <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}" {{ request()->routeIs('profile.edit') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg>
+        <span>Profile</span>
+      </a>
+      <form method="POST" action="{{ route('logout') }}" class="logout-form">
+        @csrf
+        <button type="submit" aria-label="Logout">Logout</button>
+      </form>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+    <button id="mobile-toggle" aria-controls="sidebar" aria-expanded="false">Menu</button>
+
+    <header>
+      <div class="header-left">
+        <h1><span>FitLife</span> Sleep Tracker</h1>
+        <p class="muted">Log and track your sleep patterns</p>
+      </div>
+      <div class="header-info">
+        <div>{{ now()->format('l, F d, Y') }}</div>
+        <div>{{ now()->format('H:i') }}</div>
+      </div>
+    </header>
+
+    <!-- Success Message -->
+    @if(session('success'))
+    <section aria-labelledby="success-heading">
+      <h3 id="success-heading">Status</h3>
+      <div class="result-card">
+        <div class="result-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </div>
+        <div class="result-body">
+          <h4>Success</h4>
+          <div class="value">{{ session('success') }}</div>
+        </div>
+      </div>
+    </section>
+    @endif
+
+    <!-- Sleep Form -->
+    <section aria-labelledby="sleep-form-heading">
+      <h3 id="sleep-form-heading">Log Your Sleep</h3>
+      <div class="sleep-card">
+        <h4>Add Sleep Record</h4>
+        <form action="{{ route('sleep.store') }}" method="POST" class="sleep-form">
+          @csrf
+          <div class="form-group">
+            <label for="date">Date</label>
+            <input type="date" id="date" name="date" required>
+          </div>
+          <div class="form-group">
+            <label for="start_time">Start Time</label>
+            <input type="time" id="start_time" name="start_time" required>
+          </div>
+          <div class="form-group">
+            <label for="end_time">End Time</label>
+            <input type="time" id="end_time" name="end_time" required>
+          </div>
+          <button type="submit" class="calculate-btn">Add Sleep Record</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Sleep History -->
+    <section id="history-section" aria-labelledby="history-heading">
+      <h3 id="history-heading">Sleep History</h3>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Duration (hrs)</th>
+          </tr>
+        </thead>
+        <tbody>
+          @forelse($sleeps as $sleep)
+          <tr>
+            <td>{{ $sleep->date }}</td>
+            <td>{{ $sleep->start_time }}</td>
+            <td>{{ $sleep->end_time }}</td>
+            <td>{{ round($sleep->duration, 1) }}</td>
+          </tr>
+          @empty
+          <tr>
+            <td colspan="4" class="no-data">No sleep records yet. Start logging your sleep!</td>
+          </tr>
+          @endforelse
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Average Sleep -->
+    @if($average)
+    <section aria-labelledby="average-heading">
+      <h3 id="average-heading">Sleep Summary</h3>
+      <div class="result-card">
+        <div class="result-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </div>
+        <div class="result-body">
+          <h4>Average Sleep</h4>
+          <div class="value count-up" data-target="{{ round($average, 1) }}">0</div>
+          <div class="muted">hours per night</div>
+        </div>
+      </div>
+    </section>
+    @endif
+  </main>
+</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // Sidebar Toggle
-    const menuBtn = document.getElementById('menu-toggle');
-    const sideMenu = document.getElementById('side-menu');
-    const dashboardMain = document.getElementById('dashboard-main');
+  /* ===== Sidebar Mobile Toggle ===== */
+  const mobileToggle = document.getElementById('mobile-toggle');
+  const body = document.body;
+  const sidebar = document.getElementById('sidebar');
 
-    menuBtn.addEventListener('click', () => {
-        sideMenu.classList.toggle('active');
-        const open = sideMenu.classList.contains('active');
-        dashboardMain.style.marginRight = open ? '300px' : '0';
-        menuBtn.style.right = open ? '320px' : '20px';
-    });
+  mobileToggle.addEventListener('click', () => {
+    const opened = body.classList.toggle('sidebar-open');
+    mobileToggle.setAttribute('aria-expanded', opened ? 'true' : 'false');
+  });
 
-    document.addEventListener('click', (e) => {
-        if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-            sideMenu.classList.remove('active');
-            dashboardMain.style.marginRight = '0';
-            menuBtn.style.right = '20px';
-        }
-    });
+  document.addEventListener('click', (e) => {
+    if (!body.classList.contains('sidebar-open')) return;
+    if (sidebar.contains(e.target) || mobileToggle.contains(e.target)) return;
+    body.classList.remove('sidebar-open');
+    mobileToggle.setAttribute('aria-expanded', 'false');
+  });
 
-    // Accessibility
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            sideMenu.classList.remove('active');
-            dashboardMain.style.marginRight = '0';
-            menuBtn.style.right = '20px';
-        }
-    });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && body.classList.contains('sidebar-open')) {
+      body.classList.remove('sidebar-open');
+      mobileToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  /* ===== Count Up Animation for Average Sleep ===== */
+  const countUps = document.querySelectorAll('.count-up');
+  countUps.forEach(el => {
+    const target = parseFloat(el.getAttribute('data-target') || '0');
+    let started = false;
+    const run = () => {
+      if (started) return;
+      started = true;
+      const duration = 1200;
+      const start = performance.now();
+      const initial = 0;
+      function step(ts) {
+        const progress = Math.min((ts - start) / duration, 1);
+        const value = initial + (target - initial) * progress;
+        el.textContent = Number.isInteger(target) ? Math.round(value) : (Math.round(value * 10) / 10);
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    };
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            run();
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.4 });
+      io.observe(el);
+    } else {
+      run();
+    }
+  });
 });
 </script>
 @endsection

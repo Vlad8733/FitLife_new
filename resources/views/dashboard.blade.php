@@ -1,750 +1,1031 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="dashboard-main" id="dashboard-main">
-    <!-- Menu Button -->
-    <button class="menu-btn" id="menu-toggle">☰ Menu</button>
-
-    <!-- Dashboard Header -->
-    <div class="dashboard-header">
-        <h1><span>Welcome to</span> FitLife</h1>
-        <p>Track your health & progress in one place.</p>
-    </div>
-
-    <!-- Motivation Quote -->
-    <div class="motivation" id="motivation"></div>
-
-    <!-- Biography -->
-    <div class="biography-card">
-        <h3>Your Biography</h3>
-        @php $bio = Auth::user()->biography; @endphp
-        <p><strong>Name:</strong> {{ $bio->full_name ?? Auth::user()->name }}</p>
-        <p><strong>Age:</strong> {{ $bio->age ?? 'Not set' }}</p>
-        <p><strong>Height:</strong> {{ $bio->height ?? 'Not set' }} cm</p>
-        <p><strong>Weight:</strong> {{ $bio->weight ?? 'Not set' }} kg</p>
-        <p><strong>Gender:</strong> {{ ucfirst($bio->gender ?? 'Not set') }}</p>
-    </div>
-
-    <!-- KPIs -->
-    <div class="kpi-container">
-        <div class="kpi-card"><h3>Total Calories</h3><p>{{ $totalCalories ?? 0 }}</p></div>
-        <div class="kpi-card"><h3>Total Sleep (h)</h3><p>{{ round($totalSleep ?? 0, 1) }}</p></div>
-        <div class="kpi-card"><h3>Total Water (ml)</h3><p>{{ $totalWater ?? 0 }}</p></div>
-    </div>
-
-    <!-- Histories -->
-    <div class="history-section">
-        <h2>🍽 Meal History</h2>
-        <div id="meal-history-wrapper">@include('profile.partials.meal_table')</div>
-    </div>
-    <div class="history-section">
-        <h2>🛌 Sleep History</h2>
-        <div id="sleep-history-wrapper">@include('profile.partials.sleep_table')</div>
-    </div>
-    <div class="history-section">
-        <h2>💧 Water History</h2>
-        <div id="water-history-wrapper">@include('profile.partials.water_table')</div>
-    </div>
-
-    <!-- Photos -->
-    <div class="photos-grid">
-        @forelse($photos as $photo)
-            <div class="photo-card">
-                <img src="{{ asset('storage/'.$photo->photo) }}" alt="Progress Photo">
-                @if($photo->description)
-                    <div class="photo-description">{{ $photo->description }}</div>
-                @endif
-                <div class="photo-date">Uploaded: {{ $photo->created_at->format('M d, Y H:i') }}</div>
-            </div>
-        @empty
-            <p class="no-data">No progress photos yet.</p>
-        @endforelse
-    </div>
-
-    <!-- Goals -->
-    <div class="history-section">
-        <h2>🎯 Your Goals</h2>
-        @if($goals->isEmpty())
-            <p class="no-data">No goals yet.</p>
-        @else
-            @foreach($goals as $goal)
-                <div class="goal-card">
-                    <h3>{{ ucfirst($goal->type) }} Goal (Deadline: {{ $goal->deadline }})</h3>
-                    <div class="progress-bar">
-                        <div class="progress-bar-inner" style="width: {{ $goal->progressPercent() }}%;"></div>
-                    </div>
-                    <small>{{ round($goal->current_value,1) }} / {{ $goal->target_value }}</small>
-                </div>
-            @endforeach
-        @endif
-    </div>
-</div>
-
-<!-- Sidebar -->
-<div class="side-menu" id="side-menu">
-    <h3>Navigation</h3>
-    <ul>
-        <li><a href="{{ route('dashboard') }}">Home</a></li>
-        <li><a href="{{ route('foods.index') }}">Meal Tracker</a></li>
-        <li><a href="{{ route('sleep.index') }}">Sleep Tracker</a></li>
-        <li><a href="{{ route('water.index') }}">Water Tracker</a></li>
-        <li><a href="{{ route('progress.index') }}">Progress Photos</a></li>
-        <li><a href="{{ route('goals.index') }}">Goals</a></li>
-        <li><a href="{{ route('calories.index') }}">Calorie Calculator</a></li>
-        <li><a href="{{ route('biography.edit') }}">Biography</a></li>
-        <li><a href="{{ route('profile.edit') }}">Profile</a></li>
-        <li>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit">Log Out</button>
-            </form>
-        </li>
-    </ul>
-</div>
-
-<!-- Lightbox -->
-<div id="lightbox">
-    <div id="lightbox-content">
-        <img id="lightbox-img" src="" alt="">
-        <div id="lightbox-info">
-            <p id="lightbox-date"></p>
-            <p id="lightbox-desc"></p>
-        </div>
-    </div>
-</div>
-
 <style>
-/* --- General Reset & Base --- */
-* {
+  /* ====== Reset ====== */
+  *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
-}
-
-body {
-    background: linear-gradient(135deg, #0d1117 0%, #1c2526 100%);
-    color: #e6e6fa;
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-button {
-    cursor: pointer;
-    border: none;
-    background: none;
-    font-family: inherit;
-}
-
-/* --- Dashboard Layout --- */
-.dashboard-main {
-    padding: 2.5rem;
-    transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    z-index: 1;
-}
-
-/* --- Menu Button --- */
-.menu-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #d4af37, #b8860b);
-    color: #1c2526;
-    padding: 0.8rem 1.2rem;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 15px rgba(216, 175, 55, 0.4);
-    z-index: 1001;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.menu-btn:hover {
-    background: linear-gradient(135deg, #b8860b, #a67c00);
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(216, 175, 55, 0.6);
-}
-
-/* --- Sidebar --- */
-.side-menu {
-    position: fixed;
-    top: 0;
-    right: -300px;
-    width: 300px;
-    height: 100vh;
-    background: rgba(13, 17, 23, 0.95);
-    backdrop-filter: blur(12px);
-    border-left: 1px solid rgba(216, 175, 55, 0.3);
-    padding: 2rem 1.5rem;
-    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1000;
-    overflow-y: auto;
-}
-
-.side-menu.active {
-    right: 0;
-}
-
-.side-menu h3 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #48c9b0;
-    margin-bottom: 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.side-menu ul {
-    list-style: none;
-}
-
-.side-menu ul li {
-    margin-bottom: 0.5rem;
-}
-
-.side-menu ul li a,
-.side-menu ul li button {
-    display: block;
+  }
+  html, body, #app {
+    height: 100%;
     width: 100%;
-    padding: 1rem 1.2rem;
-    border-radius: 10px;
-    color: #e6e6fa;
-    font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-}
-
-.side-menu ul li a:hover,
-.side-menu ul li button:hover {
-    background: rgba(72, 201, 176, 0.2);
-    color: #48c9b0;
-    transform: translateX(5px);
-    box-shadow: 0 4px 12px rgba(72, 201, 176, 0.3);
-}
-
-.side-menu ul li a.active {
-    background: rgba(216, 175, 55, 0.2);
-    color: #d4af37;
-}
-
-/* --- Dashboard Header --- */
-.dashboard-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    animation: fadeIn 0.8s ease-out;
-}
-
-.dashboard-header h1 {
-    font-size: 3rem;
-    font-weight: 800;
-    color: #48c9b0;
-    margin-bottom: 0.5rem;
-    text-shadow: 0 2px 8px rgba(72, 201, 176, 0.3);
-}
-
-.dashboard-header h1 span {
-    font-weight: 300;
-    color: #a3bffa;
-}
-
-.dashboard-header p {
-    font-size: 1.2rem;
-    color: #a3bffa;
-    font-weight: 400;
-}
-
-/* --- Motivation Quote --- */
-.motivation {
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #d4af37;
-    margin: 2rem 0;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.6s ease-out;
-    text-shadow: 0 2px 8px rgba(216, 175, 55, 0.3);
-}
-
-/* --- Biography Card --- */
-.biography-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(72, 201, 176, 0.3);
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-}
-
-.biography-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 32px rgba(72, 201, 176, 0.2);
-    border-color: #48c9b0;
-}
-
-.biography-card h3 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #48c9b0;
-    margin-bottom: 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.biography-card p {
-    font-size: 1.1rem;
-    color: #e6e6fa;
-    margin-bottom: 1rem;
+    overflow-x: hidden;
+  }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: linear-gradient(180deg, #0A0C10, #1A1F26);
+    color: #E6ECEF;
     line-height: 1.6;
-}
+  }
 
-.biography-card strong {
-    color: #fff;
-    font-weight: 600;
-}
+  /* ====== Palette & Variables ====== */
+  :root {
+    --bg: #0A0C10; /* Deep charcoal */
+    --panel: #14171C; /* Sidebar/card background */
+    --muted: #8A94A6; /* Muted text */
+    --neon: #00FF88; /* Neon green */
+    --accent: #FF3D00; /* Vibrant orange */
+    --white: #F5F7FA;
+    --glass: rgba(255, 255, 255, 0.04);
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+    --glow: 0 0 15px rgba(0, 255, 136, 0.4);
+    --radius: 14px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-size-base: 16px;
+    --font-weight-bold: 700;
+    --font-weight-medium: 500;
+  }
 
-/* --- KPIs --- */
-.kpi-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-}
+  /* ====== Layout ====== */
+  #fitlife-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100vw;
+    background: var(--bg);
+    overflow: hidden;
+  }
 
-.kpi-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(216, 175, 55, 0.3);
-    border-radius: 12px;
-    padding: 1.5rem;
+  /* ====== Sidebar ====== */
+  aside#sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #14171C, #0C1014);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    z-index: 1200;
+  }
+  @media (max-width: 960px) {
+    aside#sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      transform: translateX(-100%);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    }
+    body.sidebar-open aside#sidebar {
+      transform: translateX(0);
+    }
+  }
+
+  .sidebar-header {
     text-align: center;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.kpi-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(216, 175, 55, 0.3);
-    border-color: #d4af37;
-}
-
-.kpi-card h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #a3bffa;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--glass);
+  }
+  .sidebar-header h2 {
+    font-size: 1.6rem;
+    color: var(--neon);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 1px;
     text-transform: uppercase;
-    margin-bottom: 0.8rem;
-}
+  }
+  .sidebar-header p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
 
-.kpi-card p {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: #d4af37;
-}
-
-/* --- Histories --- */
-.history-section {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(72, 201, 176, 0.3);
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.history-section:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(72, 201, 176, 0.2);
-}
-
-.history-section h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #48c9b0;
-    margin-bottom: 1.5rem;
+  nav.nav-menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  nav.nav-menu a {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-}
-
-.history-section table {
-    width: 100%;
-    border-collapse: collapse;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.history-section th,
-.history-section td {
-    padding: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    text-align: left;
-}
-
-.history-section th {
-    background: rgba(72, 201, 176, 0.1);
-    color: #48c9b0;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-}
-
-.history-section tr:hover {
-    background: rgba(72, 201, 176, 0.1);
-}
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 1.5rem;
-}
-
-.pagination a,
-.pagination span {
-    padding: 0.8rem 1.2rem;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.05);
-    color: #e6e6fa;
+    gap: 12px;
+    padding: 12px 16px;
+    color: var(--white);
+    text-decoration: none;
     font-size: 0.95rem;
-    border: 1px solid rgba(216, 175, 55, 0.3);
-    transition: all 0.3s ease;
-}
-
-.pagination a:hover {
-    background: rgba(216, 175, 55, 0.2);
-    color: #d4af37;
-    transform: scale(1.05);
-}
-
-.pagination .active {
-    background: #d4af37;
-    color: #1c2526;
-    border-color: #d4af37;
-}
-
-/* --- Progress Bars --- */
-.progress-bar {
-    background: rgba(255, 255, 255, 0.1);
-    height: 12px;
-    border-radius: 6px;
-    overflow: hidden;
-    margin: 1rem 0;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.progress-bar-inner {
-    height: 100%;
-    background: linear-gradient(90deg, #48c9b0, #2e856e);
-    border-radius: 6px;
-    transition: width 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    box-shadow: 0 0 10px rgba(72, 201, 176, 0.5);
+    font-weight: var(--font-weight-medium);
+    border-radius: 10px;
+    background: var(--glass);
+    transition: var(--transition);
     position: relative;
-}
-
-.progress-bar-inner::after {
+    overflow: hidden;
+  }
+  nav.nav-menu a::before {
     content: '';
     position: absolute;
     top: 0;
-    left: 0;
+    left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    animation: shimmer 2s infinite;
-}
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+  nav.nav-menu a:hover::before {
+    left: 100%;
+  }
+  nav.nav-menu a svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: var(--neon);
+    transition: transform 0.2s ease, stroke 0.2s ease;
+  }
+  nav.nav-menu a:hover {
+    background: rgba(0, 255, 136, 0.08);
+    transform: translateX(6px);
+  }
+  nav.nav-menu a:hover svg {
+    transform: scale(1.1);
+    stroke: var(--accent);
+  }
+  nav.nav-menu a.active {
+    background: linear-gradient(90deg, rgba(0, 255, 136, 0.15), rgba(255, 61, 0, 0.1));
+    color: var(--neon);
+    box-shadow: var(--glow);
+  }
 
-/* --- Photos Grid --- */
-.photos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-}
-
-.photo-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(216, 175, 55, 0.3);
-    border-radius: 12px;
-    padding: 1rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.photo-card:hover {
-    transform: scale(1.03);
-    box-shadow: 0 8px 20px rgba(216, 175, 55, 0.3);
-    border-color: #d4af37;
-}
-
-.photo-card img {
-    width: 100%;
-    height: 200px;
+  /* ====== Unified Button Styles ====== */
+  button, .logout-form button, .informer-action a {
+    padding: 8px 12px;
+    background: linear-gradient(90deg, var(--neon), var(--accent));
+    color: var(--white);
+    border: none;
     border-radius: 8px;
-    object-fit: cover;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.photo-card img:hover {
-    filter: brightness(1.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.photo-description {
-    font-size: 0.95rem;
-    color: #a3bffa;
-    margin-top: 0.8rem;
-    font-style: italic;
-}
-
-.photo-date {
     font-size: 0.85rem;
-    color: #6b7280;
-}
-
-.no-data {
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--glow);
+    text-decoration: none;
+    display: inline-block;
     text-align: center;
-    color: #6b7280;
-    font-size: 1rem;
-    padding: 1rem;
-}
+  }
+  button:hover, .logout-form button:hover, .informer-action a:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+    background: linear-gradient(90deg, var(--accent), var(--neon));
+  }
+  button::before, .logout-form button::before, .informer-action a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.4s ease;
+  }
+  button:hover::before, .logout-form button:hover::before, .informer-action a:hover::before {
+    left: 100%;
+  }
 
-/* --- Goals --- */
-.goal-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(72, 201, 176, 0.3);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+  /* ====== Main Content ====== */
+  main {
+    flex: 1;
+    padding: 32px;
+    background: var(--bg);
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+  #mobile-toggle {
+    display: none;
+  }
+  @media (max-width: 960px) {
+    #mobile-toggle {
+      display: inline-block;
+    }
+  }
 
-.goal-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(72, 201, 176, 0.3);
-}
-
-.goal-card h3 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #48c9b0;
-    margin-bottom: 1rem;
-}
-
-.goal-card small {
-    color: #a3bffa;
+  header {
+    background: var(--panel);
+    padding: 24px;
+    border-radius: var(--radius);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .header-left h1 {
+    font-size: 1.8rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--neon);
+    margin: 0;
+  }
+  .header-left p {
     font-size: 0.9rem;
-}
+    color: var(--muted);
+    margin: 4px 0 0;
+  }
+  .header-info {
+    display: flex;
+    gap: 16px;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .header-info div {
+    background: var(--glass);
+    padding: 6px 12px;
+    border-radius: 8px;
+  }
 
-/* --- Lightbox --- */
-#lightbox {
+  /* ====== KPI and Informer Cards ====== */
+  .stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card, .informer-card {
+    background: linear-gradient(135deg, var(--panel), #1A1F26);
+    padding: 16px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: box-shadow 0.3s ease;
+  }
+  .stat-card:hover, .informer-card:hover {
+    box-shadow: var(--glow), var(--shadow);
+  }
+  .stat-icon, .informer-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(255, 61, 0, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .stat-icon svg, .informer-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--neon);
+    transition: transform 0.3s ease;
+  }
+  .stat-card:hover .stat-icon svg, .informer-card:hover .informer-icon svg {
+    transform: rotate(10deg);
+  }
+  .stat-body, .informer-body {
+    flex: 1;
+  }
+  .stat-body h4, .informer-body h4 {
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: var(--font-weight-medium);
+    margin: 0;
+  }
+  .stat-body .value, .informer-body .value {
+    font-size: 1.4rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--neon);
+    margin-top: 4px;
+  }
+  .stat-body .muted, .informer-body .muted {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .informer-bar {
+    background: rgba(255, 255, 255, 0.05);
+    height: 6px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+    position: relative;
+  }
+  .informer-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon), var(--accent));
+    transition: width 1.2s ease;
+    position: relative;
+    animation: pulse 2s infinite;
+  }
+  .informer-action {
+    margin-top: 8px;
+  }
+
+  /* ====== Sections ====== */
+  section {
+    margin-bottom: 32px;
+  }
+  section h3 {
+    font-size: 1.3rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--neon);
+    margin-bottom: 12px;
+    position: relative;
+  }
+  section h3::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 40px;
+    height: 2px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+  section:hover h3::after {
+    width: 60px;
+  }
+
+  /* ====== Gallery Grid ====== */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+  .photo-item {
+    border-radius: var(--radius);
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    background: var(--glass);
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.3s ease;
+  }
+  .photo-item:hover {
+    box-shadow: var(--glow), var(--shadow);
+  }
+  .photo-item img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+  .photo-item:hover img {
+    transform: scale(1.08);
+  }
+  .photo-meta {
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .photo-item:hover .photo-meta {
+    opacity: 1;
+  }
+  .photo-meta p {
+    font-size: 0.85rem;
+    color: var(--white);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .photo-meta small {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  /* ====== Lightbox ====== */
+  #photo-lightbox {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.9);
+    inset: 0;
+    z-index: 1500;
+    background: linear-gradient(rgba(10, 12, 16, 0.9), rgba(10, 12, 16, 0.95));
     backdrop-filter: blur(8px);
-    justify-content: center;
+    -webkit-backdrop-filter: blur(8px);
     align-items: center;
-    z-index: 2000;
-    animation: fadeIn 0.4s ease;
-}
+    justify-content: center;
+    padding: 24px;
+  }
+  #photo-lightbox[aria-hidden="false"] {
+    display: flex;
+  }
+  .lightbox-inner {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    background: var(--panel);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+  .lightbox-img {
+    flex: 1;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .lightbox-img img {
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    object-fit: contain;
+    display: block;
+    border-radius: 10px;
+  }
+  .lightbox-side {
+    width: 340px;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    color: var(--muted);
+  }
+  .lightbox-close, .lightbox-nav button {
+    padding: 10px 16px;
+    background: linear-gradient(90deg, var(--neon), var(--accent));
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--glow);
+  }
+  .lightbox-close:hover, .lightbox-nav button:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+    background: linear-gradient(90deg, var(--accent), var(--neon));
+  }
+  .lightbox-close::before, .lightbox-nav button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.4s ease;
+  }
+  .lightbox-close:hover::before, .lightbox-nav button:hover::before {
+    left: 100%;
+  }
+  .lightbox-nav {
+    display: flex;
+    gap: 10px;
+  }
 
-#lightbox-content {
-    max-width: 90%;
-    max-height: 90%;
-    text-align: center;
-}
+  /* ====== Goals ====== */
+  .goal-item {
+    background: var(--glass);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    transition: box-shadow 0.3s ease;
+  }
+  .goal-item:hover {
+    box-shadow: var(--glow), var(--shadow);
+  }
+  .goal-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  .goal-meta strong {
+    font-size: 1rem;
+    color: var(--neon);
+    font-weight: var(--font-weight-bold);
+  }
+  .goal-bar {
+    background: rgba(255, 255, 255, 0.05);
+    height: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 10px;
+    position: relative;
+  }
+  .goal-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon), var(--accent));
+    transition: width 1.2s ease;
+    position: relative;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 5px rgba(0, 255, 136, 0.3); }
+    50% { box-shadow: 0 0 15px rgba(0, 255, 136, 0.5); }
+    100% { box-shadow: 0 0 5px rgba(0, 255, 136, 0.3); }
+  }
 
-#lightbox-img {
-    max-width: 100%;
-    max-height: 70vh;
-    border: 1px solid #d4af37;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(216, 175, 55, 0.3);
-    transition: transform 0.3s ease;
-}
+  /* ====== Helpers ====== */
+  .muted { color: var(--muted); font-size: 0.9rem; }
+  .small { font-size: 0.8rem; color: var(--muted); }
+  a.small { color: var(--neon); text-decoration: none; }
+  a.small:hover { text-decoration: underline; }
 
-#lightbox-content:hover #lightbox-img {
-    transform: scale(1.02);
-}
+  /* ====== Responsive Design ====== */
+  @media (max-width: 1200px) {
+    .stat-cards { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    .lightbox-inner { flex-direction: column; }
+    .lightbox-side { width: 100%; max-width: 100%; text-align: center; }
+  }
+  @media (max-width: 768px) {
+    main { padding: 20px; }
+    .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    .photo-item img { height: 140px; }
+    .stat-card, .informer-card { flex-direction: column; text-align: center; }
+    .header-info { flex-direction: column; gap: 8px; }
+  }
+  @media (max-width: 480px) {
+    header { flex-direction: column; text-align: center; }
+    .header-left h1 { font-size: 1.5rem; }
+    .stat-card, .informer-card { min-width: 100%; }
+    .photo-item img { height: 120px; }
+  }
 
-#lightbox-info p {
-    color: #e6e6fa;
-    margin: 0.5rem 0;
-    font-size: 1.1rem;
-}
-
-#lightbox-info #lightbox-desc {
-    color: #a3bffa;
-    font-style: italic;
-}
-
-/* --- Animations --- */
-@keyframes fadeIn {
+  /* ====== Animations ====== */
+  @keyframes slideInDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
-}
-
-@keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-
-/* --- Responsive --- */
-@media (max-width: 768px) {
-    .dashboard-main {
-        padding: 1.5rem;
-    }
-    .kpi-container {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    .side-menu {
-        width: 100%;
-        right: -100%;
-    }
-    .side-menu.active {
-        right: 0;
-    }
-    .dashboard-header h1 {
-        font-size: 2.2rem;
-    }
-    .photos-grid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 1rem;
-    }
-    .photo-card img {
-        height: 160px;
-    }
-    .menu-btn {
-        top: 15px;
-        right: 15px;
-        padding: 0.6rem 1rem;
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .dashboard-header {
-        padding: 1rem;
-    }
-    .biography-card, .history-section, .goal-card {
-        padding: 1rem;
-    }
-    .kpi-card p {
-        font-size: 2rem;
-    }
-}
+  }
+  section, .stat-card, .informer-card, .photo-item {
+    animation: fadeIn 0.5s var(--animation-ease);
+  }
 </style>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const menuBtn = document.getElementById('menu-toggle');
-    const sideMenu = document.getElementById('side-menu');
-    const dashboardMain = document.getElementById('dashboard-main');
+<div id="fitlife-container" role="application" aria-label="FitLife Dashboard">
+  <!-- Sidebar -->
+  <aside id="sidebar" aria-label="Main navigation">
+    <div class="sidebar-header">
+      <h2>FitLife</h2>
+      <p>Power Your Performance</p>
+    </div>
 
-    menuBtn.addEventListener('click', () => {
-        sideMenu.classList.toggle('active');
-        const open = sideMenu.classList.contains('active');
-        dashboardMain.style.marginRight = open ? '300px' : '0';
-        menuBtn.style.right = open ? '320px' : '20px';
+    <nav class="nav-menu" aria-label="Main menu">
+      <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}" {{ request()->routeIs('dashboard') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h8V3H3z"/><path d="M13 21h8V11h-8z"/><path d="M13 3v8"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="{{ route('foods.index') }}" class="{{ request()->routeIs('foods.*') ? 'active' : '' }}" {{ request()->routeIs('foods.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21c4-4 6-11 6-17"/><path d="M20 7a4 4 0 11-8 0"/></svg>
+        <span>Nutrition</span>
+      </a>
+      <a href="{{ route('sleep.index') }}" class="{{ request()->routeIs('sleep.*') ? 'active' : '' }}" {{ request()->routeIs('sleep.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <span>Recovery</span>
+      </a>
+      <a href="{{ route('water.index') }}" class="{{ request()->routeIs('water.*') ? 'active' : '' }}" {{ request()->routeIs('water.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s4 5 4 8a4 4 0 01-8 0c0-3 4-8 4-8z"/></svg>
+        <span>Hydration</span>
+      </a>
+      <a href="{{ route('progress.index') }}" class="{{ request()->routeIs('progress.*') ? 'active' : '' }}" {{ request()->routeIs('progress.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 3v18H3V3h18z"/><path d="M7 14l3-3 2 2 5-5"/></svg>
+        <span>Progress</span>
+      </a>
+      <a href="{{ route('goals.index') }}" class="{{ request()->routeIs('goals.*') ? 'active' : '' }}" {{ request()->routeIs('goals.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <span>Goals</span>
+      </a>
+      <a href="{{ route('calories.index') }}" class="{{ request()->routeIs('calories.*') ? 'active' : '' }}" {{ request()->routeIs('calories.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20"/><path d="M5 12h14"/></svg>
+        <span>Energy</span>
+      </a>
+      <a href="{{ route('biography.edit') }}" class="{{ request()->routeIs('biography.*') ? 'active' : '' }}" {{ request()->routeIs('biography.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M6 20v-1a6 6 0 0112 0v1"/></svg>
+        <span>Bio</span>
+      </a>
+      <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}" {{ request()->routeIs('profile.edit') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg>
+        <span>Profile</span>
+      </a>
+      <form method="POST" action="{{ route('logout') }}" class="logout-form">
+        @csrf
+        <button type="submit" aria-label="Logout">Logout</button>
+      </form>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+    <button id="mobile-toggle" aria-controls="sidebar" aria-expanded="false">Menu</button>
+
+    <header>
+      <div class="header-left">
+        <h1>Hello, {{ Auth::user()->name }}!</h1>
+        <p class="muted">Your FitLife dashboard</p>
+      </div>
+      <div class="header-info">
+        <div>{{ now()->format('l, F d, Y') }}</div>
+        <div>{{ now()->format('H:i') }}</div>
+      </div>
+    </header>
+
+    <!-- Personal Stats -->
+    <section aria-labelledby="stats-heading">
+      <h3 id="stats-heading">Your Stats</h3>
+      @php $bio = Auth::user()->biography; @endphp
+      <div class="log-card" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+        <div>
+          <div class="small"><strong>Name:</strong> {{ $bio->full_name ?? Auth::user()->name }}</div>
+          <div class="small"><strong>Age:</strong> {{ $bio->age ?? 'Not set' }}</div>
+        </div>
+        <div>
+          <div class="small"><strong>Height:</strong> {{ $bio->height ?? 'Not set' }} cm</div>
+          <div class="small"><strong>Weight:</strong> {{ $bio->weight ?? 'Not set' }} kg</div>
+        </div>
+        <div>
+          <div class="small"><strong>Gender:</strong> {{ ucfirst($bio->gender ?? 'Not set') }}</div>
+          <div style="margin-top: 10px;"><a href="{{ route('biography.edit') }}" class="small">Update Stats</a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KPI Cards -->
+    <section aria-labelledby="metrics-heading">
+      <h3 id="metrics-heading">Performance Metrics</h3>
+      <div class="stat-cards">
+        <div class="stat-card" aria-hidden="false">
+          <div class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h18"/></svg>
+          </div>
+          <div class="stat-body">
+            <h4>Energy</h4>
+            <div class="value count-up" data-target="{{ $totalCalories ?? 0 }}">0</div>
+            <div class="small muted">kcal today</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v6l4 2"/></svg>
+          </div>
+          <div class="stat-body">
+            <h4>Recovery</h4>
+            <div class="value count-up" data-target="{{ round($totalSleep ?? 0, 1) }}">0</div>
+            <div class="small muted">hours</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s4 5 4 8a4 4 0 01-8 0c0-3 4-8 4-8z"/></svg>
+          </div>
+          <div class="stat-body">
+            <h4>Hydration</h4>
+            <div class="value count-up" data-target="{{ $totalWater ?? 0 }}">0</div>
+            <div class="small muted">ml</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trackers -->
+    <section aria-labelledby="trackers-heading">
+      <h3 id="trackers-heading">Trackers</h3>
+      <div class="stat-cards">
+        <!-- Nutrition Informer -->
+        <div class="informer-card" id="nutrition-informer">
+          @if($mealLogs->isEmpty())
+            <div class="informer-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21c4-4 6-11 6-17"/><path d="M20 7a4 4 0 11-8 0"/></svg>
+            </div>
+            <div class="informer-body">
+              <h4>Nutrition</h4>
+              <div class="value">0 kcal</div>
+              <div class="small muted">No meals logged</div>
+              <div class="informer-action">
+                <a href="{{ route('foods.index') }}">Log Meal</a>
+              </div>
+            </div>
+          @else
+            @php
+              $dailyCalories = $mealLogs->sum('calories');
+              $calorieGoal = 2000; // Adjust based on user settings if available
+              $calorieProgress = min(100, ($dailyCalories / $calorieGoal) * 100);
+            @endphp
+            <div class="informer-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21c4-4 6-11 6-17"/><path d="M20 7a4 4 0 11-8 0"/></svg>
+            </div>
+            <div class="informer-body">
+              <h4>Nutrition</h4>
+              <div class="value">{{ $dailyCalories }} kcal</div>
+              <div class="small muted">Fueling strong!</div>
+              <div class="informer-bar" data-progress="{{ $calorieProgress }}">
+                <div class="fill" style="width:0%;" aria-valuenow="{{ $calorieProgress }}" aria-valuemax="100" aria-valuemin="0" role="progressbar"></div>
+              </div>
+              <div class="informer-action">
+                <a href="{{ route('foods.index') }}">Log More</a>
+              </div>
+            </div>
+          @endif
+        </div>
+        <!-- Recovery Informer -->
+        <div class="informer-card" id="recovery-informer">
+          @if($sleepLogs->isEmpty())
+            <div class="informer-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            </div>
+            <div class="informer-body">
+              <h4>Recovery</h4>
+              <div class="value">0 hrs</div>
+              <div class="small muted">No sleep logged</div>
+              <div class="informer-action">
+                <a href="{{ route('sleep.index') }}">Log Sleep</a>
+              </div>
+            </div>
+          @else
+            @php
+              $dailySleep = $sleepLogs->sum('duration');
+              $sleepGoal = 8; // Adjust based on user settings if available
+              $sleepProgress = min(100, ($dailySleep / $sleepGoal) * 100);
+            @endphp
+            <div class="informer-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            </div>
+            <div class="informer-body">
+              <h4>Recovery</h4>
+              <div class="value">{{ round($dailySleep, 1) }} hrs</div>
+              <div class="small muted">Great rest!</div>
+              <div class="informer-bar" data-progress="{{ $sleepProgress }}">
+                <div class="fill" style="width:0%;" aria-valuenow="{{ $sleepProgress }}" aria-valuemax="100" aria-valuemin="0" role="progressbar"></div>
+              </div>
+              <div class="informer-action">
+                <a href="{{ route('sleep.index') }}">Log More</a>
+              </div>
+            </div>
+          @endif
+        </div>
+        <!-- Hydration Informer -->
+        <div class="informer-card" id="hydration-informer">
+          @if($waterLogs->isEmpty())
+            <div class="informer-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s4 5 4 8a4 4 0 01-8 0c0-3 4-8 4-8z"/></svg>
+            </div>
+            <div class="informer-body">
+              <h4>Hydration</h4>
+              <div class="value">0 ml</div>
+              <div class="small muted">No water logged</div>
+              <div class="informer-action">
+                <a href="{{ route('water.index') }}">Log Water</a>
+              </div>
+            </div>
+          @else
+            @php
+              $dailyWater = $waterLogs->sum('amount');
+              $waterGoal = 2000; // Adjust based on user settings if available
+              $waterProgress = min(100, ($dailyWater / $waterGoal) * 100);
+            @endphp
+            <div class="informer-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s4 5 4 8a4 4 0 01-8 0c0-3 4-8 4-8z"/></svg>
+            </div>
+            <div class="informer-body">
+              <h4>Hydration</h4>
+              <div class="value">{{ $dailyWater }} ml</div>
+              <div class="small muted">Keep sipping!</div>
+              <div class="informer-bar" data-progress="{{ $waterProgress }}">
+                <div class="fill" style="width:0%;" aria-valuenow="{{ $waterProgress }}" aria-valuemax="100" aria-valuemin="0" role="progressbar"></div>
+              </div>
+              <div class="informer-action">
+                <a href="{{ route('water.index') }}">Log More</a>
+              </div>
+            </div>
+          @endif
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery -->
+    <section>
+      <h3>Progress Gallery</h3>
+      <div class="gallery-grid" id="gallery-grid">
+        @forelse($photos as $idx => $photo)
+          <article class="photo-item" role="button" tabindex="0"
+            data-idx="{{ $idx }}"
+            data-img="{{ asset('storage/'.$photo->photo) }}"
+            data-desc="{{ $photo->description ?? '' }}"
+            data-date="{{ $photo->created_at->format('M d, Y H:i') }}">
+            <img src="{{ asset('storage/'.$photo->photo) }}" alt="Progress photo" loading="lazy">
+            <div class="photo-meta">
+              <p>{{ $photo->description ?? 'No description' }}</p>
+              <small>{{ $photo->created_at->format('M d, Y') }}</small>
+            </div>
+          </article>
+        @empty
+          <div class="log-card small">No photos yet. <a href="{{ route('progress.index') }}">Add one!</a></div>
+        @endforelse
+      </div>
+    </section>
+
+    <!-- Goals -->
+    <section>
+      <h3>Your Targets</h3>
+      @if($goals->isEmpty())
+        <div class="log-card small">No goals set. <a href="{{ route('goals.index') }}">Set one!</a></div>
+      @else
+        <div class="log-card">
+          @foreach($goals as $goal)
+            @php $percent = min(100, max(0, (int)$goal->progressPercent())); @endphp
+            <div class="goal-item" aria-label="{{ $goal->type }} goal">
+              <div class="goal-meta">
+                <strong>{{ ucfirst($goal->type) }} Target</strong>
+                <span class="small muted">Deadline: {{ $goal->deadline }}</span>
+              </div>
+              <div class="small muted" style="margin-top:8px">{{ round($goal->current_value, 1) }} / {{ $goal->target_value }}</div>
+              <div class="goal-bar" data-progress="{{ $percent }}">
+                <div class="fill" style="width:0%;" aria-valuenow="{{ $percent }}" aria-valuemax="100" aria-valuemin="0" role="progressbar"></div>
+              </div>
+            </div>
+          @endforeach
+        </div>
+      @endif
+    </section>
+
+    <!-- Lightbox -->
+    <div id="photo-lightbox" role="dialog" aria-hidden="true" aria-label="Photo viewer">
+      <div class="lightbox-inner" role="document">
+        <div class="lightbox-img">
+          <img id="lightbox-image" src="" alt="">
+        </div>
+        <aside class="lightbox-side">
+          <button class="lightbox-close" aria-label="Close viewer">Close</button>
+          <div id="lightbox-caption" class="small muted">—</div>
+          <div id="lightbox-timestamp" class="small muted" style="margin-top:8px"></div>
+          <div class="lightbox-nav">
+            <button id="lightbox-prev" aria-label="Previous">Prev</button>
+            <button id="lightbox-next" aria-label="Next">Next</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    /* ===== Sidebar Mobile Toggle ===== */
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const body = document.body;
+    const sidebar = document.getElementById('sidebar');
+
+    mobileToggle.addEventListener('click', () => {
+      const opened = body.classList.toggle('sidebar-open');
+      mobileToggle.setAttribute('aria-expanded', opened ? 'true' : 'false');
     });
 
     document.addEventListener('click', (e) => {
-        if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-            sideMenu.classList.remove('active');
-            dashboardMain.style.marginRight = '0';
-            menuBtn.style.right = '20px';
+      if (!body.classList.contains('sidebar-open')) return;
+      if (sidebar.contains(e.target) || mobileToggle.contains(e.target)) return;
+      body.classList.remove('sidebar-open');
+      mobileToggle.setAttribute('aria-expanded', 'false');
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && body.classList.contains('sidebar-open')) {
+        body.classList.remove('sidebar-open');
+        mobileToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    /* ===== Count Up Animation for KPI ===== */
+    const countUps = document.querySelectorAll('.count-up');
+    countUps.forEach(el => {
+      const target = parseFloat(el.getAttribute('data-target') || '0');
+      let started = false;
+      const run = () => {
+        if (started) return;
+        started = true;
+        const duration = 1200;
+        const start = performance.now();
+        const initial = 0;
+        function step(ts) {
+          const progress = Math.min((ts - start) / duration, 1);
+          const value = initial + (target - initial) * progress;
+          el.textContent = Number.isInteger(target) ? Math.round(value) : (Math.round(value * 10) / 10);
+          if (progress < 1) requestAnimationFrame(step);
         }
-    });
-
-    // Motivation Quote
-    const quotes = [
-        "Every step counts 🚶",
-        "Consistency is key 🔑",
-        "Stay focused & strong 💪",
-        "Small progress is still progress 📈",
-        "Push your limits 🔥"
-    ];
-    const motivationEl = document.getElementById('motivation');
-    motivationEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
-    setTimeout(() => {
-        motivationEl.style.opacity = '1';
-        motivationEl.style.transform = 'translateY(0)';
-    }, 200);
-
-    // Progress Bars Animation
-    document.querySelectorAll('.progress-bar-inner').forEach(bar => {
-        const width = bar.style.width;
-        bar.style.width = '0';
-        setTimeout(() => bar.style.width = width, 300);
-    });
-
-    // Lightbox
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxDate = document.getElementById('lightbox-date');
-    const lightboxDesc = document.getElementById('lightbox-desc');
-
-    document.querySelectorAll('.photo-card img').forEach(img => {
-        img.addEventListener('click', () => {
-            lightbox.style.display = 'flex';
-            lightboxImg.src = img.src;
-            const card = img.closest('.photo-card');
-            lightboxDate.textContent = card.querySelector('.photo-date')?.textContent || '';
-            lightboxDesc.textContent = card.querySelector('.photo-description')?.textContent || '';
-        });
-    });
-
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) {
-            lightbox.style.display = 'none';
-        }
-    });
-
-    // AJAX Pagination
-    function ajaxPagination(wrapperId) {
-        const wrapper = document.getElementById(wrapperId);
-        wrapper.addEventListener('click', function(e) {
-            const target = e.target;
-            if (target.tagName === 'A' && target.closest('.pagination')) {
-                e.preventDefault();
-                const url = target.getAttribute('href');
-                if (!url) return;
-                fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                    .then(res => res.text())
-                    .then(html => {
-                        wrapper.innerHTML = html;
-                    })
-                    .catch(err => console.error(err));
+        requestAnimationFrame(step);
+      };
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries, obs) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              run();
+              obs.unobserve(entry.target);
             }
+          });
+        }, { threshold: 0.4 });
+        io.observe(el);
+      } else {
+        run();
+      }
+    });
+
+    /* ===== Progress Bar Animation ===== */
+    const bars = document.querySelectorAll('.goal-bar, .informer-bar');
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target;
+          const percent = parseInt(el.getAttribute('data-progress') || '0', 10);
+          const fill = el.querySelector('.fill');
+          if (fill) {
+            fill.style.width = percent + '%';
+            fill.setAttribute('aria-valuenow', percent);
+          }
+          obs.unobserve(el);
         });
+      }, { threshold: 0.4 });
+      bars.forEach(b => observer.observe(b));
+    } else {
+      bars.forEach(b => {
+        const percent = parseInt(b.getAttribute('data-progress') || '0', 10);
+        const fill = b.querySelector('.fill');
+        if (fill) fill.style.width = percent + '%';
+      });
     }
-    ajaxPagination('meal-history-wrapper');
-    ajaxPagination('sleep-history-wrapper');
-    ajaxPagination('water-history-wrapper');
-});
+
+    /* ===== Gallery / Lightbox ===== */
+    const gallery = document.getElementById('gallery-grid');
+    const items = Array.from(gallery ? gallery.querySelectorAll('.photo-item') : []);
+    const lightbox = document.getElementById('photo-lightbox');
+    const lbImage = document.getElementById('lightbox-image');
+    const lbCaption = document.getElementById('lightbox-caption');
+    const lbTimestamp = document.getElementById('lightbox-timestamp');
+    const lbClose = document.querySelector('.lightbox-close');
+    const lbPrev = document.getElementById('lightbox-prev');
+    const lbNext = document.getElementById('lightbox-next');
+    let currentIndex = -1;
+
+    function openLightbox(idx) {
+      if (idx < 0 || idx >= items.length) return;
+      const it = items[idx];
+      currentIndex = idx;
+      const src = it.getAttribute('data-img');
+      const desc = it.getAttribute('data-desc') || 'No description';
+      const date = it.getAttribute('data-date') || '';
+      lbImage.src = src;
+      lbImage.alt = desc;
+      lbCaption.textContent = desc;
+      lbTimestamp.textContent = date;
+      lightbox.setAttribute('aria-hidden', 'false');
+      lbClose.focus();
+      preloadImage(items[(idx + 1) % items.length]?.getAttribute('data-img'));
+      preloadImage(items[(idx - 1 + items.length) % items.length]?.getAttribute('data-img'));
+    }
+
+    function closeLightbox() {
+      lightbox.setAttribute('aria-hidden', 'true');
+      lbImage.src = '';
+      currentIndex = -1;
+    }
+
+    function preloadImage(url) {
+      if (!url) return;
+      const i = new Image();
+      i.src = url;
+    }
+
+    if (items.length) {
+      items.forEach((it, idx) => {
+        it.addEventListener('click', () => openLightbox(idx));
+        it.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openLightbox(idx);
+          }
+        });
+      });
+    }
+
+    lbClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    lbPrev.addEventListener('click', () => {
+      if (currentIndex <= 0) currentIndex = items.length - 1;
+      else currentIndex--;
+      openLightbox(currentIndex);
+    });
+    lbNext.addEventListener('click', () => {
+      if (currentIndex >= items.length - 1) currentIndex = 0;
+      else currentIndex++;
+      openLightbox(currentIndex);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (lightbox.getAttribute('aria-hidden') === 'false') {
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') lbPrev.click();
+        if (e.key === 'ArrowRight') lbNext.click();
+      }
+    });
+  });
 </script>
 @endsection

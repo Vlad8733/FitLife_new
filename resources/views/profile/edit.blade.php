@@ -2,382 +2,575 @@
 
 @section('content')
 <style>
-/* --- General Reset & Base --- */
-* {
+  /* ====== Reset ====== */
+  *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
-}
-
-body {
-    background: linear-gradient(135deg, #0d1117 0%, #1c2526 100%);
-    color: #e6e6fa;
-    min-height: 100vh;
+  }
+  html, body, #app {
+    height: 100%;
+    width: 100%;
     overflow-x: hidden;
-}
+  }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: linear-gradient(180deg, #0A0C10, #1A1F26);
+    color: #E6ECEF;
+    line-height: 1.6;
+  }
 
-a {
-    text-decoration: none;
-    color: inherit;
-}
+  /* ====== Palette & Variables ====== */
+  :root {
+    --bg: #0A0C10;
+    --panel: #14171C;
+    --muted: #8A94A6;
+    --neon: #00FF88;
+    --accent: #FF3D00;
+    --white: #F5F7FA;
+    --glass: rgba(255, 255, 255, 0.04);
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+    --glow: 0 0 15px rgba(0, 255, 136, 0.4);
+    --radius: 14px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-size-base: 16px;
+    --font-weight-bold: 700;
+    --font-weight-medium: 500;
+  }
 
-button {
-    cursor: pointer;
-    border: none;
-    background: none;
-    font-family: inherit;
-}
+  /* ====== Layout ====== */
+  #fitlife-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background: var(--bg);
+    overflow-x: hidden;
+  }
 
-/* --- Dashboard Layout --- */
-.dashboard-main {
-    padding: 2.5rem;
-    transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    z-index: 1;
-}
+  /* ====== Sidebar ====== */
+  aside#sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #14171C, #0C1014);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    z-index: 1200;
+  }
+  @media (max-width: 960px) {
+    aside#sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      transform: translateX(-100%);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    }
+    body.sidebar-open aside#sidebar {
+      transform: translateX(0);
+    }
+  }
 
-/* --- Menu Button --- */
-.menu-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #d4af37, #b8860b);
-    color: #1c2526;
-    padding: 0.8rem 1.2rem;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 15px rgba(216, 175, 55, 0.4);
-    z-index: 1001;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.menu-btn:hover {
-    background: linear-gradient(135deg, #b8860b, #a67c00);
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(216, 175, 55, 0.6);
-}
-
-/* --- Sidebar --- */
-.side-menu {
-    position: fixed;
-    top: 0;
-    right: -300px;
-    width: 300px;
-    height: 100vh;
-    background: rgba(13, 17, 23, 0.95);
-    backdrop-filter: blur(12px);
-    border-left: 1px solid rgba(216, 175, 55, 0.3);
-    padding: 2rem 1.5rem;
-    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1000;
-    overflow-y: auto;
-}
-
-.side-menu.active {
-    right: 0;
-}
-
-.side-menu h3 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #48c9b0;
-    margin-bottom: 1.5rem;
-    text-transform: uppercase;
+  .sidebar-header {
+    text-align: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--glass);
+  }
+  .sidebar-header h2 {
+    font-size: 1.6rem;
+    color: var(--neon);
+    font-weight: var(--font-weight-bold);
     letter-spacing: 1px;
-}
-
-.side-menu ul {
-    list-style: none;
-}
-
-.side-menu ul li {
-    margin-bottom: 0.5rem;
-}
-
-.side-menu ul li a,
-.side-menu ul li button {
-    display: block;
-    width: 100%;
-    padding: 1rem 1.2rem;
-    border-radius: 10px;
-    color: #e6e6fa;
-    font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-}
-
-.side-menu ul li a:hover,
-.side-menu ul li button:hover {
-    background: rgba(72, 201, 176, 0.2);
-    color: #48c9b0;
-    transform: translateX(5px);
-    box-shadow: 0 4px 12px rgba(72, 201, 176, 0.3);
-}
-
-.side-menu ul li a.active {
-    background: rgba(216, 175, 55, 0.2);
-    color: #d4af37;
-}
-
-/* --- Content Wrapper (Dashboard Header Style) --- */
-.content-wrapper {
-    text-align: center;
-    margin-bottom: 3rem;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    animation: fadeIn 0.8s ease-out;
-}
-
-.content-wrapper h1 {
-    font-size: 3rem;
-    font-weight: 800;
-    color: #48c9b0;
-    margin-bottom: 0.5rem;
-    text-shadow: 0 2px 8px rgba(72, 201, 176, 0.3);
-}
-
-.content-wrapper h1 span {
-    font-weight: 300;
-    color: #a3bffa;
-}
-
-/* --- Form Groups (Styled like Biography Card) --- */
-.form-group {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(72, 201, 176, 0.3);
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.form-group:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 32px rgba(72, 201, 176, 0.2);
-    border-color: #48c9b0;
-}
-
-.form-group label {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="password"] {
-    width: 100%;
-    padding: 0.8rem;
-    border-radius: 8px;
-    border: 1px solid rgba(72, 201, 176, 0.3);
-    background: rgba(255, 255, 255, 0.05);
-    color: #e6e6fa;
-    font-size: 1rem;
-    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.form-group input:focus {
-    border-color: #48c9b0;
-    outline: none;
-}
-
-/* --- Buttons (Styled like KPI Card Buttons) --- */
-.save-btn, .delete-btn {
-    width: 100%;
-    padding: 0.8rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
     text-transform: uppercase;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+  }
+  .sidebar-header p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
 
-.save-btn {
-    background: linear-gradient(90deg, #48c9b0, #2e856e);
-    color: #1c2526;
-}
+  nav.nav-menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  nav.nav-menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: var(--font-weight-medium);
+    border-radius: 10px;
+    background: var(--glass);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  nav.nav-menu a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+  nav.nav-menu a:hover::before {
+    left: 100%;
+  }
+  nav.nav-menu a svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: var(--neon);
+    transition: transform 0.2s ease, stroke 0.2s ease;
+  }
+  nav.nav-menu a:hover {
+    background: rgba(0, 255, 136, 0.08);
+    transform: translateX(6px);
+  }
+  nav.nav-menu a:hover svg {
+    transform: scale(1.1);
+    stroke: var(--accent);
+  }
+  nav.nav-menu a.active {
+    background: linear-gradient(90deg, rgba(0, 255, 136, 0.15), rgba(255, 61, 0, 0.1));
+    color: var(--neon);
+    box-shadow: var(--glow);
+  }
 
-.save-btn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(72, 201, 176, 0.3);
-    border-color: #48c9b0;
-}
-
-.delete-btn {
-    background: linear-gradient(90deg, #ef4444, #f87171);
-    color: #fff;
-    margin-top: 1rem;
-}
-
-.delete-btn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
-}
-
-/* --- Success Message (Styled like No-data) --- */
-.success-msg {
-    text-align: center;
-    color: #a3bffa;
-    font-size: 1rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
+  /* ====== Unified Button Styles ====== */
+  button, .logout-form button, .save-btn, .delete-btn {
+    padding: 6px 10px;
+    background: linear-gradient(90deg, var(--neon), var(--accent));
+    color: var(--white);
+    border: none;
     border-radius: 8px;
-    margin-bottom: 1.5rem;
-}
+    font-size: 0.8rem;
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--glow);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+  button:hover, .logout-form button:hover, .save-btn:hover, .delete-btn:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+    background: linear-gradient(90deg, var(--accent), var(--neon));
+  }
+  button::before, .logout-form button::before, .save-btn::before, .delete-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.4s ease;
+  }
+  button:hover::before, .logout-form button:hover::before, .save-btn:hover::before, .delete-btn:hover::before {
+    left: 100%;
+  }
+  .delete-btn {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+  }
+  .delete-btn:hover {
+    background: linear-gradient(90deg, #f87171, #ef4444);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+  }
+  button svg, .save-btn svg, .delete-btn svg {
+    width: 14px;
+    height: 14px;
+    stroke: var(--white);
+  }
 
-/* --- Animations --- */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+  /* ====== Main Content ====== */
+  main {
+    flex: 1;
+    padding: 32px;
+    background: var(--bg);
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+  #mobile-toggle {
+    display: none;
+  }
+  @media (max-width: 960px) {
+    #mobile-toggle {
+      display: inline-block;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      background: linear-gradient(90deg, var(--neon), var(--accent));
+      color: var(--white);
+      border-radius: 8px;
+      box-shadow: var(--glow);
+    }
+    #mobile-toggle:hover {
+      background: linear-gradient(90deg, var(--accent), var(--neon));
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+    }
+  }
 
-/* --- Responsive --- */
-@media (max-width: 768px) {
-    .dashboard-main {
-        padding: 1.5rem;
-    }
-    .side-menu {
-        width: 100%;
-        right: -100%;
-    }
-    .side-menu.active {
-        right: 0;
-    }
-    .content-wrapper h1 {
-        font-size: 2.2rem;
-    }
-    .menu-btn {
-        top: 15px;
-        right: 15px;
-        padding: 0.6rem 1rem;
-        font-size: 0.9rem;
-    }
-}
+  header {
+    background: var(--panel);
+    padding: 24px;
+    border-radius: var(--radius);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .header-left h1 {
+    font-size: 1.8rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--neon);
+    margin: 0;
+  }
+  .header-left h1 span {
+    font-weight: 300;
+    color: var(--white);
+  }
+  .header-info {
+    display: flex;
+    gap: 16px;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .header-info div {
+    background: var(--glass);
+    padding: 6px 12px;
+    border-radius: 8px;
+  }
 
-@media (max-width: 480px) {
-    .content-wrapper {
-        padding: 1rem;
+  /* ====== Form Styling ====== */
+  .form-group {
+    background: linear-gradient(135deg, var(--panel), #1A1F26);
+    padding: 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.3s ease;
+    margin-bottom: 24px;
+  }
+  .form-group:hover {
+    box-shadow: var(--glow), var(--shadow);
+  }
+  .form-group h3 {
+    font-size: 1.4rem;
+    color: var(--neon);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .form-group h3 svg {
+    width: 14px;
+    height: 14px;
+    stroke: var(--neon);
+  }
+  .form-group label {
+    font-size: 0.95rem;
+    color: var(--white);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--glass);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--white);
+    font-size: 0.9rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--neon);
+    box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3);
+  }
+  .form-group input::placeholder {
+    color: var(--muted);
+  }
+
+  /* ====== Success Message ====== */
+  .success-msg {
+    text-align: center;
+    padding: 16px;
+    background: var(--glass);
+    border-radius: var(--radius);
+    color: var(--neon);
+    font-size: 0.95rem;
+    font-weight: var(--font-weight-medium);
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+
+  /* ====== Responsive Design ====== */
+  @media (max-width: 768px) {
+    main {
+      padding: 20px;
+    }
+    .header-info {
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+  @media (max-width: 480px) {
+    header {
+      flex-direction: column;
+      text-align: center;
+    }
+    .header-left h1 {
+      font-size: 1.5rem;
     }
     .form-group {
-        padding: 1rem;
+      padding: 16px;
     }
-}
+  }
+
+  /* ====== Animations ====== */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  section, .form-group, .success-msg {
+    animation: fadeIn 0.5s var(--animation-ease);
+  }
+
+  /* ====== Accessibility ====== */
+  @media (prefers-reduced-motion: reduce) {
+    .form-group, button, aside#sidebar {
+      transition: none;
+    }
+  }
+  @media (prefers-contrast: high) {
+    .form-group {
+      border: 2px solid var(--white);
+    }
+    .form-group input {
+      border: 1px solid var(--white);
+    }
+    nav.nav-menu a.active, .save-btn {
+      background: var(--white);
+      color: var(--bg);
+    }
+    .delete-btn {
+      background: #ef4444;
+      color: var(--white);
+    }
+  }
 </style>
 
-<!-- Sidebar -->
-<div class="side-menu" id="side-menu">
-    <h3>Navigation</h3>
-    <ul>
-        <li><a href="{{ route('dashboard') }}">Home Page</a></li>
-        <li><a href="{{ route('foods.index') }}">Meal Tracker</a></li>
-        <li><a href="{{ route('sleep.index') }}">Sleep Tracker</a></li>
-        <li><a href="{{ route('water.index') }}">Water Tracker</a></li>
-        <li><a href="{{ route('progress.index') }}">Progress Photo</a></li>
-        <li><a href="{{ route('goals.index') }}">Goals</a></li>
-        <li><a href="{{ route('calories.index') }}">Calorie Calculator</a></li>
-        <li><a href="{{ route('biography.edit') }}">Biography</a></li>
-        <li><a href="{{ route('profile.edit') }}">Profile</a></li>
-        <li>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit">Log Out</button>
-            </form>
-        </li>
-    </ul>
-</div>
-
-<!-- Content -->
-<div class="dashboard-main" id="dashboard-main">
-    <button class="menu-btn" id="menu-toggle">☰ Menu</button>
-
-    <div class="content-wrapper">
-        <h1><span>Profile</span> Settings</h1>
-
-        @if(session('status'))
-            <div class="success-msg">{{ session('status') }}</div>
-        @endif
-
-        <!-- Profile -->
-        <form action="{{ route('profile.update') }}" method="POST">
-            @csrf
-            @method('PATCH')
-
-            <div class="form-group">
-                <label>Name</label>
-                <input type="text" name="name" value="{{ old('name', $user->name) }}" required>
-            </div>
-
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" value="{{ old('email', $user->email) }}" required>
-            </div>
-
-            <button type="submit" class="save-btn">Save Profile</button>
-        </form>
-
-        <!-- Password Change -->
-        <form action="{{ route('password.update') }}" method="POST" style="margin-top:30px;">
-            @csrf
-            @method('PUT')
-
-            <div class="form-group">
-                <label>Current Password</label>
-                <input type="password" name="current_password" required>
-            </div>
-
-            <div class="form-group">
-                <label>New Password</label>
-                <input type="password" name="password" required>
-            </div>
-
-            <div class="form-group">
-                <label>Confirm Password</label>
-                <input type="password" name="password_confirmation" required>
-            </div>
-
-            <button type="submit" class="save-btn">Update Password</button>
-        </form>
-
-        <!-- Delete Account -->
-        <form action="{{ route('profile.destroy') }}" method="POST" style="margin-top:30px;">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="delete-btn">Delete Account</button>
-        </form>
+<div id="fitlife-container" role="application" aria-label="FitLife Profile Settings">
+  <!-- Sidebar -->
+  <aside id="sidebar" aria-label="Main navigation">
+    <div class="sidebar-header">
+      <h2>FitLife</h2>
+      <p>Power Your Performance</p>
     </div>
+    <nav class="nav-menu" aria-label="Main menu">
+      <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}" {{ request()->routeIs('dashboard') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13h8V3H3z"/><path d="M13 21h8V11h-8z"/><path d="M13 3v8"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="{{ route('foods.index') }}" class="{{ request()->routeIs('foods.*') ? 'active' : '' }}" {{ request()->routeIs('foods.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21c4-4 6-11 6-17"/><path d="M20 7a4 4 0 11-8 0"/></svg>
+        <span>Nutrition</span>
+      </a>
+      <a href="{{ route('sleep.index') }}" class="{{ request()->routeIs('sleep.*') ? 'active' : '' }}" {{ request()->routeIs('sleep.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <span>Recovery</span>
+      </a>
+      <a href="{{ route('water.index') }}" class="{{ request()->routeIs('water.*') ? 'active' : '' }}" {{ request()->routeIs('water.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s4 5 4 8a4 4 0 01-8 0c0-3 4-8 4-8z"/></svg>
+        <span>Hydration</span>
+      </a>
+      <a href="{{ route('progress.index') }}" class="{{ request()->routeIs('progress.*') ? 'active' : '' }}" {{ request()->routeIs('progress.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 3v18H3V3h18z"/><path d="M7 14l3-3 2 2 5-5"/></svg>
+        <span>Progress</span>
+      </a>
+      <a href="{{ route('goals.index') }}" class="{{ request()->routeIs('goals.*') ? 'active' : '' }}" {{ request()->routeIs('goals.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <span>Goals</span>
+      </a>
+      <a href="{{ route('calories.index') }}" class="{{ request()->routeIs('calories.*') ? 'active' : '' }}" {{ request()->routeIs('calories.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20"/><path d="M5 12h14"/></svg>
+        <span>Energy</span>
+      </a>
+      <a href="{{ route('biography.edit') }}" class="{{ request()->routeIs('biography.*') ? 'active' : '' }}" {{ request()->routeIs('biography.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M6 20v-1a6 6 0 0112 0v1"/></svg>
+        <span>Bio</span>
+      </a>
+      <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}" {{ request()->routeIs('profile.edit') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg>
+        <span>Profile</span>
+      </a>
+      <form method="POST" action="{{ route('logout') }}" class="logout-form">
+        @csrf
+        <button type="submit" aria-label="Logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+          Logout
+        </button>
+      </form>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+    <button id="mobile-toggle" aria-controls="sidebar" aria-expanded="false">Menu</button>
+
+    <header>
+      <div class="header-left">
+        <h1><span>FitLife</span> Profile Settings</h1>
+      </div>
+      <div class="header-info">
+        <div>{{ now()->format('l, F d, Y') }}</div>
+        <div>{{ now()->format('H:i') }}</div>
+      </div>
+    </header>
+
+    <section aria-labelledby="profile-settings-heading">
+      @if(session('status'))
+        <div class="success-msg">{{ session('status') }}</div>
+      @endif
+
+      <!-- Profile Form -->
+      <div class="form-group">
+        <h3 id="profile-settings-heading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          </svg>
+          Update Profile
+        </h3>
+        <form action="{{ route('profile.update') }}" method="POST">
+          @csrf
+          @method('PATCH')
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}" required>
+          </div>
+          <button type="submit" class="save-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+              <path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/>
+            </svg>
+            Save Profile
+          </button>
+        </form>
+      </div>
+
+      <!-- Password Change Form -->
+      <div class="form-group">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 2a5 5 0 00-5 5v2a2 2 0 00-2 2v7a2 2 0 002 2h10a2 2 0 002-2v-7a2 2 0 00-2-2V7a5 5 0 00-5-5z"/>
+            <path d="M12 15a2 2 0 110-4 2 2 0 010 4z"/>
+          </svg>
+          Update Password
+        </h3>
+        <form action="{{ route('password.update') }}" method="POST">
+          @csrf
+          @method('PUT')
+          <div class="form-group">
+            <label for="current_password">Current Password</label>
+            <input type="password" id="current_password" name="current_password" required>
+          </div>
+          <div class="form-group">
+            <label for="password">New Password</label>
+            <input type="password" id="password" name="password" required>
+          </div>
+          <div class="form-group">
+            <label for="password_confirmation">Confirm Password</label>
+            <input type="password" id="password_confirmation" name="password_confirmation" required>
+          </div>
+          <button type="submit" class="save-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+              <path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/>
+            </svg>
+            Update Password
+          </button>
+        </form>
+      </div>
+
+      <!-- Delete Account Form -->
+      <div class="form-group">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+            <path d="M6 6v15a2 2 0 002 2h8a2 2 0 002-2V6"/>
+            <path d="M10 11v6"/><path d="M14 11v6"/>
+          </svg>
+          Delete Account
+        </h3>
+        <form action="{{ route('profile.destroy') }}" method="POST">
+          @csrf
+          @method('DELETE')
+          <button type="submit" class="delete-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+              <path d="M6 6v15a2 2 0 002 2h8a2 2 0 002-2V6"/>
+              <path d="M10 11v6"/><path d="M14 11v6"/>
+            </svg>
+            Delete Account
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function(){
-    const menuBtn = document.getElementById('menu-toggle');
-    const sideMenu = document.getElementById('side-menu');
-    const dashboardMain = document.getElementById('dashboard-main');
+document.addEventListener("DOMContentLoaded", function() {
+  /* ===== Sidebar Mobile Toggle ===== */
+  const mobileToggle = document.getElementById('mobile-toggle');
+  const body = document.body;
+  const sidebar = document.getElementById('sidebar');
 
-    menuBtn.addEventListener('click', () => {
-        sideMenu.classList.toggle('active');
-        const open = sideMenu.classList.contains('active');
-        dashboardMain.style.marginRight = open ? '300px' : '0';
-        menuBtn.style.right = open ? '320px' : '20px';
-    });
+  mobileToggle.addEventListener('click', () => {
+    const opened = body.classList.toggle('sidebar-open');
+    mobileToggle.setAttribute('aria-expanded', opened ? 'true' : 'false');
+  });
 
-    document.addEventListener('click', (e) => {
-        if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-            sideMenu.classList.remove('active');
-            dashboardMain.style.marginRight = '0';
-            menuBtn.style.right = '20px';
-        }
-    });
+  document.addEventListener('click', (e) => {
+    if (!body.classList.contains('sidebar-open')) return;
+    if (sidebar.contains(e.target) || mobileToggle.contains(e.target)) return;
+    body.classList.remove('sidebar-open');
+    mobileToggle.setAttribute('aria-expanded', 'false');
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && body.classList.contains('sidebar-open')) {
+      body.classList.remove('sidebar-open');
+      mobileToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
 });
 </script>
 @endsection

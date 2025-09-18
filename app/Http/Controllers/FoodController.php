@@ -52,7 +52,11 @@ class FoodController extends Controller
     public function index()
     {
         $foods = $this->foods;
-        return view('foods.index', compact('foods'));
+        $logs = MealLog::where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('foods.index', compact('foods', 'logs'));
     }
 
     // Расчёт калорий и сохранение истории
@@ -102,12 +106,12 @@ class FoodController extends Controller
         ]);
     }
 
-    // История еды
+    // История еды (если используется отдельно)
     public function history()
     {
         $logs = MealLog::where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(10);
 
         return view('foods.history', compact('logs'));
     }

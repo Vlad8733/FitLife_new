@@ -1,420 +1,506 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Font Awesome CDN for Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-<div class="dashboard-main" id="dashboard-main">
-    <!-- Menu Button -->
-    <button class="menu-btn" id="menu-toggle"><i class="fas fa-bars"></i> Menu</button>
-
-    <!-- Dashboard Header -->
-    <div class="dashboard-header">
-        <h1><span>FitLife</span> Goals</h1>
-        <p>Track your daily progress and stay motivated!</p>
-    </div>
-
-    <!-- Create Goal Button -->
-    <a href="{{ route('goals.create') }}" class="calculate-btn create-btn"><i class="fas fa-plus"></i> Create New Goal</a>
-
-    <!-- Goals List -->
-    <div class="goals-grid">
-        @forelse($goals as $goal)
-            <div class="goal-card">
-                <h3><i class="fas fa-bullseye"></i> {{ ucfirst($goal->type) }} Goal</h3>
-                <p><strong>Target:</strong> {{ $goal->target_value }}</p>
-                <p><strong>Current:</strong> {{ $goal->current_value }}</p>
-                <p><strong>End Date:</strong> {{ $goal->end_date }}</p>
-                @if($goal->description)
-                    <p><em>{{ $goal->description }}</em></p>
-                @endif
-                <div class="progress-bar">
-                    <div class="progress" style="width: {{ min($goal->current_value / $goal->target_value * 100, 100) }}%;"></div>
-                </div>
-                <a href="{{ route('goals.log', $goal) }}" class="calculate-btn log-btn"><i class="fas fa-plus-circle"></i> Log Progress</a>
-            </div>
-        @empty
-            <p class="no-data">No goals set yet.</p>
-        @endforelse
-    </div>
-</div>
-
-<!-- Sidebar -->
-<div class="side-menu" id="side-menu">
-    <h3>Navigation</h3>
-    <ul>
-        <li><a href="{{ route('dashboard') }}"><i class="fas fa-home nav-icon"></i> Home</a></li>
-        <li><a href="{{ route('foods.index') }}"><i class="fas fa-utensils nav-icon"></i> Meal Tracker</a></li>
-        <li><a href="{{ route('sleep.index') }}"><i class="fas fa-bed nav-icon"></i> Sleep Tracker</a></li>
-        <li><a href="{{ route('water.index') }}"><i class="fas fa-tint nav-icon"></i> Water Tracker</a></li>
-        <li><a href="{{ route('progress.index') }}"><i class="fas fa-camera nav-icon"></i> Progress Photos</a></li>
-        <li><a href="{{ route('goals.index') }}" class="active"><i class="fas fa-bullseye nav-icon"></i> Goals</a></li>
-        <li><a href="{{ route('calories.index') }}"><i class="fas fa-calculator nav-icon"></i> Calorie Calculator</a></li>
-        <li><a href="{{ route('biography.edit') }}"><i class="fas fa-user-edit nav-icon"></i> Biography</a></li>
-        <li><a href="{{ route('profile.edit') }}"><i class="fas fa-cog nav-icon"></i> Profile</a></li>
-        <li>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit"><i class="fas fa-sign-out-alt nav-icon"></i> Log Out</button>
-            </form>
-        </li>
-    </ul>
-</div>
-
 <style>
-/* --- General Reset & Base --- */
-* {
+  /* ====== Reset ====== */
+  *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
-}
-
-body {
-    background: linear-gradient(135deg, #0d1117 0%, #1c2526 100%);
-    color: #e6e6fa;
-    min-height: 100vh;
+  }
+  html, body, #app {
+    height: 100%;
+    width: 100%;
     overflow-x: hidden;
-}
+  }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: linear-gradient(180deg, #0A0C10, #1A1F26);
+    color: #E6ECEF;
+    line-height: 1.6;
+  }
 
-a {
-    text-decoration: none;
-    color: inherit;
-}
+  /* ====== Palette & Variables ====== */
+  :root {
+    --bg: #0A0C10;
+    --panel: #14171C;
+    --muted: #8A94A6;
+    --neon: #00FF88;
+    --accent: #FF3D00;
+    --white: #F5F7FA;
+    --glass: rgba(255, 255, 255, 0.04);
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+    --glow: 0 0 15px rgba(0, 255, 136, 0.4);
+    --radius: 14px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-size-base: 16px;
+    --font-weight-bold: 700;
+    --font-weight-medium: 500;
+  }
 
-button {
-    cursor: pointer;
-    border: none;
-    background: none;
-    font-family: inherit;
-}
+  /* ====== Layout ====== */
+  #fitlife-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background: var(--bg);
+    overflow-x: hidden;
+  }
 
-/* --- Dashboard Layout --- */
-.dashboard-main {
-    padding: 2.5rem;
-    transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    z-index: 1;
-}
+  /* ====== Sidebar ====== */
+  aside#sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #14171C, #0C1014);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    z-index: 1200;
+  }
+  @media (max-width: 960px) {
+    aside#sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      transform: translateX(-100%);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    }
+    body.sidebar-open aside#sidebar {
+      transform: translateX(0);
+    }
+  }
 
-/* --- Menu Button --- */
-.menu-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #d4af37, #b8860b);
-    color: #1c2526;
-    padding: 0.8rem 1.2rem;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 15px rgba(216, 175, 55, 0.4);
-    z-index: 1001;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.menu-btn:hover {
-    background: linear-gradient(135deg, #b8860b, #a67c00);
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(216, 175, 55, 0.6);
-}
-
-.menu-btn i {
-    margin-right: 0.5rem;
-}
-
-/* --- Sidebar --- */
-.side-menu {
-    position: fixed;
-    top: 0;
-    right: -300px;
-    width: 300px;
-    height: 100vh;
-    background: rgba(13, 17, 23, 0.95);
-    backdrop-filter: blur(12px);
-    border-left: 1px solid rgba(216, 175, 55, 0.3);
-    padding: 2rem 1.5rem;
-    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1000;
-    overflow-y: auto;
-}
-
-.side-menu.active {
-    right: 0;
-}
-
-.side-menu h3 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #48c9b0;
-    margin-bottom: 1.5rem;
-    text-transform: uppercase;
+  .sidebar-header {
+    text-align: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--glass);
+  }
+  .sidebar-header h2 {
+    font-size: 1.6rem;
+    color: var(--neon);
+    font-weight: var(--font-weight-bold);
     letter-spacing: 1px;
-}
+    text-transform: uppercase;
+  }
+  .sidebar-header p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
 
-.side-menu ul {
-    list-style: none;
-}
-
-.side-menu ul li {
-    margin-bottom: 0.5rem;
-}
-
-.side-menu ul li a,
-.side-menu ul li button {
+  nav.nav-menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  nav.nav-menu a {
     display: flex;
     align-items: center;
-    width: 100%;
-    padding: 1rem 1.2rem;
+    gap: 12px;
+    padding: 12px 16px;
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: var(--font-weight-medium);
     border-radius: 10px;
-    color: #e6e6fa;
-    font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--glass);
+    transition: var(--transition);
     position: relative;
-}
+    overflow: hidden;
+  }
+  nav.nav-menu a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+  nav.nav-menu a:hover::before {
+    left: 100%;
+  }
+  nav.nav-menu a svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: var(--neon);
+    transition: transform 0.2s ease, stroke 0.2s ease;
+  }
+  nav.nav-menu a:hover {
+    background: rgba(0, 255, 136, 0.08);
+    transform: translateX(6px);
+  }
+  nav.nav-menu a:hover svg {
+    transform: scale(1.1);
+    stroke: var(--accent);
+  }
+  nav.nav-menu a.active {
+    background: linear-gradient(90deg, rgba(0, 255, 136, 0.15), rgba(255, 61, 0, 0.1));
+    color: var(--neon);
+    box-shadow: var(--glow);
+  }
 
-.side-menu ul li a:hover,
-.side-menu ul li button:hover {
-    background: rgba(72, 201, 176, 0.2);
-    color: #48c9b0;
-    transform: translateX(5px);
-    box-shadow: 0 4px 12px rgba(72, 201, 176, 0.3);
-}
-
-.side-menu ul li a.active {
-    background: rgba(216, 175, 55, 0.2);
-    color: #d4af37;
-}
-
-.nav-icon {
-    margin-right: 0.8rem;
-    font-size: 1.2rem;
-}
-
-/* --- Dashboard Header --- */
-.dashboard-header {
+  /* ====== Unified Button Styles ====== */
+  button, .logout-form button, .create-btn, .log-btn {
+    padding: 8px 12px;
+    background: linear-gradient(90deg, var(--neon), var(--accent));
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--glow);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     text-align: center;
-    margin-bottom: 3rem;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    animation: fadeIn 0.8s ease-out;
-}
+  }
+  button:hover, .logout-form button:hover, .create-btn:hover, .log-btn:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+    background: linear-gradient(90deg, var(--accent), var(--neon));
+  }
+  button::before, .logout-form button::before, .create-btn::before, .log-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.4s ease;
+  }
+  button:hover::before, .logout-form button:hover::before, .create-btn:hover::before, .log-btn:hover::before {
+    left: 100%;
+  }
+  .log-btn {
+    background: linear-gradient(90deg, rgba(0, 255, 136, 0.7), rgba(72, 201, 176, 0.7));
+  }
+  .log-btn:hover {
+    background: linear-gradient(90deg, rgba(72, 201, 176, 0.7), rgba(0, 255, 136, 0.7));
+  }
 
-.dashboard-header h1 {
-    font-size: 3rem;
-    font-weight: 800;
-    color: #48c9b0;
-    margin-bottom: 0.5rem;
-    text-shadow: 0 2px 8px rgba(72, 201, 176, 0.3);
-}
+  /* ====== Create Button Specific Styles ====== */
+  .create-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(90deg, var(--neon), var(--accent));
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--glow);
+    text-decoration: none;
+    line-height: 1.2;
+  }
+  .create-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--white);
+  }
 
-.dashboard-header h1 span {
+  /* ====== Main Content ====== */
+  main {
+    flex: 1;
+    padding: 32px;
+    background: var(--bg);
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+  #mobile-toggle {
+    display: none;
+  }
+  @media (max-width: 960px) {
+    #mobile-toggle {
+      display: inline-block;
+    }
+  }
+
+  header {
+    background: var(--panel);
+    padding: 24px;
+    border-radius: var(--radius);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .header-left h1 {
+    font-size: 1.8rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--neon);
+    margin: 0;
+  }
+  .header-left h1 span {
     font-weight: 300;
-    color: #a3bffa;
-}
+    color: var(--white);
+  }
+  .header-left p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin: 4px 0 0;
+  }
+  .header-info {
+    display: flex;
+    gap: 16px;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .header-info div {
+    background: var(--glass);
+    padding: 6px 12px;
+    border-radius: 8px;
+  }
 
-.dashboard-header p {
-    font-size: 1.2rem;
-    color: #a3bffa;
-    font-weight: 400;
-}
-
-/* --- Goals Grid --- */
-.goals-grid {
+  /* ====== Goals Grid ====== */
+  .goals-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
-    margin-bottom: 3rem;
-}
-
-.goal-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(216, 175, 55, 0.3);
-    border-radius: 12px;
-    padding: 1.5rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.goal-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(216, 175, 55, 0.3);
-    border-color: #d4af37;
-}
-
-.goal-card h3 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #48c9b0;
-    margin-bottom: 0.8rem;
+    margin-bottom: 24px;
+  }
+  .goal-card {
+    background: linear-gradient(135deg, var(--panel), #1A1F26);
+    padding: 16px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .goal-card:hover {
+    box-shadow: var(--glow), var(--shadow);
+  }
+  .goal-card h4 {
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-}
-
-.goal-card p {
-    font-size: 0.95rem;
-    color: #a3bffa;
-    margin-bottom: 0.5rem;
-}
-
-.goal-card p em {
+    gap: 8px;
+  }
+  .goal-card p {
     font-size: 0.9rem;
-    color: #e6e6fa;
+    color: var(--white);
+  }
+  .goal-card p strong {
+    color: var(--neon);
+  }
+  .goal-card p em {
+    font-size: 0.85rem;
+    color: var(--muted);
     font-style: italic;
-}
-
-.progress-bar {
-    background: rgba(72, 201, 176, 0.2);
+  }
+  .progress-bar {
+    background: rgba(0, 255, 136, 0.2);
     height: 12px;
     border-radius: 12px;
     overflow: hidden;
-    margin: 1rem 0;
-}
-
-.progress {
-    background: linear-gradient(135deg, #48c9b0, #2e856e);
+    margin: 12px 0;
+  }
+  .progress {
+    background: linear-gradient(90deg, var(--neon), var(--accent));
     height: 100%;
     transition: width 1s ease;
-    box-shadow: 0 0 8px rgba(72, 201, 176, 0.5);
-}
-
-.calculate-btn {
-    background: linear-gradient(135deg, #d4af37, #b8860b);
-    color: #1c2526;
-    padding: 0.8rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.calculate-btn:hover {
-    background: linear-gradient(135deg, #b8860b, #a67c00);
-    transform: scale(1.03);
-    box-shadow: 0 4px 12px rgba(216, 175, 55, 0.3);
-}
-
-.create-btn {
-    margin-bottom: 2rem;
-    display: inline-flex;
-}
-
-.log-btn {
-    background: linear-gradient(135deg, #48c9b0, #2e856e);
-}
-
-.log-btn:hover {
-    background: linear-gradient(135deg, #2e856e, #1a6450);
-    box-shadow: 0 4px 12px rgba(72, 201, 176, 0.3);
-}
-
-.no-data {
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+  }
+  .no-data {
     text-align: center;
-    color: #6b7280;
+    padding: 24px;
+    color: var(--muted);
     font-size: 1rem;
-    padding: 1rem;
-}
+  }
 
-/* --- Animations --- */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* --- Responsive --- */
-@media (max-width: 768px) {
-    .dashboard-main {
-        padding: 1.5rem;
+  /* ====== Responsive Design ====== */
+  @media (max-width: 768px) {
+    main {
+      padding: 20px;
     }
     .goals-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
+      grid-template-columns: 1fr;
+      gap: 1rem;
     }
-    .side-menu {
-        width: 100%;
-        right: -100%;
+    .header-info {
+      flex-direction: column;
+      gap: 8px;
     }
-    .side-menu.active {
-        right: 0;
+  }
+  @media (max-width: 480px) {
+    header {
+      flex-direction: column;
+      text-align: center;
     }
-    .dashboard-header h1 {
-        font-size: 2.2rem;
-    }
-    .menu-btn {
-        top: 15px;
-        right: 15px;
-        padding: 0.6rem 1rem;
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .dashboard-header {
-        padding: 1rem;
+    .header-left h1 {
+      font-size: 1.5rem;
     }
     .goal-card {
-        padding: 1rem;
+      min-width: 100%;
     }
-}
+  }
 
-/* --- Accessibility --- */
-@media (prefers-reduced-motion: reduce) {
-    .goal-card, .menu-btn, .side-menu, .calculate-btn, .progress {
-        transition: none;
-    }
-}
-
-@media (prefers-contrast: high) {
-    .goal-card {
-        border: 2px solid #fff;
-    }
-    .side-menu ul li a.active, .calculate-btn {
-        background: #fff;
-        color: #1c2526;
-    }
-}
+  /* ====== Animations ====== */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  section, .goal-card, .goals-grid {
+    animation: fadeIn 0.5s var(--animation-ease);
+  }
 </style>
+
+<div id="fitlife-container" role="application" aria-label="FitLife Goals">
+  <!-- Sidebar -->
+  <aside id="sidebar" aria-label="Main navigation">
+    <div class="sidebar-header">
+      <h2>FitLife</h2>
+      <p>Power Your Performance</p>
+    </div>
+    <nav class="nav-menu" aria-label="Main menu">
+      <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}" {{ request()->routeIs('dashboard') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13h8V3H3z"/><path d="M13 21h8V11h-8z"/><path d="M13 3v8"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="{{ route('foods.index') }}" class="{{ request()->routeIs('foods.*') ? 'active' : '' }}" {{ request()->routeIs('foods.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21c4-4 6-11 6-17"/><path d="M20 7a4 4 0 11-8 0"/></svg>
+        <span>Nutrition</span>
+      </a>
+      <a href="{{ route('sleep.index') }}" class="{{ request()->routeIs('sleep.*') ? 'active' : '' }}" {{ request()->routeIs('sleep.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <span>Recovery</span>
+      </a>
+      <a href="{{ route('water.index') }}" class="{{ request()->routeIs('water.*') ? 'active' : '' }}" {{ request()->routeIs('water.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s4 5 4 8a4 4 0 01-8 0c0-3 4-8 4-8z"/></svg>
+        <span>Hydration</span>
+      </a>
+      <a href="{{ route('progress.index') }}" class="{{ request()->routeIs('progress.*') ? 'active' : '' }}" {{ request()->routeIs('progress.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 3v18H3V3h18z"/><path d="M7 14l3-3 2 2 5-5"/></svg>
+        <span>Progress</span>
+      </a>
+      <a href="{{ route('goals.index') }}" class="{{ request()->routeIs('goals.*') ? 'active' : '' }}" {{ request()->routeIs('goals.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <span>Goals</span>
+      </a>
+      <a href="{{ route('calories.index') }}" class="{{ request()->routeIs('calories.*') ? 'active' : '' }}" {{ request()->routeIs('calories.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20"/><path d="M5 12h14"/></svg>
+        <span>Energy</span>
+      </a>
+      <a href="{{ route('biography.edit') }}" class="{{ request()->routeIs('biography.*') ? 'active' : '' }}" {{ request()->routeIs('biography.*') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M6 20v-1a6 6 0 0112 0v1"/></svg>
+        <span>Bio</span>
+      </a>
+      <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}" {{ request()->routeIs('profile.edit') ? 'aria-current=page' : '' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg>
+        <span>Profile</span>
+      </a>
+      <form method="POST" action="{{ route('logout') }}" class="logout-form">
+        @csrf
+        <button type="submit" aria-label="Logout">Logout</button>
+      </form>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+    <button id="mobile-toggle" aria-controls="sidebar" aria-expanded="false">Menu</button>
+
+    <header>
+      <div class="header-left">
+        <h1><span>FitLife</span> Goals</h1>
+        <p class="muted">Track your daily progress and stay motivated!</p>
+      </div>
+      <div class="header-info">
+        <div>{{ now()->format('l, F d, Y') }}</div>
+        <div>{{ now()->format('H:i') }}</div>
+      </div>
+    </header>
+
+    <!-- Create Goal Button -->
+    <section aria-labelledby="create-goal-heading">
+      <h3 id="create-goal-heading">Your Goals</h3>
+      <a href="{{ route('goals.create') }}" class="create-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>
+        New Goal
+      </a>
+    </section>
+
+    <!-- Goals List -->
+    <section aria-labelledby="goals-heading">
+      <div class="goals-grid">
+        @forelse($goals as $goal)
+        <div class="goal-card">
+          <h4>
+            {{ ucfirst($goal->type) }} Goal
+          </h4>
+          <p><strong>Target:</strong> {{ $goal->target_value }}</p>
+          <p><strong>Current:</strong> {{ $goal->current_value }}</p>
+          <p><strong>End Date:</strong> {{ $goal->end_date }}</p>
+          @if($goal->description)
+          <p><em>{{ $goal->description }}</em></p>
+          @endif
+          <div class="progress-bar">
+            <div class="progress" style="width: {{ min($goal->current_value / $goal->target_value * 100, 100) }}%;"></div>
+          </div>
+          <a href="{{ route('goals.log', $goal) }}" class="log-btn">
+            Log Progress
+          </a>
+        </div>
+        @empty
+        <div class="no-data">No goals set yet. Start creating your goals!</div>
+        @endforelse
+      </div>
+    </section>
+  </main>
+</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // Sidebar Toggle
-    const menuBtn = document.getElementById('menu-toggle');
-    const sideMenu = document.getElementById('side-menu');
-    const dashboardMain = document.getElementById('dashboard-main');
+  /* ===== Sidebar Mobile Toggle ===== */
+  const mobileToggle = document.getElementById('mobile-toggle');
+  const body = document.body;
+  const sidebar = document.getElementById('sidebar');
 
-    menuBtn.addEventListener('click', () => {
-        sideMenu.classList.toggle('active');
-        const open = sideMenu.classList.contains('active');
-        dashboardMain.style.marginRight = open ? '300px' : '0';
-        menuBtn.style.right = open ? '320px' : '20px';
-    });
+  mobileToggle.addEventListener('click', () => {
+    const opened = body.classList.toggle('sidebar-open');
+    mobileToggle.setAttribute('aria-expanded', opened ? 'true' : 'false');
+  });
 
-    document.addEventListener('click', (e) => {
-        if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-            sideMenu.classList.remove('active');
-            dashboardMain.style.marginRight = '0';
-            menuBtn.style.right = '20px';
-        }
-    });
+  document.addEventListener('click', (e) => {
+    if (!body.classList.contains('sidebar-open')) return;
+    if (sidebar.contains(e.target) || mobileToggle.contains(e.target)) return;
+    body.classList.remove('sidebar-open');
+    mobileToggle.setAttribute('aria-expanded', 'false');
+  });
 
-    // Accessibility
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            sideMenu.classList.remove('active');
-            dashboardMain.style.marginRight = '0';
-            menuBtn.style.right = '20px';
-        }
-    });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && body.classList.contains('sidebar-open')) {
+      body.classList.remove('sidebar-open');
+      mobileToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
 });
 </script>
 @endsection

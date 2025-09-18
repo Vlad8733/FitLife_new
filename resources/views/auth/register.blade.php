@@ -6,183 +6,236 @@
     <title>FitLife - Register</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- General Reset & Base --- */
-        * {
+        /* ====== Reset ====== */
+        *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
         }
-
-        body {
-            background: linear-gradient(135deg, #0d1117 0%, #1c2526 100%);
-            color: #e6e6fa;
-            min-height: 100vh;
+        html, body {
+            height: 100%;
+            width: 100%;
             overflow-x: hidden;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: linear-gradient(180deg, #0A0C10, #1A1F26);
+            color: #E6ECEF;
+            line-height: 1.6;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        a {
-            text-decoration: none;
-            color: inherit;
+        /* ====== Palette & Variables ====== */
+        :root {
+            --bg: #0A0C10;
+            --panel: #14171C;
+            --muted: #8A94A6;
+            --neon: #00FF88;
+            --accent: #FF3D00;
+            --white: #F5F7FA;
+            --glass: rgba(255, 255, 255, 0.04);
+            --shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+            --glow: 0 0 15px rgba(0, 255, 136, 0.4);
+            --radius: 14px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-size-base: 16px;
+            --font-weight-bold: 700;
+            --font-weight-medium: 500;
         }
 
-        button {
-            cursor: pointer;
-            border: none;
-            background: none;
-            font-family: inherit;
-        }
-
-        /* --- Register Wrapper --- */
+        /* ====== Register Wrapper ====== */
         .register-wrapper {
-            position: relative;
             width: 100%;
             max-width: 450px;
             padding: 2.5rem;
         }
 
-        /* --- Register Card (Styled like Dashboard Header) --- */
+        /* ====== Register Card ====== */
         .register-card {
-            position: relative;
-            z-index: 1;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
+            background: var(--panel);
             padding: 2rem;
-            border-radius: 16px;
-            border: 1px solid rgba(72, 201, 176, 0.3);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius);
+            border: 1px solid var(--glass);
+            box-shadow: var(--shadow);
             text-align: center;
-            animation: fadeIn 0.8s ease-out;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeIn 0.5s var(--animation-ease);
+            transition: var(--transition);
         }
-
         .register-card:hover {
+            box-shadow: var(--glow), var(--shadow);
             transform: translateY(-5px);
-            box-shadow: 0 12px 32px rgba(72, 201, 176, 0.2);
-            border-color: #48c9b0;
         }
-
         .register-card .logo {
             width: 90px;
             margin-bottom: 1rem;
             border-radius: 8px;
         }
-
         .register-card h2 {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #48c9b0;
+            font-size: 1.5rem;
+            font-weight: var(--font-weight-bold);
+            color: var(--neon);
             margin-bottom: 0.5rem;
-            text-shadow: 0 2px 8px rgba(72, 201, 176, 0.3);
         }
-
         .register-card .subtitle {
-            font-size: 1.2rem;
-            color: #a3bffa;
-            font-weight: 400;
+            font-size: 1.1rem;
+            color: var(--muted);
+            font-weight: var(--font-weight-medium);
             margin-bottom: 1.5rem;
         }
-
         .register-card .subtitle span {
-            font-weight: 600;
-            color: #d4af37;
+            font-weight: var(--font-weight-bold);
+            color: var(--accent);
         }
 
+        /* ====== Form Styling ====== */
         .register-card label {
             display: block;
             text-align: left;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #fff;
+            font-size: 0.95rem;
+            font-weight: var(--font-weight-medium);
+            color: var(--white);
             margin: 0.5rem 0;
         }
-
         .register-card input[type="text"],
         .register-card input[type="email"],
         .register-card input[type="password"] {
             width: 100%;
-            padding: 0.8rem;
+            padding: 10px;
             border-radius: 8px;
-            border: 1px solid rgba(72, 201, 176, 0.3);
+            border: 1px solid var(--glass);
             background: rgba(255, 255, 255, 0.05);
-            color: #e6e6fa;
-            font-size: 1rem;
+            color: var(--white);
+            font-size: 0.9rem;
             margin-bottom: 1rem;
-            transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
-
         .register-card input:focus {
-            border-color: #48c9b0;
             outline: none;
+            border-color: var(--neon);
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3);
+        }
+        .register-card input::placeholder {
+            color: var(--muted);
         }
 
-        /* --- Footer (Styled like Biography Card) --- */
+        /* ====== Footer ====== */
         .footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 1rem;
         }
-
         .footer a {
-            color: #a3bffa;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--neon);
+            font-size: 0.9rem;
+            font-weight: var(--font-weight-medium);
+            transition: var(--transition);
         }
-
         .footer a:hover {
-            color: #d4af37;
+            color: var(--accent);
         }
 
+        /* ====== Button Styling ====== */
         .btn {
-            background: linear-gradient(90deg, #48c9b0, #2e856e);
-            color: #1c2526;
-            padding: 0.8rem 1.2rem;
+            padding: 6px 12px;
+            background: linear-gradient(90deg, var(--neon), var(--accent));
+            color: var(--white);
+            border: none;
             border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.8rem;
+            font-weight: var(--font-weight-bold);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--glow);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-
+        .btn svg {
+            width: 14px;
+            height: 14px;
+            stroke: var(--white);
+        }
         .btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(72, 201, 176, 0.3);
-            border-color: #48c9b0;
+            background: linear-gradient(90deg, var(--accent), var(--neon));
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+            transform: scale(1.05);
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.4s ease;
+        }
+        .btn:hover::before {
+            left: 100%;
         }
 
-        /* --- Animations --- */
+        /* ====== Animations ====== */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
+        :root {
+            --animation-ease: cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-        /* --- Responsive --- */
+        /* ====== Responsive ====== */
         @media (max-width: 768px) {
             .register-wrapper {
                 padding: 1.5rem;
             }
             .register-card h2 {
-                font-size: 2.2rem;
+                font-size: 2rem;
             }
         }
-
         @media (max-width: 480px) {
             .register-card {
                 padding: 1rem;
             }
             .register-card h2 {
-                font-size: 2rem;
+                font-size: 1.8rem;
+            }
+            .register-card .subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        /* ====== Accessibility ====== */
+        @media (prefers-reduced-motion: reduce) {
+            .register-card, .btn {
+                transition: none;
+            }
+        }
+        @media (prefers-contrast: high) {
+            .register-card {
+                border: 2px solid var(--white);
+            }
+            .register-card input {
+                border: 1px solid var(--white);
+            }
+            .btn {
+                background: var(--white);
+                color: var(--bg);
+            }
+            .footer a {
+                color: var(--white);
             }
         }
     </style>
 </head>
 <body>
-    <div class="register-wrapper">
+    <div class="register-wrapper" role="main" aria-label="FitLife Register">
         <div class="register-card">
             <img src="{{ asset('storage/logo/logoFitLife.jpg') }}" alt="FitLife Logo" class="logo">
             <h2>Create Your Account ✨</h2>
@@ -205,7 +258,13 @@
 
                 <div class="footer">
                     <a href="{{ route('login') }}">Already registered?</a>
-                    <button type="submit" class="btn">Register</button>
+                    <button type="submit" class="btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                            <path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/>
+                        </svg>
+                        Register
+                    </button>
                 </div>
             </form>
         </div>

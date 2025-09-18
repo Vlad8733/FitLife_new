@@ -6,260 +6,262 @@
     <title>FitLife - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- General Reset & Base --- */
-        * {
+        /* ====== Reset ====== */
+        *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
         }
-
-        body {
-            background: linear-gradient(135deg, #0d1117 0%, #1c2526 100%);
-            color: #e6e6fa;
-            min-height: 100vh;
+        html, body {
+            height: 100%;
+            width: 100%;
             overflow-x: hidden;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: linear-gradient(180deg, #0A0C10, #1A1F26);
+            color: #E6ECEF;
+            line-height: 1.6;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        a {
-            text-decoration: none;
-            color: inherit;
+        /* ====== Palette & Variables ====== */
+        :root {
+            --bg: #0A0C10;
+            --panel: #14171C;
+            --muted: #8A94A6;
+            --neon: #00FF88;
+            --accent: #FF3D00;
+            --white: #F5F7FA;
+            --glass: rgba(255, 255, 255, 0.04);
+            --shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+            --glow: 0 0 15px rgba(0, 255, 136, 0.4);
+            --radius: 14px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-size-base: 16px;
+            --font-weight-bold: 700;
+            --font-weight-medium: 500;
         }
 
-        button {
-            cursor: pointer;
-            border: none;
-            background: none;
-            font-family: inherit;
-        }
-
-        /* --- Login Wrapper --- */
+        /* ====== Login Wrapper ====== */
         .login-wrapper {
-            position: relative;
             width: 100%;
             max-width: 420px;
             padding: 2.5rem;
         }
 
-        /* --- Login Card (Styled like Dashboard Header) --- */
+        /* ====== Login Card ====== */
         .login-card {
-            position: relative;
-            z-index: 1;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
+            background: var(--panel);
             padding: 2rem;
-            border-radius: 16px;
-            border: 1px solid rgba(72, 201, 176, 0.3);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius);
+            border: 1px solid var(--glass);
+            box-shadow: var(--shadow);
             text-align: center;
-            animation: fadeIn 0.8s ease-out;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeIn 0.5s var(--animation-ease);
+            transition: var(--transition);
         }
-
         .login-card:hover {
+            box-shadow: var(--glow), var(--shadow);
             transform: translateY(-5px);
-            box-shadow: 0 12px 32px rgba(72, 201, 176, 0.2);
-            border-color: #48c9b0;
         }
-
         .login-card .logo {
             width: 90px;
             margin-bottom: 1rem;
             border-radius: 8px;
         }
-
         .login-card h2 {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #48c9b0;
+            font-size: 1.5rem;
+            font-weight: var(--font-weight-bold);
+            color: var(--neon);
             margin-bottom: 0.5rem;
-            text-shadow: 0 2px 8px rgba(72, 201, 176, 0.3);
         }
-
         .login-card .subtitle {
-            font-size: 1.2rem;
-            color: #a3bffa;
-            font-weight: 400;
+            font-size: 1.1rem;
+            color: var(--muted);
+            font-weight: var(--font-weight-medium);
             margin-bottom: 1.5rem;
         }
-
         .login-card .subtitle span {
-            font-weight: 600;
-            color: #d4af37;
+            font-weight: var(--font-weight-bold);
+            color: var(--accent);
         }
 
+        /* ====== Form Styling ====== */
         .login-card label {
             display: block;
             text-align: left;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #fff;
+            font-size: 0.95rem;
+            font-weight: var(--font-weight-medium);
+            color: var(--white);
             margin: 0.5rem 0;
         }
-
         .login-card input[type="email"],
         .login-card input[type="password"] {
             width: 100%;
-            padding: 0.8rem;
+            padding: 10px;
             border-radius: 8px;
-            border: 1px solid rgba(72, 201, 176, 0.3);
+            border: 1px solid var(--glass);
             background: rgba(255, 255, 255, 0.05);
-            color: #e6e6fa;
-            font-size: 1rem;
+            color: var(--white);
+            font-size: 0.9rem;
             margin-bottom: 1rem;
-            transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
-
         .login-card input:focus {
-            border-color: #48c9b0;
             outline: none;
+            border-color: var(--neon);
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3);
+        }
+        .login-card input::placeholder {
+            color: var(--muted);
         }
 
+        /* ====== Remember Checkbox ====== */
         .remember {
             display: flex;
             align-items: center;
             margin-bottom: 1.5rem;
         }
-
         .remember input {
             margin-right: 0.5rem;
         }
-
         .remember label {
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: #a3bffa;
+            font-size: 0.9rem;
+            color: var(--muted);
         }
 
-        /* --- Footer --- */
+        /* ====== Footer ====== */
         .footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 1rem;
         }
-
         .footer a {
-            color: #a3bffa;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--neon);
+            font-size: 0.9rem;
+            font-weight: var(--font-weight-medium);
+            transition: var(--transition);
         }
-
         .footer a:hover {
-            color: #d4af37;
+            color: var(--accent);
         }
 
+        /* ====== Button Styling ====== */
         .btn {
-            background: linear-gradient(90deg, #48c9b0, #2e856e);
-            color: #1c2526;
-            padding: 0.8rem 1.2rem;
+            padding: 6px 12px;
+            background: linear-gradient(90deg, var(--neon), var(--accent));
+            color: var(--white);
+            border: none;
             border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(72, 201, 176, 0.3);
-            border-color: #48c9b0;
-        }
-
-        /* --- Divider (Styled like No-data) --- */
-        .divider {
-            display: flex;
+            font-size: 0.8rem;
+            font-weight: var(--font-weight-bold);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--glow);
+            display: inline-flex;
             align-items: center;
-            text-align: center;
-            margin: 1.5rem 0;
-            color: #a3bffa;
-            font-size: 0.95rem;
+            gap: 6px;
         }
-
-        .divider::before,
-        .divider::after {
+        .btn svg {
+            width: 14px;
+            height: 14px;
+            stroke: var(--white);
+        }
+        .btn:hover {
+            background: linear-gradient(90deg, var(--accent), var(--neon));
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+            transform: scale(1.05);
+        }
+        .btn::before {
             content: '';
-            flex: 1;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.4s ease;
+        }
+        .btn:hover::before {
+            left: 100%;
         }
 
-        .divider span {
-            padding: 0 0.5rem;
-        }
-
-        /* --- Social Buttons (Styled like KPI Card) --- */
-        .social {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .social button {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(216, 175, 55, 0.3);
-            border-radius: 12px;
-            padding: 0.8rem;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #e6e6fa;
-            text-transform: uppercase;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .social button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(216, 175, 55, 0.3);
-            border-color: #d4af37;
-            color: #d4af37;
-        }
-
-        /* --- Status Message (Styled like No-data) --- */
+        /* ====== Status Message ====== */
         .status {
             text-align: center;
-            color: #a3bffa;
-            font-size: 1rem;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
+            padding: 16px;
+            background: var(--glass);
+            border-radius: var(--radius);
+            color: var(--neon);
+            font-size: 0.95rem;
+            font-weight: var(--font-weight-medium);
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
         }
 
-        /* --- Animations --- */
+        /* ====== Animations ====== */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
+        :root {
+            --animation-ease: cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-        /* --- Responsive --- */
+        /* ====== Responsive ====== */
         @media (max-width: 768px) {
             .login-wrapper {
                 padding: 1.5rem;
             }
             .login-card h2 {
-                font-size: 2.2rem;
-            }
-            .social {
-                grid-template-columns: 1fr;
+                font-size: 2rem;
             }
         }
-
         @media (max-width: 480px) {
             .login-card {
                 padding: 1rem;
             }
             .login-card h2 {
-                font-size: 2rem;
+                font-size: 1.8rem;
+            }
+            .login-card .subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        /* ====== Accessibility ====== */
+        @media (prefers-reduced-motion: reduce) {
+            .login-card, .btn {
+                transition: none;
+            }
+        }
+        @media (prefers-contrast: high) {
+            .login-card {
+                border: 2px solid var(--white);
+            }
+            .login-card input {
+                border: 1px solid var(--white);
+            }
+            .btn {
+                background: var(--white);
+                color: var(--bg);
+            }
+            .footer a {
+                color: var(--white);
             }
         }
     </style>
 </head>
 <body>
-    <div class="login-wrapper">
+    <div class="login-wrapper" role="main" aria-label="FitLife Login">
         <div class="login-card">
             <img src="{{ asset('storage/logo/logoFitLife.jpg') }}" alt="FitLife Logo" class="logo">
             <h2>Welcome Back ⚡</h2>
@@ -273,7 +275,7 @@
                 @csrf
 
                 <label for="email">Email</label>
-                <input id="email" type="email" name="email" placeholder="you@example.com" required autofocus>
+                <input id="email" type="email" name="email" placeholder="you@example.com" value="{{ old('email') }}" required autofocus>
 
                 <label for="password">Password</label>
                 <input id="password" type="password" name="password" placeholder="••••••••" required>
@@ -286,17 +288,17 @@
                 <div class="footer">
                     @if (Route::has('password.request'))
                         <a href="{{ route('password.request') }}">Forgot your password?</a>
+                    @else
+                        <span></span>
                     @endif
-                    <button type="submit" class="btn">Log in</button>
+                    <button type="submit" class="btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>
+                        </svg>
+                        Log in
+                    </button>
                 </div>
             </form>
-
-            <div class="divider"><span>or</span></div>
-
-            <div class="social">
-                <button class="facebook">Facebook</button>
-                <button class="google">Google</button>
-            </div>
         </div>
     </div>
 </body>
