@@ -571,23 +571,23 @@
     <nav class="nav-menu" aria-label="Main menu">
       <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}" {{ request()->routeIs('dashboard') ? 'aria-current=page' : '' }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h8V3H3z"/><path d="M13 21h8V11h-8z"/><path d="M13 3v8"/></svg>
-        <span>Dashboard</span>
+        <span>Home</span>
       </a>
       <a href="{{ route('foods.index') }}" class="{{ request()->routeIs('foods.*') ? 'active' : '' }}" {{ request()->routeIs('foods.*') ? 'aria-current=page' : '' }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21c4-4 6-11 6-17"/><path d="M20 7a4 4 0 11-8 0"/></svg>
-        <span>Nutrition</span>
+        <span>Meal Tracker</span>
       </a>
       <a href="{{ route('sleep.index') }}" class="{{ request()->routeIs('sleep.*') ? 'active' : '' }}" {{ request()->routeIs('sleep.*') ? 'aria-current=page' : '' }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-        <span>Recovery</span>
+        <span>Sleep Tracker</span>
       </a>
       <a href="{{ route('water.index') }}" class="{{ request()->routeIs('water.*') ? 'active' : '' }}" {{ request()->routeIs('water.*') ? 'aria-current=page' : '' }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s4 5 4 8a4 4 0 01-8 0c0-3 4-8 4-8z"/></svg>
-        <span>Hydration</span>
+        <span>Water Tracker</span>
       </a>
       <a href="{{ route('progress.index') }}" class="{{ request()->routeIs('progress.*') ? 'active' : '' }}" {{ request()->routeIs('progress.*') ? 'aria-current=page' : '' }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 3v18H3V3h18z"/><path d="M7 14l3-3 2 2 5-5"/></svg>
-        <span>Progress</span>
+        <span>Progress Photos</span>
       </a>
       <a href="{{ route('goals.index') }}" class="{{ request()->routeIs('goals.*') ? 'active' : '' }}" {{ request()->routeIs('goals.*') ? 'aria-current=page' : '' }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
@@ -595,11 +595,11 @@
       </a>
       <a href="{{ route('calories.index') }}" class="{{ request()->routeIs('calories.*') ? 'active' : '' }}" {{ request()->routeIs('calories.*') ? 'aria-current=page' : '' }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20"/><path d="M5 12h14"/></svg>
-        <span>Energy</span>
+        <span>Calorie Calculator</span>
       </a>
       <a href="{{ route('biography.edit') }}" class="{{ request()->routeIs('biography.*') ? 'active' : '' }}" {{ request()->routeIs('biography.*') ? 'aria-current=page' : '' }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M6 20v-1a6 6 0 0112 0v1"/></svg>
-        <span>Bio</span>
+        <span>Biography</span>
       </a>
       <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}" {{ request()->routeIs('profile.edit') ? 'aria-current=page' : '' }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/></svg>
@@ -635,14 +635,9 @@
         <div>
           <div class="small"><strong>Name:</strong> {{ $bio->full_name ?? Auth::user()->name }}</div>
           <div class="small"><strong>Age:</strong> {{ $bio->age ?? 'Not set' }}</div>
-        </div>
-        <div>
           <div class="small"><strong>Height:</strong> {{ $bio->height ?? 'Not set' }} cm</div>
           <div class="small"><strong>Weight:</strong> {{ $bio->weight ?? 'Not set' }} kg</div>
-        </div>
-        <div>
           <div class="small"><strong>Gender:</strong> {{ ucfirst($bio->gender ?? 'Not set') }}</div>
-          <div style="margin-top: 10px;"><a href="{{ route('biography.edit') }}" class="small">Update Stats</a></div>
         </div>
       </div>
     </section>
@@ -718,9 +713,6 @@
               <div class="informer-bar" data-progress="{{ $calorieProgress }}">
                 <div class="fill" style="width:0%;" aria-valuenow="{{ $calorieProgress }}" aria-valuemax="100" aria-valuemin="0" role="progressbar"></div>
               </div>
-              <div class="informer-action">
-                <a href="{{ route('foods.index') }}">Log More</a>
-              </div>
             </div>
           @endif
         </div>
@@ -754,9 +746,6 @@
               <div class="informer-bar" data-progress="{{ $sleepProgress }}">
                 <div class="fill" style="width:0%;" aria-valuenow="{{ $sleepProgress }}" aria-valuemax="100" aria-valuemin="0" role="progressbar"></div>
               </div>
-              <div class="informer-action">
-                <a href="{{ route('sleep.index') }}">Log More</a>
-              </div>
             </div>
           @endif
         </div>
@@ -789,9 +778,6 @@
               <div class="small muted">Keep sipping!</div>
               <div class="informer-bar" data-progress="{{ $waterProgress }}">
                 <div class="fill" style="width:0%;" aria-valuenow="{{ $waterProgress }}" aria-valuemax="100" aria-valuemin="0" role="progressbar"></div>
-              </div>
-              <div class="informer-action">
-                <a href="{{ route('water.index') }}">Log More</a>
               </div>
             </div>
           @endif
