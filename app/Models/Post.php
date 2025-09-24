@@ -9,25 +9,64 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id','content','photo_path'];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['user_id', 'content', 'photo_path', 'views'];
 
-    public function user() {
+    /**
+     * Get the user that owns the post.
+     */
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function comments() {
+    /**
+     * Get the top-level comments for the post.
+     */
+    public function comments()
+    {
         return $this->hasMany(Comment::class)->whereNull('parent_id');
     }
 
-    public function likes() {
+    /**
+     * Get all comments for the post, including replies.
+     */
+    public function allComments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * Get the likes/dislikes for the post.
+     */
+    public function likes()
+    {
         return $this->hasMany(Like::class);
     }
 
-    public function isLikedBy($userId) {
-        return $this->likes()->where('user_id',$userId)->where('type','like')->exists();
+    /**
+     * Check if the post is liked by a specific user.
+     *
+     * @param int $userId
+     * @return bool
+     */
+    public function isLikedBy($userId)
+    {
+        return $this->likes()->where('user_id', $userId)->where('type', 'like')->exists();
     }
 
-    public function isDislikedBy($userId) {
-        return $this->likes()->where('user_id',$userId)->where('type','dislike')->exists();
+    /**
+     * Check if the post is disliked by a specific user.
+     *
+     * @param int $userId
+     * @return bool
+     */
+    public function isDislikedBy($userId)
+    {
+        return $this->likes()->where('user_id', $userId)->where('type', 'dislike')->exists();
     }
 }

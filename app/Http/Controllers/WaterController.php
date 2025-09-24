@@ -27,6 +27,6 @@ class WaterController extends Controller
             'amount' => $request->amount,
         ]);
 
-        return redirect()->back()->with('success', 'Water intake logged!');
+        return redirect()->back()->with('success', '');
     }
 }

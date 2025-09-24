@@ -11,7 +11,7 @@ class WaterLog extends Model
 
     protected $fillable = [
         'user_id',
-        'amount', // количество воды в мл
+        'amount',
     ];
 
     public function user()

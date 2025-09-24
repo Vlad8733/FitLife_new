@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class FoodController extends Controller
 {
-    // Список еды с калориями на 100г/мл
     private $foods = [
         'Rice' => 130,
         'Chicken breast' => 165,
@@ -48,71 +47,93 @@ class FoodController extends Controller
         'Tea' => 1,
     ];
 
-    // Страница выбора еды
-    public function index()
+    public function index(Request $request)
     {
         $foods = $this->foods;
-        $logs = MealLog::where('user_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+
+        $query = MealLog::where('user_id', Auth::id());
+
+        if ($request->filled('meal_type')) {
+            $query->where('meal', $request->meal_type);
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        $logs = $query->orderBy('created_at', 'desc')->paginate(10);
+
+        if ($request->ajax()) {
+            $partialHtml = view('profile.partials.meal_table', ['mealLogs' => $logs])->render();
+            $inner = '<h3 id="history-heading">Meal History</h3>' . $partialHtml;
+            return response('<section id="history-section" aria-labelledby="history-heading">' . $inner . '</section>');
+        }
 
         return view('foods.index', compact('foods', 'logs'));
     }
 
-    // Расчёт калорий и сохранение истории
     public function calculate(Request $request)
     {
+        // Исправленная валидация
         $request->validate([
             'meals' => 'required|array',
+            'meals.*' => 'array',
+            'meals.*.*.food' => 'nullable|string',
+            'meals.*.*.quantity' => 'nullable|numeric|min:0',
         ]);
 
         $totalCalories = 0;
+        $logs = [];
 
         foreach ($request->meals as $meal => $items) {
             foreach ($items as $item) {
                 $food = $item['food'] ?? null;
-                $quantity = $item['quantity'] ?? 0;
+                $quantity = isset($item['quantity']) ? (float)$item['quantity'] : 0;
 
-                if ($food && isset($this->foods[$food])) {
-                    $calories = $this->foods[$food] * ($quantity / 100);
+                if ($food && isset($this->foods[$food]) && $quantity > 0) {
+                    $calories = round($this->foods[$food] * ($quantity / 100));
                     $totalCalories += $calories;
 
-                    // Сохраняем в историю
-                    if ($quantity > 0) {
-                        MealLog::create([
-                            'user_id' => Auth::id(),
-                            'meal' => $meal,
-                            'food' => $food,
-                            'quantity' => $quantity,
-                            'calories' => round($calories),
-                        ]);
-                    }
+                    $log = MealLog::create([
+                        'user_id' => Auth::id(),
+                        'meal' => $meal,
+                        'food' => $food,
+                        'quantity' => $quantity,
+                        'calories' => $calories,
+                    ]);
+                    $logs[] = $log;
                 }
             }
         }
 
-        // Motivational message
-        if ($totalCalories < 1500) {
-            $comment = "Try to eat a bit more calories for energy!";
-        } elseif ($totalCalories < 2500) {
-            $comment = "Great! Keep it up!";
-        } else {
-            $comment = "You consumed a lot of calories, don't forget to move!";
+        if (empty($logs)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No valid meals provided',
+            ], 422);
         }
 
-        return back()->with('result', [
+        $comment = $totalCalories < 1500
+            ? "Try to eat a bit more calories for energy!"
+            : ($totalCalories < 2500
+                ? "Great! Keep it up!"
+                : "You consumed a lot of calories, don't forget to move!");
+
+        $logs = MealLog::where('user_id', Auth::id())->orderBy('created_at', 'desc')->paginate(10);
+        $partialHtml = view('profile.partials.meal_table', ['mealLogs' => $logs])->render();
+        $historyHtml = '<h3 id="history-heading">Meal History</h3>' . $partialHtml;
+
+        return response()->json([
+            'success' => true,
             'calories' => round($totalCalories),
-            'comment' => $comment
+            'comment' => $comment,
+            'historyHtml' => $historyHtml,
         ]);
     }
 
-    // История еды (если используется отдельно)
     public function history()
     {
-        $logs = MealLog::where('user_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-
+        $logs = MealLog::where('user_id', Auth::id())->orderBy('created_at', 'desc')->paginate(10);
         return view('foods.history', compact('logs'));
     }
 }

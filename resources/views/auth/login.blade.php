@@ -6,256 +6,238 @@
     <title>FitLife - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ====== Reset ====== */
-        *, *::before, *::after {
-            box-sizing: border-box;
+        :root {
+            --bg: #f8f9fa;
+            --text: #1a1a1a;
+            --accent: #2563eb;
+            --muted: #6b7280;
+            --card-bg: #ffffff;
+            --border: #e5e7eb;
+            --radius: 8px;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            --transition: 0.2s ease;
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
+
         html, body {
             height: 100%;
             width: 100%;
             overflow-x: hidden;
         }
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            background: linear-gradient(180deg, #0A0C10, #1A1F26);
-            color: #E6ECEF;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.6;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* ====== Palette & Variables ====== */
-        :root {
-            --bg: #0A0C10;
-            --panel: #14171C;
-            --muted: #8A94A6;
-            --neon: #00FF88;
-            --accent: #FF3D00;
-            --white: #F5F7FA;
-            --glass: rgba(255, 255, 255, 0.04);
-            --shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
-            --glow: 0 0 15px rgba(0, 255, 136, 0.4);
-            --radius: 14px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --font-size-base: 16px;
-            --font-weight-bold: 700;
-            --font-weight-medium: 500;
-        }
-
-        /* ====== Login Wrapper ====== */
         .login-wrapper {
             width: 100%;
             max-width: 420px;
-            padding: 2.5rem;
+            padding: 1.5rem;
         }
 
-        /* ====== Login Card ====== */
         .login-card {
-            background: var(--panel);
+            background: var(--card-bg);
             padding: 2rem;
             border-radius: var(--radius);
-            border: 1px solid var(--glass);
+            border: 1px solid var(--border);
             box-shadow: var(--shadow);
             text-align: center;
-            animation: fadeIn 0.5s var(--animation-ease);
             transition: var(--transition);
         }
+
         .login-card:hover {
-            box-shadow: var(--glow), var(--shadow);
-            transform: translateY(-5px);
-        }
-        .login-card .logo {
-            width: 90px;
-            margin-bottom: 1rem;
-            border-radius: 8px;
-        }
-        .login-card h2 {
-            font-size: 1.5rem;
-            font-weight: var(--font-weight-bold);
-            color: var(--neon);
-            margin-bottom: 0.5rem;
-        }
-        .login-card .subtitle {
-            font-size: 1.1rem;
-            color: var(--muted);
-            font-weight: var(--font-weight-medium);
-            margin-bottom: 1.5rem;
-        }
-        .login-card .subtitle span {
-            font-weight: var(--font-weight-bold);
-            color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        /* ====== Form Styling ====== */
+        .login-card .logo {
+            width: 80px;
+            margin-bottom: 1rem;
+            border-radius: var(--radius);
+        }
+
+        .login-card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-card .subtitle {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .login-card .subtitle span {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
         .login-card label {
             display: block;
             text-align: left;
-            font-size: 0.95rem;
-            font-weight: var(--font-weight-medium);
-            color: var(--white);
-            margin: 0.5rem 0;
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin: 0.5rem 0 0.25rem;
         }
+
         .login-card input[type="email"],
         .login-card input[type="password"] {
             width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--glass);
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--white);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            color: var(--text);
+            background: var(--card-bg);
+            transition: var(--transition);
         }
+
         .login-card input:focus {
             outline: none;
-            border-color: var(--neon);
-            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
         }
+
         .login-card input::placeholder {
             color: var(--muted);
         }
 
-        /* ====== Remember Checkbox ====== */
         .remember {
             display: flex;
             align-items: center;
             margin-bottom: 1.5rem;
         }
+
         .remember input {
             margin-right: 0.5rem;
         }
+
         .remember label {
             font-size: 0.9rem;
             color: var(--muted);
         }
 
-        /* ====== Footer ====== */
         .footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 1rem;
         }
+
         .footer a {
-            color: var(--neon);
-            font-size: 0.9rem;
-            font-weight: var(--font-weight-medium);
-            transition: var(--transition);
-        }
-        .footer a:hover {
             color: var(--accent);
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: var(--transition);
         }
 
-        /* ====== Button Styling ====== */
+        .footer a:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
+        }
+
         .btn {
-            padding: 6px 12px;
-            background: linear-gradient(90deg, var(--neon), var(--accent));
-            color: var(--white);
-            border: none;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: var(--font-weight-bold);
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--glow);
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-        }
-        .btn svg {
-            width: 14px;
-            height: 14px;
-            stroke: var(--white);
-        }
-        .btn:hover {
-            background: linear-gradient(90deg, var(--accent), var(--neon));
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
-            transform: scale(1.05);
-        }
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.4s ease;
-        }
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        /* ====== Status Message ====== */
-        .status {
-            text-align: center;
-            padding: 16px;
-            background: var(--glass);
+            gap: 8px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
             border-radius: var(--radius);
-            color: var(--neon);
             font-size: 0.95rem;
-            font-weight: var(--font-weight-medium);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: #fff;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .status {
+            background: #e6ffed;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: var(--radius);
             margin-bottom: 1rem;
-            box-shadow: var(--shadow);
+            font-size: 0.9rem;
         }
 
-        /* ====== Animations ====== */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        :root {
-            --animation-ease: cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* ====== Responsive ====== */
         @media (max-width: 768px) {
             .login-wrapper {
+                padding: 1rem;
+            }
+
+            .login-card {
                 padding: 1.5rem;
             }
+
             .login-card h2 {
-                font-size: 2rem;
+                font-size: 1.4rem;
             }
         }
+
         @media (max-width: 480px) {
             .login-card {
                 padding: 1rem;
             }
+
             .login-card h2 {
-                font-size: 1.8rem;
+                font-size: 1.3rem;
             }
+
             .login-card .subtitle {
-                font-size: 1rem;
+                font-size: 0.85rem;
             }
         }
 
-        /* ====== Accessibility ====== */
         @media (prefers-reduced-motion: reduce) {
             .login-card, .btn {
                 transition: none;
             }
         }
+
         @media (prefers-contrast: high) {
             .login-card {
-                border: 2px solid var(--white);
+                border: 2px solid var(--text);
             }
+
             .login-card input {
-                border: 1px solid var(--white);
+                border: 2px solid var(--text);
             }
+
             .btn {
-                background: var(--white);
+                background: var(--text);
                 color: var(--bg);
             }
+
+            .btn svg {
+                stroke: var(--bg);
+            }
+
             .footer a {
-                color: var(--white);
+                color: var(--text);
             }
         }
     </style>
@@ -264,7 +246,7 @@
     <div class="login-wrapper" role="main" aria-label="FitLife Login">
         <div class="login-card">
             <img src="{{ asset('storage/logo/logoFitLife.jpg') }}" alt="FitLife Logo" class="logo">
-            <h2>Welcome Back ⚡</h2>
+            <h2>Welcome Back</h2>
             <p class="subtitle">Log in to your <span>FitLife account</span></p>
 
             @if (session('status'))
@@ -292,8 +274,8 @@
                         <span></span>
                     @endif
                     <button type="submit" class="btn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
                         </svg>
                         Log in
                     </button>

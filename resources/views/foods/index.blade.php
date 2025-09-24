@@ -8,70 +8,65 @@
         <p>Power Your Performance</p>
       </div>
       <nav class="nav-menu" aria-label="Main menu">
-        <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}" {{ request()->routeIs('dashboard') ? 'aria-current=page' : '' }} style="--i: 1;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 13h8V3H3z" />
-            <path d="M13 21h8V11h-8z" />
-            <path d="M13 3v8" />
+        <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}" {{ request()->routeIs('dashboard') ? 'aria-current=page' : '' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 13h8V3H3zM13 21h8V11h-8zM13 3v8" />
           </svg>
           <span>Home</span>
         </a>
-        <a href="{{ route('posts.index') }}" class="{{ request()->routeIs('posts.*') ? 'active' : '' }}" {{ request()->routeIs('posts.*') ? 'aria-current=page' : '' }} style="--i: 2;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-            <path d="M21 11.5a8.38 8.38 0 01-8.5 8 8.38 8.38 0 01-8.5-8 8.38 8.38 0 018.5-8c3.1 0 5.8 1.7 7.2 4.2" />
-            <path d="M17 8l4 4-4 4" />
+        <a href="{{ route('posts.index') }}" class="{{ request()->routeIs('posts.*') ? 'active' : '' }}" {{ request()->routeIs('posts.*') ? 'aria-current=page' : '' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path
+              d="M21 11.5a8.38 8.38 0 01-8.5 8 8.38 8.38 0 01-8.5-8 8.38 8.38 0 018.5-8c3.1 0 5.8 1.7 7.2 4.2M17 8l4 4-4 4" />
           </svg>
           <span>Community Posts</span>
         </a>
-        <a href="{{ route('foods.index') }}" class="{{ request()->routeIs('foods.*') ? 'active' : '' }}" {{ request()->routeIs('foods.*') ? 'aria-current=page' : '' }} style="--i: 3;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-            <path d="M4 21c4-4 6-11 6-17" />
-            <path d="M20 7a4 4 0 11-8 0" />
+        <a href="{{ route('foods.index') }}" class="{{ request()->routeIs('foods.*') ? 'active' : '' }}" {{ request()->routeIs('foods.*') ? 'aria-current=page' : '' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 21c4-4 6-11 6-17M20 7a4 4 0 11-8 0" />
           </svg>
           <span>Meal Tracker</span>
         </a>
-        <a href="{{ route('sleep.index') }}" class="{{ request()->routeIs('sleep.*') ? 'active' : '' }}" {{ request()->routeIs('sleep.*') ? 'aria-current=page' : '' }} style="--i: 4;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <a href="{{ route('sleep.index') }}" class="{{ request()->routeIs('sleep.*') ? 'active' : '' }}" {{ request()->routeIs('sleep.*') ? 'aria-current=page' : '' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
           </svg>
           <span>Sleep Tracker</span>
         </a>
-        <a href="{{ route('water.index') }}" class="{{ request()->routeIs('water.*') ? 'active' : '' }}" {{ request()->routeIs('water.*') ? 'aria-current=page' : '' }} style="--i: 5;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <a href="{{ route('water.index') }}" class="{{ request()->routeIs('water.*') ? 'active' : '' }}" {{ request()->routeIs('water.*') ? 'aria-current=page' : '' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M12 2s4 5 4 8a4 4 0 01-8 0c0-3 4-8 4-8z" />
           </svg>
           <span>Water Tracker</span>
         </a>
-        <a href="{{ route('progress.index') }}" class="{{ request()->routeIs('progress.*') ? 'active' : '' }}" {{ request()->routeIs('progress.*') ? 'aria-current=page' : '' }} style="--i: 6;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-            <path d="M21 3v18H3V3h18z" />
-            <path d="M7 14l3-3 2 2 5-5" />
+        <a href="{{ route('progress.index') }}" class="{{ request()->routeIs('progress.*') ? 'active' : '' }}" {{ request()->routeIs('progress.*') ? 'aria-current=page' : '' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 3v18H3V3h18zM7 14l3-3 2 2 5-5" />
           </svg>
           <span>Progress Photos</span>
         </a>
-        <a href="{{ route('goals.index') }}" class="{{ request()->routeIs('goals.*') ? 'active' : '' }}" {{ request()->routeIs('goals.*') ? 'aria-current=page' : '' }} style="--i: 7;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <a href="{{ route('goals.index') }}" class="{{ request()->routeIs('goals.*') ? 'active' : '' }}" {{ request()->routeIs('goals.*') ? 'aria-current=page' : '' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="12" cy="12" r="10" />
             <path d="M12 8v4l3 3" />
           </svg>
           <span>Goals</span>
         </a>
-        <a href="{{ route('calories.index') }}" class="{{ request()->routeIs('calories.*') ? 'active' : '' }}" {{ request()->routeIs('calories.*') ? 'aria-current=page' : '' }} style="--i: 8;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-            <path d="M12 2v20" />
-            <path d="M5 12h14" />
+        <a href="{{ route('calories.index') }}" class="{{ request()->routeIs('calories.*') ? 'active' : '' }}" {{ request()->routeIs('calories.*') ? 'aria-current=page' : '' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2v20M5 12h14" />
           </svg>
           <span>Calorie Calculator</span>
         </a>
-        <a href="{{ route('biography.edit') }}" class="{{ request()->routeIs('biography.*') ? 'active' : '' }}" {{ request()->routeIs('biography.*') ? 'aria-current=page' : '' }} style="--i: 9;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <a href="{{ route('biography.edit') }}" class="{{ request()->routeIs('biography.*') ? 'active' : '' }}" {{ request()->routeIs('biography.*') ? 'aria-current=page' : '' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="12" cy="8" r="4" />
             <path d="M6 20v-1a6 6 0 0112 0v1" />
           </svg>
           <span>Biography</span>
         </a>
-        <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}" {{ request()->routeIs('profile.edit') ? 'aria-current=page' : '' }} style="--i: 10;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}" {{ request()->routeIs('profile.edit') ? 'aria-current=page' : '' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
           </svg>
           <span>Profile</span>
@@ -79,12 +74,10 @@
         <form method="POST" action="{{ route('logout') }}" class="logout-form">
           @csrf
           <button type="submit" aria-label="Logout">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-              <path d="M16 17l5-5-5-5" />
-              <path d="M21 12H9" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
             </svg>
-            Logout
+            <span>Logout</span>
           </button>
         </form>
       </nav>
@@ -96,10 +89,6 @@
         <div class="header-left">
           <h1>Meal Tracker</h1>
           <p class="muted">Log and analyze your daily nutrition</p>
-        </div>
-        <div class="header-info">
-          <div>{{ now()->format('l, F d, Y') }}</div>
-          <div>{{ now()->format('H:i') }}</div>
         </div>
       </header>
 
@@ -119,13 +108,15 @@
                   <h4>{{ $meal }}</h4>
                   <div class="meal-items" data-meal="{{ $meal }}">
                     <div class="meal-item">
-                      <select class="food-select" name="meals[{{ $meal }}][0][food]" aria-label="Select food for {{ $meal }}">
+                      <select class="food-select" name="meals[{{ $meal }}][0][food]"
+                        aria-label="Select food for {{ $meal }}">
                         <option value="">Select Food</option>
                         @foreach($foods as $food => $cal)
                           <option value="{{ $food }}" data-calories="{{ $cal }}">{{ $food }} ({{ $cal }} kcal)</option>
                         @endforeach
                       </select>
-                      <input type="number" class="quantity-input" name="meals[{{ $meal }}][0][quantity]" placeholder="g/ml" style="display:none;" min="0" step="1" aria-label="Quantity for {{ $meal }} food">
+                      <input type="number" class="quantity-input" name="meals[{{ $meal }}][0][quantity]" placeholder="g/ml"
+                        style="display:none;" min="0" step="1" aria-label="Quantity for {{ $meal }} food">
                       <div class="calorie-preview" data-calories="0">0 kcal</div>
                       <button type="button" class="remove-food-btn" style="display:none;" aria-label="Remove food item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
@@ -161,66 +152,10 @@
         </form>
       </section>
 
-      <!-- Filter Form -->
-      <section aria-labelledby="filter-heading">
-        <h3 id="filter-heading">Filter Meal History</h3>
-        <form class="filter-form" id="filter-form">
-          <select name="meal_type" aria-label="Filter by meal type">
-            <option value="">All Meals</option>
-            @foreach($meals as $meal)
-              <option value="{{ $meal }}">{{ $meal }}</option>
-            @endforeach
-          </select>
-          <input type="date" name="date" aria-label="Filter by date">
-          <button type="submit" class="calculate-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            Filter
-          </button>
-        </form>
-      </section>
-
       <!-- Meal History -->
       <section id="history-section" aria-labelledby="history-heading">
         <h3 id="history-heading">Meal History</h3>
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Meal</th>
-              <th>Food</th>
-              <th>Quantity</th>
-              <th>Calories</th>
-            </tr>
-          </thead>
-          <tbody>
-            @if($logs->isEmpty())
-              <tr>
-                <td colspan="5" class="no-data">No meal history yet. Start logging your meals!</td>
-              </tr>
-            @else
-              @foreach($logs as $log)
-                <tr>
-                  <td>{{ \Carbon\Carbon::parse($log->created_at)->format('M d, Y H:i') }}</td>
-                  <td>{{ $log->meal }}</td>
-                  <td>{{ $log->food }}</td>
-                  <td>{{ $log->quantity }} g/ml</td>
-                  <td>{{ $log->calories }} kcal</td>
-                </tr>
-              @endforeach
-            @endif
-          </tbody>
-        </table>
-        @if(!$logs->isEmpty())
-          <div class="pagination" data-current-page="{{ $logs->currentPage() }}" data-last-page="{{ $logs->lastPage() }}">
-            <a href="{{ route('foods.index', ['page' => max(1, $logs->currentPage() - 1)]) }}" class="{{ $logs->onFirstPage() ? 'disabled' : '' }}">Previous</a>
-            @for($i = 1; $i <= $logs->lastPage(); $i++)
-              <a href="{{ route('foods.index', ['page' => $i]) }}" class="{{ $logs->currentPage() == $i ? 'current' : '' }}">{{ $i }}</a>
-            @endfor
-            <a href="{{ route('foods.index', ['page' => min($logs->lastPage(), $logs->currentPage() + 1)]) }}" class="{{ $logs->onLastPage() ? 'disabled' : '' }}">Next</a>
-          </div>
-        @endif
+        @include('profile.partials.meal_table', ['mealLogs' => $logs])
       </section>
 
       <!-- Result Widget -->
@@ -245,24 +180,465 @@
     </main>
   </div>
 
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --text: #1a1a1a;
+      --accent: #2563eb;
+      --muted: #6b7280;
+      --card-bg: #fff;
+      --border: #e5e7eb;
+      --radius: 8px;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      --transition: 0.2s ease;
+      --sidebar-width: 240px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    #fitlife-container {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    #sidebar {
+      width: var(--sidebar-width);
+      background: var(--card-bg);
+      padding: 24px;
+      border-right: 1px solid var(--border);
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      margin-bottom: 24px;
+    }
+
+    .sidebar-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .sidebar-header p {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .nav-menu a,
+    .nav-menu button {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.95rem;
+      border-radius: var(--radius);
+      transition: var(--transition);
+    }
+
+    .nav-menu a svg,
+    .nav-menu button svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--muted);
+    }
+
+    .nav-menu a:hover,
+    .nav-menu button:hover {
+      background: var(--bg);
+      color: var(--accent);
+    }
+
+    .nav-menu a:hover svg,
+    .nav-menu button:hover svg {
+      stroke: var(--accent);
+    }
+
+    .nav-menu a.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .nav-menu a.active svg {
+      stroke: #fff;
+    }
+
+    .nav-menu button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+    }
+
+    main {
+      margin-left: var(--sidebar-width);
+      padding: 24px;
+      flex: 1;
+      width: calc(100% - var(--sidebar-width));
+    }
+
+    #mobile-toggle {
+      display: none;
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px;
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+
+    #mobile-toggle svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .header-left h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+    }
+
+    .header-left .muted {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .header-info {
+      text-align: right;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      background: var(--card-bg);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      transform: translateY(-20px);
+      z-index: 1000;
+    }
+
+    .notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .notification.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .notification.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    section {
+      margin-bottom: 32px;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .meal-grid-form {
+      background: var(--card-bg);
+      padding: 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .meals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+
+    .meal-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .meal-card h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .meal-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .meal-item {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .food-select,
+    .quantity-input {
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+    }
+
+    .quantity-input {
+      width: 80px;
+    }
+
+    .calorie-preview {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .remove-food-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .remove-food-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--muted);
+    }
+
+    .add-food-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin: 8px 0;
+    }
+
+    .add-food-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--accent);
+    }
+
+    .total-calories {
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .error-message {
+      color: #dc3545;
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    .calculate-container {
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .calculate-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .calculate-btn:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .calculate-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .history-table th,
+    .history-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .history-table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+
+    .history-table .no-data {
+      text-align: center;
+      color: var(--muted);
+      padding: 24px;
+    }
+
+    .pagination {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .pagination a {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    .pagination a.current {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .pagination a.disabled {
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+
+    .result-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--card-bg);
+      padding: 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .result-icon svg {
+      width: 40px;
+      height: 40px;
+      stroke: var(--accent);
+    }
+
+    .result-body h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .result-body .value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .result-body .muted {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      #sidebar {
+        position: fixed;
+        transform: translateX(-100%);
+        transition: var(--transition);
+        width: var(--sidebar-width);
+      }
+
+      #sidebar.active {
+        transform: translateX(0);
+      }
+
+      main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      #mobile-toggle {
+        display: block;
+      }
+
+      .meals-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Mobile sidebar toggle
       const mobileToggle = document.getElementById('mobile-toggle'),
-            body = document.body,
-            sidebar = document.getElementById('sidebar');
+        body = document.body,
+        sidebar = document.getElementById('sidebar');
       mobileToggle.addEventListener('click', () => {
-        const opened = body.classList.toggle('sidebar-open');
+        const opened = sidebar.classList.toggle('active');
         mobileToggle.setAttribute('aria-expanded', opened ? 'true' : 'false');
       });
       document.addEventListener('click', e => {
-        if (!body.classList.contains('sidebar-open') || sidebar.contains(e.target) || mobileToggle.contains(e.target)) return;
-        body.classList.remove('sidebar-open');
+        if (!sidebar.classList.contains('active') || sidebar.contains(e.target) || mobileToggle.contains(e.target)) return;
+        sidebar.classList.remove('active');
         mobileToggle.setAttribute('aria-expanded', 'false');
       });
       document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && body.classList.contains('sidebar-open')) {
-          body.classList.remove('sidebar-open');
+        if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+          sidebar.classList.remove('active');
           mobileToggle.setAttribute('aria-expanded', 'false');
         }
       });
@@ -302,8 +678,7 @@
 
       document.querySelectorAll('.quantity-input').forEach(input => {
         input.addEventListener('input', e => {
-          const item = e.target.closest('.meal-item');
-          updateCaloriePreview(item);
+          updateCaloriePreview(e.target.closest('.meal-item'));
         });
       });
 
@@ -316,19 +691,19 @@
           const div = document.createElement('div');
           div.classList.add('meal-item');
           let selectHTML = `<select class="food-select" name="meals[${meal}][${count}][food]" aria-label="Select food for ${meal}">
-            <option value="">Select Food</option>`;
+              <option value="">Select Food</option>`;
           @foreach($foods as $food => $cal)
             selectHTML += `<option value="{{ $food }}" data-calories="{{ $cal }}">{{ $food }} ({{ $cal }} kcal)</option>`;
           @endforeach
           selectHTML += `</select>`;
           div.innerHTML = selectHTML + `
-            <input type="number" class="quantity-input" name="meals[${meal}][${count}][quantity]" placeholder="g/ml" style="display:none;" min="0" step="1" aria-label="Quantity for ${meal} food">
-            <div class="calorie-preview" data-calories="0">0 kcal</div>
-            <button type="button" class="remove-food-btn" aria-label="Remove food item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                <path d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>`;
+              <input type="number" class="quantity-input" name="meals[${meal}][${count}][quantity]" placeholder="g/ml" style="display:none;" min="0" step="1" aria-label="Quantity for ${meal} food">
+              <div class="calorie-preview" data-calories="0">0 kcal</div>
+              <button type="button" class="remove-food-btn" aria-label="Remove food item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <path d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>`;
           container.appendChild(div);
           div.querySelector('.food-select').addEventListener('change', e => {
             const item = e.target.closest('.meal-item');
@@ -357,21 +732,38 @@
         });
       });
 
-      /* ===== Form Submission with Validation ===== */
+      /* ===== Form Submission with Validation and Optimistic UI Update ===== */
       const mealForm = document.getElementById('meal-form');
       const calculateBtn = document.getElementById('calculate-btn');
       mealForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         let valid = true;
         document.querySelectorAll('.error-message').forEach(e => e.remove());
-        document.querySelectorAll('.quantity-input').forEach(input => {
-          if (input.style.display !== 'none' && (!input.value || parseFloat(input.value) <= 0)) {
-            valid = false;
-            const error = document.createElement('div');
-            error.className = 'error-message';
-            error.textContent = 'Quantity must be a positive number';
-            input.parentElement.appendChild(error);
+        const formData = new FormData(mealForm);
+        const mealsData = {};
+        formData.forEach((value, key) => {
+          const matches = key.match(/meals\[(\w+)\]\[(\d+)\]\[(\w+)\]/);
+          if (matches) {
+            const [_, meal, index, field] = matches;
+            if (!mealsData[meal]) mealsData[meal] = [];
+            if (!mealsData[meal][index]) mealsData[meal][index] = {};
+            mealsData[meal][index][field] = value;
           }
+        });
+
+        // Validate inputs
+        Object.keys(mealsData).forEach(meal => {
+          mealsData[meal].forEach((item, index) => {
+            if (item.food && (!item.quantity || parseFloat(item.quantity) <= 0)) {
+              valid = false;
+              const mealCard = document.querySelector(`.meal-card[data-meal-block="${meal}"]`);
+              const mealItem = mealCard.querySelectorAll('.meal-item')[index];
+              const error = document.createElement('div');
+              error.className = 'error-message';
+              error.textContent = 'Quantity must be a positive number';
+              mealItem.appendChild(error);
+            }
+          });
         });
 
         if (!valid) {
@@ -379,67 +771,95 @@
           return;
         }
 
+        // Optimistic UI update: Add meals to history table
+        const historyTbody = document.querySelector('.history-table tbody');
+        const noDataRow = historyTbody.querySelector('.no-data');
+        if (noDataRow) noDataRow.remove();
+        Object.keys(mealsData).forEach(meal => {
+          mealsData[meal].forEach(item => {
+            if (item.food && item.quantity) {
+              const calories = Math.round((foodCalories[item.food] || 0) * parseFloat(item.quantity) / 100);
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                  <td>${new Date().toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+                  <td>${meal}</td>
+                  <td>${item.food}</td>
+                  <td>${item.quantity} g/ml</td>
+                  <td>${calories} kcal</td>
+                `;
+              row.classList.add('optimistic');
+              historyTbody.insertBefore(row, historyTbody.firstChild);
+            }
+          });
+        });
+
         calculateBtn.disabled = true;
         calculateBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M5 12h14" /></svg> Calculating...';
 
         try {
-          const response = await fetch(mealForm.action, {
-            method: 'POST',
-            body: new FormData(mealForm),
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest'
-            }
+          const response = await axios.post(mealForm.action, formData, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
           });
-          const data = await response.json();
-          if (response.ok) {
+          if (response.data.success) {
             showNotification('Meals logged successfully!', 'success');
             const historySection = document.getElementById('history-section');
-            historySection.innerHTML = data.historyHtml;
-            // Re-attach pagination event listeners
+            historySection.innerHTML = response.data.historyHtml;
+            mealForm.reset();
+            document.querySelectorAll('.quantity-input').forEach(input => input.style.display = 'none');
+            document.querySelectorAll('.remove-food-btn').forEach(btn => btn.style.display = 'none');
+            document.querySelectorAll('.calorie-preview').forEach(preview => {
+              preview.textContent = '0 kcal';
+              preview.dataset.calories = '0';
+            });
+            document.querySelectorAll('.total-calories').forEach(total => {
+              total.textContent = 'Total: 0 kcal';
+              total.dataset.totalCalories = '0';
+            });
             attachPaginationListeners();
           } else {
-            showNotification(data.message || 'Error logging meals', 'error');
+            showNotification(response.data.message || 'Error logging meals', 'error');
+            document.querySelectorAll('.optimistic').forEach(row => row.remove());
           }
         } catch (error) {
-          showNotification('Network error, please try again', 'error');
+          showNotification(error.response?.data?.message || 'Network error, please try again', 'error');
+          document.querySelectorAll('.optimistic').forEach(row => row.remove());
         } finally {
           calculateBtn.disabled = false;
           calculateBtn.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-              <path d="M12 2v20M5 12h14" />
-            </svg>
-            Calculate Calories`;
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M12 2v20M5 12h14" />
+              </svg>
+              Calculate Calories`;
         }
       });
 
-      /* ===== Filter Form ===== */
+      /* ===== Filter Form (if exists) ===== */
       const filterForm = document.getElementById('filter-form');
-      filterForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData(filterForm);
-        const url = new URL('{{ route('foods.index') }}');
-        formData.forEach((value, key) => {
-          if (value) url.searchParams.append(key, value);
-        });
-
-        try {
-          const response = await fetch(url, {
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest'
-            }
+      if (filterForm) {
+        filterForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const formData = new FormData(filterForm);
+          const url = new URL('{{ route('foods.index') }}');
+          formData.forEach((value, key) => {
+            if (value) url.searchParams.append(key, value);
           });
-          const html = await response.text();
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-          const newHistorySection = doc.getElementById('history-section');
-          if (newHistorySection) {
-            document.getElementById('history-section').innerHTML = newHistorySection.innerHTML;
-            attachPaginationListeners();
+
+          try {
+            const response = await axios.get(url, {
+              headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(response.data, 'text/html');
+            const newHistorySection = doc.getElementById('history-section');
+            if (newHistorySection) {
+              document.getElementById('history-section').innerHTML = newHistorySection.innerHTML;
+              attachPaginationListeners();
+            }
+          } catch (error) {
+            showNotification('Error filtering meals', 'error');
           }
-        } catch (error) {
-          showNotification('Error filtering meals', 'error');
-        }
-      });
+        });
+      }
 
       /* ===== Notification Function ===== */
       function showNotification(message, type) {
@@ -463,14 +883,11 @@
             const scrollPosition = window.scrollY;
 
             try {
-              const response = await fetch(url, {
-                headers: {
-                  'X-Requested-With': 'XMLHttpRequest'
-                }
+              const response = await axios.get(url, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
               });
-              const html = await response.text();
               const parser = new DOMParser();
-              const doc = parser.parseFromString(html, 'text/html');
+              const doc = parser.parseFromString(response.data, 'text/html');
               const newHistorySection = doc.getElementById('history-section');
               if (newHistorySection) {
                 historySection.innerHTML = newHistorySection.innerHTML;

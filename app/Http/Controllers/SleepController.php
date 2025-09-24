@@ -49,6 +49,6 @@ class SleepController extends Controller
             'duration' => $duration,
         ]);
 
-        return redirect()->back()->with('success', 'Sleep record added successfully!');
+        return redirect()->back()->with('success', ' ');
     }
 }

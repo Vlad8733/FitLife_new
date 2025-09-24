@@ -38,7 +38,7 @@ class GoalController extends Controller
             'current_value' => 0,
         ]);
 
-        return redirect()->route('goals.index')->with('success', 'Goal created!');
+        return redirect()->route('goals.index')->with('success', '');
     }
 
     public function log(Goal $goal)
@@ -69,6 +69,6 @@ class GoalController extends Controller
             session()->flash('goal_completed', true);
         }
 
-        return redirect()->route('goals.index')->with('success', 'Progress updated!');
+        return redirect()->route('goals.index')->with('success', '');
     }
 }

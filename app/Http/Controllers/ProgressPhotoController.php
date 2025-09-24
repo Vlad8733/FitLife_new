@@ -29,7 +29,7 @@ class ProgressPhotoController extends Controller
             'description' => $request->description,
         ]);
 
-        return back()->with('success', 'Photo added successfully.');
+        return back()->with('success', '');
     }
 
     // Update description of a photo
@@ -47,7 +47,7 @@ class ProgressPhotoController extends Controller
             'description' => $request->description,
         ]);
 
-        return back()->with('success', 'Description updated.');
+        return back()->with('success', '');
     }
 
     // Delete a photo
@@ -60,6 +60,6 @@ class ProgressPhotoController extends Controller
         Storage::disk('public')->delete($progress->photo);
         $progress->delete();
 
-        return back()->with('success', 'Photo deleted.');
+        return back()->with('success', '');
     }
 }

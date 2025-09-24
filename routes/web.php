@@ -22,7 +22,6 @@ require __DIR__.'/auth.php';
 
 // Все маршруты, требующие авторизации
 Route::middleware(['auth', 'verified'])->group(function () {
-
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -89,15 +88,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Маршруты для постов
-    Route::prefix('posts')->middleware('auth')->group(function () {
-        Route::get('/', [PostController::class,'index'])->name('posts.index');
-        Route::post('/', [PostController::class,'store'])->name('posts.store');
-        Route::patch('/{post}', [PostController::class,'update'])->name('posts.update');
-        Route::delete('/{post}', [PostController::class,'destroy'])->name('posts.destroy');
-
-        Route::post('/{post}/like', [PostController::class,'like'])->name('posts.like');
-        Route::post('/{post}/dislike', [PostController::class,'dislike'])->name('posts.dislike');
-        Route::post('/{post}/comment', [PostController::class,'comment'])->name('posts.comment');
+    Route::prefix('posts')->group(function () {
+        Route::get('/', [PostController::class, 'index'])->name('posts.index');
+        Route::post('/', [PostController::class, 'store'])->name('posts.store');
+        Route::patch('/{post}', [PostController::class, 'update'])->name('posts.update');
+        Route::delete('/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+        Route::post('/{post}/reaction', [PostController::class, 'toggleReaction'])->name('posts.toggleReaction');
+        Route::post('/{post}/comment', [PostController::class, 'comment'])->name('posts.comment');
+        Route::post('/{post}/view', [PostController::class, 'incrementView'])->name('posts.view');
+        Route::get('/{post}/views', [PostController::class, 'getViews'])->name('posts.views');
     });
-
 });
