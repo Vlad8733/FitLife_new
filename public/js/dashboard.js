@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const container = document.getElementById('fitlife-container');
-    if (!container) return; // работает только на дашборде
+    const container = document.querySelector('main');
+    if (!container) return;
 
     // Animate metric values
-    container.querySelectorAll('.value').forEach(val => {
+    const values = container.querySelectorAll('.metric-card .value');
+    values.forEach(val => {
         const target = parseFloat(val.dataset.target || 0);
         let current = 0;
         const step = target / 50;
@@ -20,16 +21,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Animate progress bars
-    container.querySelectorAll('.progress-bar').forEach(bar => {
+    const progressBars = container.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => {
         const percent = parseInt(bar.dataset.progress || 0, 10);
         const fill = bar.querySelector('.progress-fill');
-        if (fill) fill.style.width = `${percent}%`;
+        if (fill) {
+            fill.style.width = `${percent}%`;
+        }
     });
 
     // Lightbox
     const photos = container.querySelectorAll('.photo-item');
     const lightbox = container.querySelector('#lightbox');
-    if (!lightbox) return;
+    if (!lightbox || !photos.length) return;
 
     const lightboxImg = lightbox.querySelector('#lightbox-img');
     const lightboxDesc = lightbox.querySelector('#lightbox-desc');
@@ -52,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeLightbox = () => {
         lightbox.setAttribute('aria-hidden', 'true');
+        lightboxImg.src = '';
         currentIdx = -1;
     };
 

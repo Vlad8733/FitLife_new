@@ -1,0 +1,284 @@
+:root {
+  --bg: #f8f9fa;
+  --text: #1a1a1a;
+  --accent: #2563eb;
+  --muted: #6b7280;
+  --card-bg: #ffffff;
+  --border: #e5e7eb;
+  --radius: 10px; /* Увеличен радиус для согласованности */
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Более мягкая тень */
+  --transition: 0.3s ease; /* Плавные переходы */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 16px; /* Добавлен базовый размер шрифта */
+}
+
+#fitlife-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+#sidebar {
+  width: 240px;
+  background: var(--card-bg);
+  padding: 24px;
+  border-right: 1px solid var(--border);
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  transition: var(--transition);
+}
+
+.sidebar-header {
+  margin-bottom: 24px;
+}
+
+.sidebar-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.sidebar-header p {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.nav-menu a,
+.nav-menu button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.95rem;
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+
+.nav-menu a svg,
+.nav-menu button svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--muted);
+}
+
+.nav-menu a:hover,
+.nav-menu button:hover {
+  background: var(--bg);
+  color: var(--accent);
+}
+
+.nav-menu a:hover svg,
+.nav-menu button:hover svg {
+  stroke: var(--accent);
+}
+
+.nav-menu a.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.nav-menu a.active svg {
+  stroke: #fff;
+}
+
+.nav-menu button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+main {
+  margin-left: 240px;
+  padding: 32px; /* Увеличен отступ для лучшей читаемости */
+  flex: 1;
+}
+
+#mobile-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 8px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  z-index: 1000; /* Добавлен z-index для наложения */
+}
+
+#mobile-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px; /* Увеличен отступ для визуального пространства */
+}
+
+.header-left h1 {
+  font-size: 2rem; /* Увеличен размер заголовка */
+  font-weight: 700; /* Более выразительный вес */
+}
+
+.header-left p.muted {
+  font-size: 1rem; /* Увеличен размер для читаемости */
+  color: var(--muted);
+}
+
+.header-info {
+  text-align: right;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+h3 {
+  font-size: 1.5rem; /* Увеличен размер заголовков секций */
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.biography-card {
+  background: var(--card-bg);
+  padding: 20px; /* Увеличен отступ */
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow); /* Добавлена тень */
+  margin-bottom: 20px;
+}
+
+.biography-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Увеличен зазор для читаемости */
+  align-items: flex-end;
+}
+
+.form-group {
+  flex: 1;
+  min-width: 220px; /* Увеличен минимальный размер для удобства */
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 6px; /* Увеличен отступ */
+  color: var(--muted);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px; /* Увеличен отступ */
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 12px 20px; /* Увеличен размер кнопки */
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.save-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: #fff;
+}
+
+.save-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px); /* Лёгкий подъём при наведении */
+}
+
+.success-msg {
+  background: #e6ffed;
+  color: #2e7d32;
+  padding: 12px;
+  border-radius: var(--radius);
+  border: 1px solid #a5d6a7; /* Добавлена граница для акцента */
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  box-shadow: var(--shadow); /* Добавлена тень */
+}
+
+@media (max-width: 768px) {
+  #sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+    transition: var(--transition);
+  }
+
+  #sidebar.active {
+    transform: translateX(0);
+  }
+
+  main {
+    margin-left: 0;
+    padding: 16px; /* Уменьшен отступ для мобильных */
+  }
+
+  #mobile-toggle {
+    display: block;
+  }
+
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-info {
+    text-align: left;
+    margin-top: 12px;
+  }
+
+  .biography-card {
+    padding: 16px; /* Уменьшен отступ для мобильных */
+  }
+}
+
+@media (max-width: 480px) {
+  .biography-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-group {
+    min-width: 100%;
+  }
+}

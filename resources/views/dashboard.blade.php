@@ -1,8 +1,7 @@
 @extends('layouts.app')
 
 @section('styles')
-    <!-- Dashboard CSS -->
-    <link href="{{ asset('css/dashboard.css') }}?v=1" rel="stylesheet">
+    <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -53,7 +52,7 @@
             <h3>Progress</h3>
             <div class="gallery-grid">
                 @forelse($photos as $idx => $photo)
-                    <div class="photo-item" role="button" tabindex="0"
+                    <div class="photo-item" role="button" tabindex="0" data-idx="{{ $idx }}"
                          data-img="{{ asset('storage/' . $photo->photo) }}"
                          data-desc="{{ $photo->description ?? '' }}"
                          data-date="{{ $photo->created_at->format('M d, Y') }}">
@@ -92,7 +91,7 @@
         <div id="lightbox" role="dialog" aria-hidden="true">
             <div class="lightbox-content">
                 <button class="lightbox-close" aria-label="Close">×</button>
-                <img id="lightbox-img" src="" alt="">
+                <img id="lightbox-img" src="" alt="Lightbox image">
                 <div class="lightbox-info">
                     <p id="lightbox-desc"></p>
                     <p id="lightbox-date"></p>
@@ -106,6 +105,5 @@
 @endsection
 
 @section('scripts')
-    <!-- Dashboard JS -->
-    <script src="{{ asset('js/dashboard.js') }}?v=1"></script>
+    <script src="{{ asset('js/dashboard.js') }}"></script>
 @endsection

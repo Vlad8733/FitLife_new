@@ -10,29 +10,31 @@
     --transition: 0.3s ease;
 }
 
-#fitlife-container {
-    background: var(--bg);
-    color: var(--text);
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
     font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-    padding: 24px;
 }
 
 /* Header */
-#fitlife-container header h1 {
+header h1 {
     font-size: 1.75rem;
     font-weight: 600;
     margin-bottom: 24px;
 }
 
 /* Stats */
-#fitlife-container .stats-grid {
+.stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 16px;
 }
 
-#fitlife-container .stats-grid div {
+.stats-grid div {
     background: var(--card-bg);
     padding: 16px;
     border-radius: var(--radius);
@@ -40,7 +42,7 @@
     font-size: 0.9rem;
 }
 
-#fitlife-container .stats-grid div span {
+.stats-grid div span {
     display: block;
     color: var(--muted);
     font-size: 0.85rem;
@@ -48,13 +50,13 @@
 }
 
 /* Metrics */
-#fitlife-container .metrics-grid {
+.metrics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 16px;
 }
 
-#fitlife-container .metric-card {
+.metric-card {
     background: var(--card-bg);
     padding: 16px;
     border-radius: var(--radius);
@@ -62,31 +64,31 @@
     text-align: center;
 }
 
-#fitlife-container .metric-card h4 {
+.metric-card h4 {
     font-size: 1rem;
     font-weight: 500;
     margin-bottom: 8px;
 }
 
-#fitlife-container .metric-card .value {
+.metric-card .value {
     font-size: 1.5rem;
     font-weight: 600;
 }
 
-#fitlife-container .metric-card span:last-child {
+.metric-card span:last-child {
     display: block;
     color: var(--muted);
     font-size: 0.85rem;
 }
 
 /* Gallery */
-#fitlife-container .gallery-grid {
+.gallery-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 12px;
 }
 
-#fitlife-container .photo-item {
+.photo-item {
     cursor: pointer;
     border-radius: var(--radius);
     overflow: hidden;
@@ -94,38 +96,38 @@
     transition: var(--transition);
 }
 
-#fitlife-container .photo-item:hover {
+.photo-item:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow);
 }
 
-#fitlife-container .photo-item img {
+.photo-item img {
     width: 100%;
     height: 140px;
     object-fit: cover;
 }
 
 /* Goals */
-#fitlife-container .goals-grid {
+.goals-grid {
     display: grid;
     gap: 12px;
 }
 
-#fitlife-container .goal-item {
+.goal-item {
     background: var(--card-bg);
     padding: 16px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
 }
 
-#fitlife-container .goal-progress {
+.goal-progress {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-top: 8px;
 }
 
-#fitlife-container .progress-bar {
+.progress-bar {
     flex: 1;
     height: 6px;
     background: var(--border);
@@ -133,7 +135,7 @@
     overflow: hidden;
 }
 
-#fitlife-container .progress-fill {
+.progress-fill {
     height: 100%;
     background: var(--accent);
     width: 0;
@@ -141,7 +143,7 @@
 }
 
 /* Lightbox */
-#fitlife-container #lightbox {
+#lightbox {
     display: none;
     position: fixed;
     inset: 0;
@@ -149,13 +151,14 @@
     align-items: center;
     justify-content: center;
     padding: 16px;
+    z-index: 2000;
 }
 
-#fitlife-container #lightbox[aria-hidden="false"] {
+#lightbox[aria-hidden="false"] {
     display: flex;
 }
 
-#fitlife-container .lightbox-content {
+.lightbox-content {
     max-width: 800px;
     width: 100%;
     background: var(--card-bg);
@@ -164,7 +167,7 @@
     position: relative;
 }
 
-#fitlife-container .lightbox-close {
+.lightbox-close {
     position: absolute;
     top: 8px;
     right: 8px;
@@ -175,23 +178,23 @@
     cursor: pointer;
 }
 
-#fitlife-container .lightbox-img {
+.lightbox-img {
     width: 100%;
     max-height: 70vh;
     object-fit: contain;
 }
 
-#fitlife-container .lightbox-info {
+.lightbox-info {
     margin-top: 12px;
     text-align: center;
 }
 
-#fitlife-container .lightbox-info p {
+.lightbox-info p {
     font-size: 0.9rem;
     color: var(--muted);
 }
 
-#fitlife-container .lightbox-nav {
+.lightbox-nav {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -203,21 +206,21 @@
     cursor: pointer;
 }
 
-#fitlife-container .lightbox-nav.prev { left: 8px; }
-#fitlife-container .lightbox-nav.next { right: 8px; }
+.lightbox-nav.prev { left: 8px; }
+.lightbox-nav.next { right: 8px; }
 
 /* Responsive */
 @media (max-width: 480px) {
-    #fitlife-container .stats-grid,
-    #fitlife-container .metrics-grid {
+    .stats-grid,
+    .metrics-grid {
         grid-template-columns: 1fr;
     }
 
-    #fitlife-container .gallery-grid {
+    .gallery-grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     }
 
-    #fitlife-container .photo-item img {
+    .photo-item img {
         height: 120px;
     }
 }

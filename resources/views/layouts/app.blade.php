@@ -7,6 +7,7 @@
     <title>{{ config('app.name', 'FitLife') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    @yield('styles')
 </head>
 <body>
     <div id="fitlife-container">
@@ -181,9 +182,9 @@
         }
 
         main {
-           margin-left: 125px;
-           padding: 24px 24px 24px 0;
-           flex: 1;
+            margin-left: 120px;
+            padding: 24px;
+            flex: 1;
         }
 
         #mobile-toggle {
@@ -246,6 +247,7 @@
                 position: fixed;
                 transform: translateX(-100%);
                 transition: var(--transition);
+                z-index: 1000;
             }
 
             #sidebar.active {
@@ -292,5 +294,6 @@
             }
         });
     </script>
+    @yield('scripts')
 </body>
 </html>
