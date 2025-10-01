@@ -1,21 +1,28 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
+    <!-- Meta tags for encoding and responsive viewport -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page title -->
     <title>FitLife - Login</title>
+    
+    <!-- External font import -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Inline CSS styles with modernized design: updated colors, smoother transitions, and accessibility enhancements -->
     <style>
         :root {
-            --bg: #f8f9fa;
-            --text: #1a1a1a;
-            --accent: #2563eb;
+            --bg: #f9fafb;
+            --text: #111827;
+            --accent: #3b82f6;
             --muted: #6b7280;
             --card-bg: #ffffff;
-            --border: #e5e7eb;
-            --radius: 8px;
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            --transition: 0.2s ease;
+            --border: #d1d5db;
+            --radius: 12px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --transition: 0.3s ease; 
         }
 
         * {
@@ -40,12 +47,14 @@
             justify-content: center;
         }
 
+        /* Login container styles */
         .login-wrapper {
             width: 100%;
             max-width: 420px;
             padding: 1.5rem;
         }
 
+        /* Login card styles with hover effect */
         .login-card {
             background: var(--card-bg);
             padding: 2rem;
@@ -58,19 +67,20 @@
 
         .login-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
         }
 
+        /* Logo styling */
         .login-card .logo {
             width: 80px;
             margin-bottom: 1rem;
             border-radius: var(--radius);
         }
 
+        /* Typography for login card */
         .login-card h2 {
             font-size: 1.5rem;
             font-weight: 600;
-            color: var(--text);
             margin-bottom: 0.5rem;
         }
 
@@ -85,6 +95,7 @@
             font-weight: 600;
         }
 
+        /* Form input labels */
         .login-card label {
             display: block;
             text-align: left;
@@ -93,6 +104,7 @@
             margin: 0.5rem 0 0.25rem;
         }
 
+        /* Input field styles */
         .login-card input[type="email"],
         .login-card input[type="password"] {
             width: 100%;
@@ -108,13 +120,14 @@
         .login-card input:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
 
         .login-card input::placeholder {
             color: var(--muted);
         }
 
+        /* Remember me checkbox styles */
         .remember {
             display: flex;
             align-items: center;
@@ -130,6 +143,7 @@
             color: var(--muted);
         }
 
+        /* Footer with forgot password link and submit button */
         .footer {
             display: flex;
             justify-content: space-between;
@@ -145,10 +159,11 @@
         }
 
         .footer a:hover {
-            color: #1d4ed8;
+            color: #2563eb;
             text-decoration: underline;
         }
 
+        /* Button styles */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -171,10 +186,11 @@
         }
 
         .btn:hover {
-            background: #1d4ed8;
+            background: #2563eb;
             transform: translateY(-1px);
         }
 
+        /* Status message styling */
         .status {
             background: #e6ffed;
             color: #2e7d32;
@@ -184,6 +200,7 @@
             font-size: 0.9rem;
         }
 
+        /* Responsive design for tablets */
         @media (max-width: 768px) {
             .login-wrapper {
                 padding: 1rem;
@@ -198,6 +215,7 @@
             }
         }
 
+        /* Responsive design for mobile */
         @media (max-width: 480px) {
             .login-card {
                 padding: 1rem;
@@ -212,12 +230,14 @@
             }
         }
 
+        /* Accessibility: reduced motion */
         @media (prefers-reduced-motion: reduce) {
             .login-card, .btn {
                 transition: none;
             }
         }
 
+        /* Accessibility: high contrast */
         @media (prefers-contrast: high) {
             .login-card {
                 border: 2px solid var(--text);
@@ -243,16 +263,20 @@
     </style>
 </head>
 <body>
+    <!-- Main login wrapper -->
     <div class="login-wrapper" role="main" aria-label="FitLife Login">
+        <!-- Login card with form -->
         <div class="login-card">
             <img src="{{ asset('storage/logo/logoFitLife.jpg') }}" alt="FitLife Logo" class="logo">
             <h2>Welcome Back</h2>
             <p class="subtitle">Log in to your <span>FitLife account</span></p>
 
+            <!-- Status message display -->
             @if (session('status'))
                 <div class="status">{{ session('status') }}</div>
             @endif
 
+            <!-- Login form -->
             <form method="POST" action="{{ route('login') }}">
                 @csrf
 

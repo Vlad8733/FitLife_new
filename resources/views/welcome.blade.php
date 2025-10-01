@@ -1,440 +1,357 @@
-```php
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
+    <!-- Meta tags for character encoding and viewport responsiveness -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>FitLife Dashboard</title>
+    
+    <!-- Page title -->
+    <title>FitLife - Welcome</title>
+    
+    <!-- External font import -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Inline CSS styles with modernized design: updated color palette for a fresher look, smoother transitions, and subtle gradients -->
     <style>
-        /* Reset */
-        *, *::before, *::after {
-            box-sizing: border-box;
+        :root {
+            --bg: #f9fafb;
+            --text: #111827;
+            --accent: #3b82f6;
+            --muted: #6b7280;
+            --card-bg: #ffffff;
+            --border: #e5e7eb;
+            --radius: 12px; 
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --transition: 0.3s ease;
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         html, body {
             height: 100%;
             width: 100%;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'Arial', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #FFFFFF;
-            color: #000000;
-            line-height: 1.5;
-            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
         }
 
-        :root {
-            --bg: #FFFFFF;
-            --panel: #F5F5F5;
-            --text: #000000;
-            --accent: #007BFF;
-            --border: #E0E0E0;
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            --radius: 8px;
-            --transition: all 0.2s ease;
-            --font-weight-bold: 600;
-            --font-weight-medium: 500;
-            --error: #DC3545;
-            --success: #28A745;
-        }
-
+        /* Header styles for authentication buttons */
         header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: var(--panel);
-            padding: 15px 30px;
+            padding: 24px;
+            text-align: right;
+        }
+
+        .auth-buttons {
             display: flex;
+            gap: 12px;
             justify-content: flex-end;
-            align-items: center;
-            z-index: 1000;
-            border-bottom: 1px solid var(--border);
-            animation: slideInDown 0.5s ease;
         }
 
-        header nav {
-            display: flex;
-            gap: 8px;
+        /* General typography styles */
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 16px;
         }
 
-        header nav a {
-            padding: 8px 12px;
-            background: #E8F0FE;
-            color: var(--text);
-            font-size: 0.9rem;
-            font-weight: var(--font-weight-medium);
+        p {
+            font-size: 0.95rem;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        /* Layout for sections with text and images */
+        .flex-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 24px;
+            margin: 32px 24px;
+            align-items: start;
+        }
+
+        .flex-layout.reverse {
+            grid-template-columns: 350px 1fr;
+        }
+
+        /* Image placeholders with hover effects */
+        .image-placeholder {
+            width: 100%;
+            max-width: 350px;
+            height: 220px;
+            background: linear-gradient(135deg, #e5e7eb, #d1d5db);
             border-radius: var(--radius);
-            text-decoration: none;
-            transition: var(--transition);
-            animation: fadeIn 0.6s ease;
-        }
-
-        header nav a.primary {
-            background: var(--accent);
-            color: #FFFFFF;
-            font-weight: var(--font-weight-bold);
-        }
-
-        header nav a:hover {
-            background: #D1E0FF;
-            color: var(--accent);
-            transform: scale(1.05);
-        }
-
-        header nav a.primary:hover {
-            background: #0056b3;
-        }
-
-        .content-container {
-            max-width: 1200px;
-            margin: 80px auto 40px;
-            padding: 0 15px;
-        }
-
-        .hero {
-            background: var(--panel);
-            border-radius: var(--radius);
-            padding: 2rem;
-            text-align: center;
             border: 1px solid var(--border);
-            margin-bottom: 1.5rem;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .hero:hover {
-            box-shadow: var(--shadow);
-            transform: translateY(-2px);
-        }
-
-        .hero h1 {
-            font-size: 2rem;
-            color: var(--text);
-            font-weight: var(--font-weight-bold);
-            margin-bottom: 0.8rem;
-        }
-
-        .hero p {
-            font-size: 1rem;
-            color: #666666;
-            margin-bottom: 1.2rem;
-        }
-
-        .hero .button {
-            padding: 8px 12px;
-            background: var(--accent);
-            color: #FFFFFF;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 0.9rem;
-            font-weight: var(--font-weight-medium);
-            cursor: pointer;
             transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .text-content {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            min-width: 0;
+        }
+
+        .image-placeholder:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Button styles with hover effects */
+        .button {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            animation: popIn 0.4s ease;
-        }
-
-        .hero .button:hover {
-            background: #0056b3;
-            transform: scale(1.05);
-        }
-
-        .hero .button svg {
-            width: 16px;
-            height: 16px;
-            stroke: #FFFFFF;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .feature-card {
-            background: var(--panel);
+            gap: 12px;
+            padding: 10px 16px;
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
             border-radius: var(--radius);
-            padding: 1.5rem;
-            text-align: center;
-            border: 1px solid var(--border);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
             transition: var(--transition);
-            animation: slideInUp 0.3s ease calc(0.05s * var(--i));
         }
 
-        .feature-card:hover {
-            box-shadow: var(--shadow);
-            transform: translateY(-5px);
+        .button:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
         }
 
-        .feature-card h3 {
-            font-size: 1.1rem;
-            color: var(--text);
-            font-weight: var(--font-weight-bold);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+        .button.primary {
+            background: #ef4444; 
         }
 
-        .feature-card h3 svg {
-            width: 16px;
-            height: 16px;
-            stroke: var(--accent);
+        .button.primary:hover {
+            background: #dc2626;
         }
 
-        .feature-card p {
-            font-size: 0.9rem;
-            color: #666666;
+        .button svg {
+            width: 20px;
+            height: 20px;
+            stroke: #ffffff;
         }
 
+        /* Footer styles */
         footer {
-            background: var(--panel);
-            border-radius: var(--radius);
-            padding: 1.5rem;
+            padding: 24px;
+            background: #111827;
+            color: #ffffff;
             text-align: center;
-            border: 1px solid var(--border);
-            margin-top: 1.5rem;
-            animation: fadeIn 0.5s ease;
+            margin-top: 32px;
         }
 
         footer p {
-            color: #666666;
-            margin-bottom: 0.5rem;
+            color: #9ca3af;
+            margin-bottom: 12px;
         }
 
         footer a {
-            margin: 0 8px;
-            color: var(--accent);
-            font-weight: var(--font-weight-medium);
+            color: #3b82f6;
+            font-weight: 500;
             text-decoration: none;
-            transition: var(--transition);
+            margin: 0 12px;
+            transition: 0.2s ease;
         }
 
         footer a:hover {
-            color: #0056b3;
+            color: #2563eb;
         }
 
+        /* Intro and closing section styles */
+        .intro-section, .closing-section {
+            margin: 32px 0;
+            text-align: left;
+        }
+
+        .intro-section h2, .closing-section h2 {
+            text-align: center;
+        }
+
+        .intro-section p, .closing-section p {
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 100%;
+            padding: 0 24px;
+        }
+
+        /* Media queries for responsiveness */
         @media (max-width: 768px) {
-            .content-container {
-                margin: 70px auto 30px;
-                padding: 0 10px;
-            }
-
-            .hero {
-                padding: 1.5rem;
-            }
-
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-
-            .hero p {
-                font-size: 0.9rem;
-            }
-
-            .features {
+            .flex-layout {
                 grid-template-columns: 1fr;
             }
 
-            header {
-                padding: 10px 15px;
+            .flex-layout.reverse {
+                grid-template-columns: 1fr;
             }
 
-            header nav {
-                gap: 6px;
+            .image-placeholder {
+                margin: 0 auto;
+                max-width: 300px;
+                height: 200px;
+            }
+
+            .intro-section, .closing-section {
+                margin: 24px 0;
+            }
+
+            .intro-section p, .closing-section p {
+                padding: 0 16px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-end;
+            }
+
+            header {
+                padding: 16px;
+            }
+
+            footer {
+                padding: 16px;
+            }
+
+            footer a {
+                margin: 0 8px;
             }
         }
 
         @media (max-width: 480px) {
-            .hero {
-                padding: 1rem;
+            h2 {
+                font-size: 1.25rem;
             }
 
-            .hero h1 {
-                font-size: 1.6rem;
+            p {
+                font-size: 0.85rem;
             }
 
-            .feature-card {
-                padding: 1rem;
+            .button {
+                width: 100%;
+                justify-content: center;
             }
 
-            footer {
-                padding: 1rem;
+            .image-placeholder {
+                max-width: 250px;
+                height: 180px;
             }
         }
 
-        @keyframes slideInDown {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideInUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
+        /* Animation for fade-in effect */
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes popIn {
-            0% {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-            70% {
-                transform: scale(1.05);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after, .hero, .feature-card, .hero .button, header nav a, footer {
-                transition: none;
-                animation: none;
-            }
-        }
-
-        @media (prefers-contrast: high) {
-            .hero, .feature-card, footer, header {
-                border: 2px solid var(--text);
-            }
-
-            header nav a, .hero .button {
-                background: var(--text);
-                color: var(--bg);
-            }
-
-            header nav a.primary {
-                background: var(--accent);
-                color: #FFFFFF;
-            }
-
-            .feature-card h3 svg, .hero .button svg {
-                stroke: var(--bg);
-            }
-
-            .hero h1, .feature-card h3 {
-                color: var(--text);
-            }
-
-            footer a {
-                color: var(--text);
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
+    <!-- Header with authentication buttons -->
+    <header>
+        <div class="auth-buttons">
+            @if(Route::has('login'))
+                @auth
+                    <a href="{{ route('dashboard') }}" class="button primary">Dashboard</a>
+                @else
+                    <a href="{{ route('login') }}" class="button">Log in</a>
+                    @if(Route::has('register'))
+                        <a href="{{ route('register') }}" class="button primary">Sign up</a>
+                    @endif
+                @endauth
+            @endif
+        </div>
+    </header>
 
-<header>
-    @if(Route::has('login'))
-        <nav aria-label="Main navigation">
-            @auth
-                <a href="{{ route('dashboard') }}" class="primary">Dashboard</a>
-            @else
-                <a href="{{ route('login') }}">Log in</a>
-                @if(Route::has('register'))
-                    <a href="{{ route('register') }}" class="primary">Sign up</a>
-                @endif
-            @endauth
-        </nav>
-    @endif
-</header>
-
-<div class="content-container" role="main" aria-label="FitLife Welcome Content">
-    <!-- Hero -->
-    <section class="hero" aria-labelledby="hero-heading">
-        <h1 id="hero-heading">Welcome to FitLife</h1>
-        <p>Track meals, sleep, hydration, and goals. Glow through your fitness journey!</p>
-        @guest
-            <a href="{{ route('register') }}" class="button">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                    <path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/>
-                </svg>
-                Get Started
-            </a>
-        @endguest
+    <!-- Introductory section with welcome text -->
+    <section class="intro-section">
+        <h2 id="intro-heading">Welcome to FitLife</h2>
+        <p>FitLife empowers your fitness journey with a sleek platform. Track nutrition, sleep, hydration, and workouts with ease. Whether you're starting out or a seasoned athlete, we’ve got the tools to elevate your game. Ignite your potential and thrive!</p>
+        <p>Life gets busy, but FitLife keeps you on track. Log your meals, plan workouts, and analyze progress—all in one hub. Our team builds intuitive features with expert input. Join our community and unlock tips on flexibility and recovery!</p>
+        <p>Discover guides on strength training, cardio efficiency, and injury avoidance. Watch tutorials for flawless form on key exercises!</p>
     </section>
 
-    <!-- Features -->
-    <section class="features" aria-labelledby="features-heading">
-        <h2 id="features-heading" style="display: none;">Features</h2>
-        <div class="feature-card">
-            <h3>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                    <path d="M4 21c4-4 6-11 6-17"/><path d="M20 7a4 4 0 11-8 0"/>
-                </svg>
-                Meal Tracker
-            </h3>
-            <p>Log and analyze your meals with AI-powered insights.</p>
+    <!-- Training section with image and text -->
+    <div class="flex-layout reverse" aria-labelledby="training-heading">
+        <img src="{{ asset('storage/WelcomePhoto/training.jpg') }}" alt="Training photo" class="image-placeholder">
+        <div class="text-content">
+            <h2 id="training-heading">Training Mastery</h2>
+            <p>FitLife turns your workouts into a personalized masterpiece. Get plans for muscle gain, fat loss, or endurance. Log every set and let our AI fine-tune your results.</p>
+            <p>Start with beginner routines featuring video guides, or build pro-level programs. Mix strength, cardio, or yoga with our tools. Boost your energy and track growth from basics to advanced lifts!</p>
+            <p>Explore HIIT techniques, optimize rest, and perfect compound lifts. FitLife tracks your milestones and suggests recovery breaks.</p>
         </div>
-        <div class="feature-card">
-            <h3>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
-                </svg>
-                Sleep Monitor
-            </h3>
-            <p>Track your sleep cycles and improve recovery.</p>
-        </div>
-        <div class="feature-card">
-            <h3>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                    <path d="M12 2s4 5 4 8a4 4 0 01-8 0c0-3 4-8 4-8z"/>
-                </svg>
-                Hydration
-            </h3>
-            <p>Stay hydrated by tracking daily water intake.</p>
-        </div>
-        <div class="feature-card">
-            <h3>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                    <path d="M21 3v18H3V3h18z"/><path d="M7 14l3-3 2 2 5-5"/>
-                </svg>
-                Dashboard
-            </h3>
-            <p>Visualize your progress with detailed stats.</p>
-        </div>
-    </section>
-</div>
-
-<footer>
-    <p>Glow through your fitness journey. All rights reserved &copy; {{ date('Y') }}</p>
-    <div>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
     </div>
-</footer>
 
+    <!-- Nutrition section with text and image -->
+    <div class="flex-layout" aria-labelledby="nutrition-heading">
+        <div class="text-content">
+            <h2 id="nutrition-heading">Nutrition Edge</h2>
+            <p>FitLife is your nutrition control center. Track macros, scan foods, and dive into our database. Our AI designs diets for your goals and lifestyle.</p>
+            <p>Enhance performance with proteins for repair, carbs for power, and fats for balance. Try pre-workout oats or post-workout shakes. Swap junk for superfoods with our plans!</p>
+            <p>Master carb cycles, vitamin benefits, and hydration tips. FitLife alerts you to replenish electrolytes after intense sessions.</p>
+        </div>
+        <img src="{{ asset('storage/WelcomePhoto/nutrition.jpg') }}" alt="Nutrition photo" class="image-placeholder">
+    </div>
+
+    <!-- Community section with image and text -->
+    <div class="flex-layout reverse" aria-labelledby="community-heading">
+        <img src="{{ asset('storage/WelcomePhoto/community.jpg') }}" alt="Community photo" class="image-placeholder">
+        <div class="text-content">
+            <h2 id="community-heading">Community Pulse</h2>
+            <p>FitLife is a dynamic community for fitness enthusiasts. Share wins, connect, and inspire each other. Post updates and join challenges to stay fired up.</p>
+            <p>Find workout buddies or recipe swaps! Participate in virtual races, earn rewards, and celebrate every step. Our forums cover marathon prep and group sessions. Join monthly expert Q&As!</p>
+            <p>Display your progress, debate fitness gear, and get advice. We also organize charity runs for good causes.</p>
+        </div>
+    </div>
+
+    <!-- Sleep section with text and image -->
+    <div class="flex-layout" aria-labelledby="sleep-heading">
+        <div class="text-content">
+            <h2 id="sleep-heading">Sleep Boost</h2>
+            <p>FitLife optimizes your sleep for top performance. Track cycles, hours, and quality with our insights. Wake up ready to dominate.</p>
+            <p>7-9 hours fuels recovery and stamina. Get bedtime reminders and relaxation methods like deep breathing. Reduce screen time and perfect your sleep environment!</p>
+            <p>Learn sleep stages, manage caffeine, and use naps effectively. FitLife syncs sleep with your workout schedule.</p>
+        </div>
+        <img src="{{ asset('storage/WelcomePhoto/sleep.jpg') }}" alt="Sleep photo" class="image-placeholder">
+    </div>
+
+    <!-- Closing section with call to action text -->
+    <section class="closing-section">
+        <h2 id="start-heading">Start Your FitLife Adventure</h2>
+        <p>FitLife is your complete fitness ecosystem. Blend tech and expertise for an amazing journey. Monitor everything, refine workouts, nail nutrition, and connect—all here. Join now and evolve!</p>
+        <p>We’re adding smartwatch features, custom plans, and live coaching. Check our blog for trends, safety tips, and mental strength. FitLife is your lifestyle—dive in!</p>
+        <p>Grab our workout guides, join online sessions, and subscribe for daily boosts. Track advanced metrics like VO2 max. FitLife drives every goal—start today!</p>
+    </section>
+
+    <!-- Footer with copyright, contact, and links -->
+    <footer>
+        <p>© {{ date('Y') }} FitLife. All rights reserved.</p>
+        <p>Contact: supportFitLife@gmail.com | Follow us: @FitLifeOfficial</p>
+        <div style="display: inline-block;">
+            <a href="#" style="margin: 0 12px;">Privacy</a>
+            <a href="#" style="margin: 0 12px;">Terms</a>
+            <a href="#" style="margin: 0 12px;">Help</a>
+        </div>
+    </footer>
 </body>
 </html>
-```

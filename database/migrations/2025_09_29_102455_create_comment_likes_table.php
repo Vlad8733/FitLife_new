@@ -10,11 +10,10 @@ class CreateCommentLikesTable extends Migration
     {
         Schema::create('comment_likes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('comment_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('comment_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->enum('type', ['like', 'dislike']);
             $table->timestamps();
-
             $table->unique(['comment_id', 'user_id']);
         });
     }

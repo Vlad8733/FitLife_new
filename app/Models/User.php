@@ -18,7 +18,9 @@ class User extends Authenticatable
         'height',
         'age',
         'activity_level',
-        'goal_type'
+        'goal_type',
+        'avatar',
+        'banner',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -41,9 +43,12 @@ class User extends Authenticatable
         return $this->hasMany(Progress::class);
     }
 
-    // ===== Связь с биографией =====
     public function biography()
     {
         return $this->hasOne(Biography::class);
     }
+    public function posts()
+{
+    return $this->hasMany(Post::class);
+}
 }

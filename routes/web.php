@@ -11,6 +11,7 @@ use App\Http\Controllers\WaterController;
 use App\Http\Controllers\CalorieCalculatorController;
 use App\Http\Controllers\BiographyController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 
 // Главная страница
 Route::get('/', function () {
@@ -18,7 +19,7 @@ Route::get('/', function () {
 });
 
 // Аутентификация
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 // Все маршруты, требующие авторизации
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -33,8 +34,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Профиль
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::get('/{user}', [ProfileController::class, 'show'])->name('profile.show');
         Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        Route::post('/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar.update');
     });
 
     // Трекер еды
@@ -88,14 +91,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Маршруты для постов
-    Route::prefix('posts')->group(function () {
-        Route::get('/', [PostController::class, 'index'])->name('posts.index');
-        Route::post('/', [PostController::class, 'store'])->name('posts.store');
-        Route::patch('/{post}', [PostController::class, 'update'])->name('posts.update');
-        Route::delete('/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
-        Route::post('/{post}/reaction', [PostController::class, 'toggleReaction'])->name('posts.toggleReaction');
-        Route::post('/{post}/comment', [PostController::class, 'comment'])->name('posts.comment');
-        Route::post('/{post}/view', [PostController::class, 'incrementView'])->name('posts.view');
-        Route::get('/{post}/views', [PostController::class, 'getViews'])->name('posts.views');
-    });
+    Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
+    Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+    Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
+    Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+    Route::post('/posts/{post}/reaction', [PostController::class, 'toggleReaction'])->name('posts.toggleReaction');
+    Route::post('/posts/{post}/comment', [PostController::class, 'comment'])->name('posts.comment');
+    Route::post('/posts/{post}/views', [PostController::class, 'incrementView'])->name('posts.views');
+    Route::get('/posts/{post}/views', [PostController::class, 'getViews'])->name('posts.getViews');
+
+    // Маршруты для комментариев
+    Route::put('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
+    Route::post('/comments/{comment}/toggle-reaction', [CommentController::class, 'toggleReaction'])->name('comments.toggle-reaction');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 });

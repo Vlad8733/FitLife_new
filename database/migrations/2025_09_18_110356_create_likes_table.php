@@ -4,22 +4,23 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
-    public function up(): void
+class CreateLikesTable extends Migration
+{
+    public function up()
     {
         Schema::create('likes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('post_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('post_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->enum('type', ['like', 'dislike']);
             $table->timestamps();
 
-            $table->unique(['post_id','user_id']); 
+            $table->unique(['post_id', 'user_id']);
         });
     }
 
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('likes');
     }
-};
+}
