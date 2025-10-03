@@ -310,3 +310,17 @@ header h1 {
         grid-template-columns: 1fr;
     }
 }
+
+.meta .username {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-weight: normal;
+}
+
+.comment-head .username {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-weight: normal;
+    margin-left: 0.5rem;
+}

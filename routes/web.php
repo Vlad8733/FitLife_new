@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\SleepController;
@@ -12,6 +11,8 @@ use App\Http\Controllers\CalorieCalculatorController;
 use App\Http\Controllers\BiographyController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FriendController;
+use Illuminate\Support\Facades\Route;
 
 // Главная страница
 Route::get('/', function () {
@@ -38,6 +39,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
         Route::post('/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar.update');
+    });
+
+    // Друзья
+    Route::prefix('friends')->group(function () {
+        Route::post('/{user}', [FriendController::class, 'store'])->name('friends.store');
+        Route::post('/{user}/accept', [FriendController::class, 'accept'])->name('friends.accept');
+        Route::delete('/{user}', [FriendController::class, 'remove'])->name('friends.remove');
     });
 
     // Трекер еды
@@ -90,7 +98,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/', [BiographyController::class, 'update'])->name('biography.update');
     });
 
-    // Маршруты для постов
+    // Посты
     Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
@@ -100,7 +108,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/posts/{post}/views', [PostController::class, 'incrementView'])->name('posts.views');
     Route::get('/posts/{post}/views', [PostController::class, 'getViews'])->name('posts.getViews');
 
-    // Маршруты для комментариев
+    // Комментарии
     Route::put('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
     Route::post('/comments/{comment}/toggle-reaction', [CommentController::class, 'toggleReaction'])->name('comments.toggle-reaction');
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');

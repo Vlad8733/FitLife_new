@@ -142,6 +142,90 @@ header h1 {
     transition: width 0.5s ease;
 }
 
+/* Friends */
+.friends {
+    margin-top: 2rem;
+    background: var(--card-bg);
+    padding: 24px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+.friends h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 16px;
+}
+
+.friend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: var(--bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    transition: var(--transition);
+}
+
+.friend-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.friend-avatar {
+    width: 48px;
+    height: 48px;
+    margin-right: 16px;
+}
+
+.friend-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border);
+}
+
+.friend-meta {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.friend-meta .name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.friend-meta .name:hover {
+    text-decoration: underline;
+}
+
+.friend-meta .username {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.friend-empty {
+    font-size: 0.95rem;
+    color: var(--muted);
+    text-align: center;
+}
+
+.friend-empty a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.friend-empty a:hover {
+    text-decoration: underline;
+}
+
 /* Lightbox */
 #lightbox {
     display: none;
@@ -222,5 +306,18 @@ header h1 {
 
     .photo-item img {
         height: 120px;
+    }
+
+    .friends {
+        padding: 16px;
+    }
+
+    .friend-item {
+        padding: 10px;
+    }
+
+    .friend-avatar {
+        width: 40px;
+        height: 40px;
     }
 }

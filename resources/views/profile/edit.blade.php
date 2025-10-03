@@ -7,7 +7,7 @@
 @section('content')
 <div id="fitlife-container" role="application" aria-label="FitLife Profile Settings">
     <main id="main-content">
-        <button id="mobile-toggle" aria-controls="sidebar" aria-expanded="false">
+        <button class="mobile-toggle" aria-controls="sidebar" aria-expanded="false">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
@@ -41,7 +41,6 @@
 
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="banner">Banner Image</label>
                             <input type="file" id="banner" name="banner" accept="image/*" style="display: none;">
                             @error('banner')
                                 <p class="error-text">{{ $message }}</p>
@@ -61,6 +60,14 @@
                             <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" required aria-required="true" aria-describedby="name-error">
                             @error('name')
                                 <p id="name-error" class="error-text">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="username">Username *</label>
+                            <input type="text" id="username" name="username" value="{{ old('username', $user->username) }}" required aria-required="true" aria-describedby="username-error">
+                            @error('username')
+                                <p id="username-error" class="error-text">{{ $message }}</p>
                             @enderror
                         </div>
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
+use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
@@ -28,7 +29,19 @@ class ProfileController extends Controller
         // Валидация
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'username' => [
+                'required',
+                'string',
+                'min:3',
+                'max:20',
+                'regex:/^[a-zA-Z0-9_]+$/',
+                Rule::unique('users', 'username')->ignore($user->id),
+            ],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
             'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -38,10 +51,11 @@ class ProfileController extends Controller
             'has_banner' => $request->hasFile('banner'),
             'has_avatar' => $request->hasFile('avatar'),
             'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
         ]);
 
-        $data = $request->only('name', 'email');
+        $data = $request->only('name', 'username', 'email');
 
         // Обработка баннера
         if ($request->hasFile('banner')) {

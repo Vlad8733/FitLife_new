@@ -6,6 +6,8 @@
 
 @section('content')
 <div id="fitlife-container">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <div class="alert-container" style="display: none;"></div>
     <main>
         <!-- Header -->
         <header>
@@ -77,7 +79,7 @@
                             <span>{{ $goal->type }}</span>
                             <div class="goal-progress">
                                 <div class="progress-bar" data-progress="{{ $percent }}">
-                                    <div class="progress-fill"></div>
+                                    <div class="progress-fill" style="width: {{ $percent }}%;"></div>
                                 </div>
                                 <span>{{ round($goal->current_value, 1) }} / {{ $goal->target_value }}</span>
                             </div>
@@ -85,6 +87,25 @@
                     @endforeach
                 </div>
             @endif
+        </section>
+
+        <!-- Friends -->
+        <section class="friends">
+            <h3>Friends</h3>
+            @forelse(Auth::user()->friends as $friend)
+                <div class="friend-item">
+                    <div class="friend-avatar">
+                        <img src="{{ $friend->avatar ? asset('storage/' . $friend->avatar) : asset('storage/logo/defaultPhoto.jpg') }}"
+                             alt="{{ $friend->name }}'s Avatar">
+                    </div>
+                    <div class="friend-meta">
+                        <span class="name">{{ $friend->name }}</span>
+                        <span class="username">{{ '@' . $friend->username }}</span>
+                    </div>
+                </div>
+            @empty
+                <p>No friends yet. Find friends in the <a href="{{ route('posts.index') }}">Community</a>.</p>
+            @endforelse
         </section>
 
         <!-- Lightbox -->
