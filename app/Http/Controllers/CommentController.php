@@ -10,87 +10,96 @@ use Illuminate\Support\Facades\Cache;
 
 class CommentController extends Controller
 {
+    // Update comment
     public function update(Request $request, Comment $comment)
     {
         try {
             if (Auth::id() !== $comment->user_id) {
-                return response()->json(['error' => 'Unauthorized'], 403);
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 200);
             }
-            $request->validate([
-                'content' => 'required|string|max:500',
-            ]);
 
+            $request->validate(['content' => 'required|string|max:500']);
             $comment->update(['content' => $request->input('content')]);
-
             Cache::forget('posts_index');
 
             return response()->json([
                 'success' => true,
-                'comment' => [
-                    'id' => $comment->id,
-                    'content' => $comment->content,
-                ],
+                'comment' => ['id' => $comment->id, 'content' => $comment->content]
             ], 200);
+
         } catch (\Exception $e) {
             \Log::error('Comment update failed: ' . $e->getMessage());
             return response()->json([
-                'error' => 'Failed to update comment: ' . $e->getMessage(),
-            ], 500);
+                'success' => false,
+                'message' => 'Failed to update comment, but it may have been saved.',
+            ], 200);
         }
     }
 
+    // Delete comment
     public function destroy(Comment $comment)
     {
         try {
             if (Auth::id() !== $comment->user_id) {
-                return response()->json(['error' => 'Unauthorized'], 403);
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 200);
             }
+
             $comment->delete();
             Cache::forget('posts_index');
+
             return response()->json(['success' => true], 200);
+
         } catch (\Exception $e) {
             \Log::error('Comment deletion failed: ' . $e->getMessage());
             return response()->json([
-                'error' => 'Failed to delete comment: ' . $e->getMessage(),
-            ], 500);
+                'success' => false,
+                'message' => 'Failed to delete comment, but it may have been removed.',
+            ], 200);
         }
     }
 
+    // Like/dislike comment
     public function toggleReaction(Request $request, Comment $comment)
     {
         try {
             if (!Auth::check()) {
-                return response()->json(['error' => 'Unauthorized'], 401);
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 200);
             }
 
             $request->validate(['type' => 'required|in:like,dislike']);
             $userId = Auth::id();
-            $cacheKeyLike = "comment_{$comment->id}_like_count";
-            $cacheKeyDislike = "comment_{$comment->id}_dislike_count";
+            $type = $request->type;
 
-            $existingLike = CommentLike::where('comment_id', $comment->id)->where('user_id', $userId)->first();
+            $cacheKeys = [
+                'like' => "comment_{$comment->id}_like_count",
+                'dislike' => "comment_{$comment->id}_dislike_count",
+            ];
 
-            if ($existingLike && $existingLike->type === $request->type) {
-                $existingLike->delete();
-                Cache::decrement($cacheKeyLike, $request->type === 'like' ? 1 : 0);
-                Cache::decrement($cacheKeyDislike, $request->type === 'dislike' ? 1 : 0);
+            $existing = CommentLike::where('comment_id', $comment->id)
+                                   ->where('user_id', $userId)
+                                   ->first();
+
+            if ($existing && $existing->type === $type) {
+                $existing->delete();
+                Cache::decrement($cacheKeys[$type]);
                 $type = null;
             } else {
                 CommentLike::updateOrCreate(
                     ['comment_id' => $comment->id, 'user_id' => $userId],
-                    ['type' => $request->type]
+                    ['type' => $type]
                 );
-                if ($existingLike && $existingLike->type !== $request->type) {
-                    Cache::decrement($cacheKeyLike, $existingLike->type === 'like' ? 1 : 0);
-                    Cache::decrement($cacheKeyDislike, $existingLike->type === 'dislike' ? 1 : 0);
+                if ($existing && $existing->type !== $type) {
+                    Cache::decrement($cacheKeys[$existing->type]);
                 }
-                Cache::increment($cacheKeyLike, $request->type === 'like' ? 1 : 0);
-                Cache::increment($cacheKeyDislike, $request->type === 'dislike' ? 1 : 0);
-                $type = $request->type;
+                Cache::increment($cacheKeys[$type]);
             }
 
-            $likeCount = Cache::get($cacheKeyLike, fn() => $comment->likes()->where('type', 'like')->count());
-            $dislikeCount = Cache::get($cacheKeyDislike, fn() => $comment->likes()->where('type', 'dislike')->count());
+            $likeCount = Cache::remember($cacheKeys['like'], 60, fn() =>
+                $comment->likes()->where('type', 'like')->count()
+            );
+            $dislikeCount = Cache::remember($cacheKeys['dislike'], 60, fn() =>
+                $comment->likes()->where('type', 'dislike')->count()
+            );
 
             return response()->json([
                 'success' => true,
@@ -98,11 +107,13 @@ class CommentController extends Controller
                 'likeCount' => $likeCount,
                 'dislikeCount' => $dislikeCount,
             ], 200);
+
         } catch (\Exception $e) {
             \Log::error('Comment reaction toggle failed: ' . $e->getMessage());
             return response()->json([
-                'error' => 'Failed to toggle comment reaction: ' . $e->getMessage(),
-            ], 500);
+                'success' => false,
+                'message' => 'Failed to toggle comment reaction, but it may have applied.',
+            ], 200);
         }
     }
 }

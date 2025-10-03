@@ -1,3 +1,4 @@
+/* ========== ROOT VARIABLES ========== */
 :root {
     --bg: #f9fafb;
     --text: #111827;
@@ -12,12 +13,14 @@
     --danger: #ef4444;
 }
 
+/* ========== GLOBAL RESET ========== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* ========== HEADER ========== */
 header {
     display: flex;
     justify-content: space-between;
@@ -30,6 +33,7 @@ header h1 {
     font-weight: 600;
 }
 
+/* ========== ALERTS ========== */
 .alert-container {
     margin-bottom: 16px;
 }
@@ -51,6 +55,7 @@ header h1 {
     color: #fff;
 }
 
+/* ========== CREATE POST FORM ========== */
 .create-post {
     background: var(--card-bg);
     padding: 16px;
@@ -108,6 +113,7 @@ header h1 {
     background: #2563eb;
 }
 
+/* ========== IMAGE PREVIEW ========== */
 .preview-container {
     position: relative;
 }
@@ -142,6 +148,7 @@ header h1 {
     display: none;
 }
 
+/* ========== POSTS FEED ========== */
 .posts-feed {
     display: grid;
     gap: 16px;
@@ -154,6 +161,7 @@ header h1 {
     border: 1px solid var(--border);
 }
 
+/* ========== POST HEADER ========== */
 .post-top {
     display: flex;
     align-items: center;
@@ -189,10 +197,12 @@ header h1 {
     color: var(--muted);
 }
 
+/* ========== POST BODY ========== */
 .post-body p {
     margin-bottom: 12px;
 }
 
+/* ========== POST ACTIONS ========== */
 .post-actions {
     display: flex;
     gap: 12px;
@@ -231,6 +241,7 @@ header h1 {
     font-size: 0.9rem;
 }
 
+/* ========== EDIT/DELETE BUTTONS ========== */
 .edit-post-btn,
 .edit-comment-btn {
     color: var(--accent);
@@ -240,6 +251,7 @@ header h1 {
     color: var(--danger);
 }
 
+/* ========== COMMENTS ========== */
 .comments {
     margin-top: 12px;
 }
@@ -300,6 +312,7 @@ header h1 {
     background: var(--muted);
 }
 
+/* ========== RESPONSIVE MOBILE ========== */
 @media (max-width: 768px) {
     header {
         flex-direction: column;
@@ -311,6 +324,7 @@ header h1 {
     }
 }
 
+/* ========== META USERNAMES ========== */
 .meta .username {
     display: block;
     font-size: 0.8rem;

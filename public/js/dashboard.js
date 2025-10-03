@@ -1,3 +1,4 @@
+// DOMContentLoaded event
 document.addEventListener('DOMContentLoaded', () => {
     const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content;
     const alertContainer = document.querySelector('.alert-container');
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const target = parseFloat(value.getAttribute('data-target'));
             let current = 0;
             const increment = target / 50;
+
             const update = () => {
                 current += increment;
                 if (current >= target) {
@@ -23,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 value.textContent = current.toFixed(target % 1 === 0 ? 0 : 1);
                 requestAnimationFrame(update);
             };
+
             requestAnimationFrame(update);
         });
     };
@@ -34,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const fill = bar.querySelector('.progress-fill');
             let current = 0;
             const increment = percent / 50;
+
             const update = () => {
                 current += increment;
                 if (current >= percent) {
@@ -43,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fill.style.width = `${current}%`;
                 requestAnimationFrame(update);
             };
+
             requestAnimationFrame(update);
         });
     };
@@ -115,11 +120,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn('Alert container not found');
             return;
         }
+
         const alert = document.createElement('div');
         alert.className = `alert alert--${type}`;
         alert.textContent = message;
         alertContainer.appendChild(alert);
         alertContainer.style.display = 'block';
+
         setTimeout(() => {
             if (alert.parentNode) {
                 alert.parentNode.removeChild(alert);

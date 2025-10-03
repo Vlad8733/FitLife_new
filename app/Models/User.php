@@ -10,13 +10,28 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    // Mass assignable attributes
     protected $fillable = [
-        'name', 'username', 'email', 'password', 'avatar', 'banner',
-        'weight', 'height', 'age', 'activity_level', 'goal_type',
+        'name',
+        'username',
+        'email',
+        'password',
+        'avatar',
+        'banner',
+        'weight',
+        'height',
+        'age',
+        'activity_level',
+        'goal_type',
     ];
 
-    protected $hidden = ['password', 'remember_token'];
+    // Hidden attributes for serialization
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
+    // Attribute casting
     protected function casts(): array
     {
         return [
@@ -24,6 +39,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Relations
 
     public function biography()
     {
@@ -73,22 +90,27 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
-    public function isFriendWith(User $user)
+    // Check if the user is friends with another user
+    public function isFriendWith(User $user): bool
     {
         return $this->friends()->where('friend_id', $user->id)->exists();
     }
 
-    public function hasPendingRequestTo(User $user)
+    // Check if a pending friend request has been sent to another user
+    public function hasPendingRequestTo(User $user): bool
     {
-        return $this->sentFriendRequests()->where('friend_id', $user->id)
-                                          ->where('status', 'pending')
-                                          ->exists();
+        return $this->sentFriendRequests()
+                    ->where('friend_id', $user->id)
+                    ->where('status', 'pending')
+                    ->exists();
     }
 
-    public function hasPendingRequestFrom(User $user)
+    // Check if a pending friend request has been received from another user
+    public function hasPendingRequestFrom(User $user): bool
     {
-        return $this->receivedFriendRequests()->where('user_id', $user->id)
-                                             ->where('status', 'pending')
-                                             ->exists();
+        return $this->receivedFriendRequests()
+                    ->where('user_id', $user->id)
+                    ->where('status', 'pending')
+                    ->exists();
     }
 }

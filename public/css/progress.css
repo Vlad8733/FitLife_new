@@ -1,3 +1,4 @@
+/* ========== ROOT VARIABLES ========== */
 :root {
   --bg: #f8f9fa;
   --text: #1a1a1a;
@@ -5,11 +6,14 @@
   --muted: #6b7280;
   --card-bg: #ffffff;
   --border: #e5e7eb;
-  --radius: 10px; /* Увеличен радиус для более мягкого вида */
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Более мягкая тень */
-  --transition: 0.3s ease; /* Плавные переходы */
+  --radius: 10px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transition: 0.3s ease;
+  --success: #22c55e;
+  --danger: #dc2626;
 }
 
+/* ========== RESET / GLOBAL STYLES ========== */
 * {
   margin: 0;
   padding: 0;
@@ -21,14 +25,16 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
-  font-size: 16px; /* Добавлен базовый размер шрифта */
+  font-size: 16px;
 }
 
+/* ========== LAYOUT CONTAINER ========== */
 #fitlife-container {
   display: flex;
   min-height: 100vh;
 }
 
+/* ========== SIDEBAR ========== */
 #sidebar {
   width: 240px;
   background: var(--card-bg);
@@ -60,11 +66,11 @@ body {
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  color: var(--text);
-  text-decoration: none;
   font-size: 0.95rem;
   border-radius: var(--radius);
   transition: var(--transition);
+  color: var(--text);
+  text-decoration: none;
 }
 
 .nav-menu a svg,
@@ -102,12 +108,14 @@ body {
   text-align: left;
 }
 
+/* ========== MAIN CONTENT ========== */
 main {
   margin-left: 240px;
-  padding: 32px; /* Увеличен отступ для лучшей читаемости */
+  padding: 32px;
   flex: 1;
 }
 
+/* ========== MOBILE TOGGLE ========== */
 #mobile-toggle {
   display: none;
   position: fixed;
@@ -119,7 +127,7 @@ main {
   padding: 8px;
   border-radius: var(--radius);
   cursor: pointer;
-  z-index: 1000; /* Добавлен z-index для наложения */
+  z-index: 1000;
 }
 
 #mobile-toggle svg {
@@ -127,20 +135,21 @@ main {
   height: 20px;
 }
 
+/* ========== HEADER ========== */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px; /* Увеличен отступ для визуального пространства */
+  margin-bottom: 32px;
 }
 
 .header-left h1 {
-  font-size: 2rem; /* Увеличен размер заголовка */
-  font-weight: 700; /* Более выразительный вес */
+  font-size: 2rem;
+  font-weight: 700;
 }
 
 .header-left p.muted {
-  font-size: 1rem; /* Увеличен размер для читаемости */
+  font-size: 1rem;
   color: var(--muted);
 }
 
@@ -150,43 +159,45 @@ header {
   color: var(--muted);
 }
 
+/* ========== SECTION TITLES ========== */
 h3 {
-  font-size: 1.5rem; /* Увеличен размер заголовков секций */
+  font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 20px;
 }
 
+/* ========== PHOTO CARD ========== */
 .photo-card {
   background: var(--card-bg);
-  padding: 20px; /* Увеличен отступ */
+  padding: 20px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow); /* Добавлена тень */
+  box-shadow: var(--shadow);
   margin-bottom: 20px;
 }
 
 .photo-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px; /* Увеличен зазор для читаемости */
+  gap: 20px;
   align-items: flex-end;
 }
 
 .form-group {
   flex: 1;
-  min-width: 220px; /* Увеличен минимальный размер для удобства */
+  min-width: 220px;
 }
 
 .form-group label {
   display: block;
   font-size: 0.95rem;
-  margin-bottom: 6px; /* Увеличен отступ */
+  margin-bottom: 6px;
   color: var(--muted);
 }
 
 .form-group input {
   width: 100%;
-  padding: 10px; /* Увеличен отступ */
+  padding: 10px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   font-size: 0.95rem;
@@ -199,48 +210,54 @@ h3 {
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
+/* ========== BUTTONS ========== */
 .calculate-btn,
 .update-btn,
 .delete-btn {
-  background: var(--accent);
-  color: #fff;
   border: none;
-  padding: 10px 16px;
   border-radius: var(--radius);
   font-size: 0.95rem;
   cursor: pointer;
   transition: var(--transition);
+  color: #fff;
+  padding: 10px 16px;
+}
+
+.calculate-btn,
+.update-btn {
+  background: var(--accent);
 }
 
 .calculate-btn:hover,
 .update-btn:hover {
   background: #1d4ed8;
-  transform: translateY(-1px); /* Лёгкий подъём при наведении */
+  transform: translateY(-1px);
 }
 
 .delete-btn {
-  background: #dc2626;
+  background: var(--danger);
 }
 
 .delete-btn:hover {
   background: #b91c1c;
-  transform: translateY(-1px); /* Лёгкий подъём при наведении */
+  transform: translateY(-1px);
 }
 
+/* ========== GALLERY GRID ========== */
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Увеличена минимальная ширина для больших блоков */
-  gap: 16px; /* Увеличен зазор */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
 }
 
 .photo-item {
   border-radius: var(--radius);
   overflow: hidden;
   border: 1px solid var(--border);
-  box-shadow: var(--shadow); /* Добавлена тень */
+  box-shadow: var(--shadow);
   transition: var(--transition);
   display: flex;
-  flex-direction: column; /* Вертикальная компоновка */
+  flex-direction: column;
 }
 
 .photo-item:hover {
@@ -249,37 +266,37 @@ h3 {
 
 .photo-img {
   width: 100%;
-  height: 200px; /* Увеличена высота изображения */
+  height: 200px;
   object-fit: cover;
   cursor: pointer;
 }
 
 .photo-description,
 .photo-date {
-  padding: 10px; /* Увеличен отступ */
-  font-size: 0.9rem; /* Увеличен шрифт */
+  padding: 10px;
+  font-size: 0.9rem;
   color: var(--muted);
 }
 
 .photo-description {
   font-weight: 500;
-  word-break: break-word; /* Перенос длинных слов */
-  margin-bottom: 8px; /* Добавлен отступ для разделения */
+  word-break: break-word;
+  margin-bottom: 8px;
 }
 
 .photo-date {
-  margin-bottom: 12px; /* Добавлен отступ для разделения */
+  margin-bottom: 12px;
 }
 
 .photo-item .photo-form {
-  padding: 0 10px 10px; /* Отступы для формы */
+  padding: 0 10px 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
 .photo-item .form-group {
-  min-width: 100%; /* Форма на всю ширину блока */
+  min-width: 100%;
 }
 
 .photo-item .form-group input {
@@ -288,10 +305,11 @@ h3 {
 
 .photo-item .update-btn,
 .photo-item .delete-btn {
-  width: 100%; /* Кнопки на всю ширину */
+  width: 100%;
   text-align: center;
 }
 
+/* ========== NO DATA MESSAGE ========== */
 .no-data {
   padding: 20px;
   text-align: center;
@@ -299,6 +317,7 @@ h3 {
   font-size: 0.95rem;
 }
 
+/* ========== LIGHTBOX ========== */
 #lightbox {
   display: none;
   position: fixed;
@@ -320,7 +339,7 @@ h3 {
   border-radius: var(--radius);
   padding: 16px;
   position: relative;
-  box-shadow: var(--shadow); /* Добавлена тень */
+  box-shadow: var(--shadow);
 }
 
 .lightbox-close {
@@ -370,11 +389,10 @@ h3 {
   right: 8px;
 }
 
+/* ========== MEDIA QUERIES ========== */
 @media (max-width: 768px) {
   #sidebar {
-    position: fixed;
     transform: translateX(-100%);
-    transition: var(--transition);
   }
 
   #sidebar.active {
@@ -383,7 +401,7 @@ h3 {
 
   main {
     margin-left: 0;
-    padding: 16px; /* Уменьшен отступ для мобильных */
+    padding: 16px;
   }
 
   #mobile-toggle {
@@ -401,11 +419,11 @@ h3 {
   }
 
   .gallery-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Уменьшена ширина для мобильных */
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   }
 
   .photo-img {
-    height: 160px; /* Уменьшена высота для мобильных */
+    height: 160px;
   }
 }
 
@@ -420,7 +438,7 @@ h3 {
   }
 
   .gallery-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Еще меньше для маленьких экранов */
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   }
 
   .photo-img {

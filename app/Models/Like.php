@@ -9,13 +9,20 @@ class Like extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['post_id', 'user_id', 'type'];
+    // Mass assignable attributes
+    protected $fillable = [
+        'post_id',
+        'user_id',
+        'type',
+    ];
 
+    // Relation: Like belongs to a Post
     public function post()
     {
         return $this->belongsTo(Post::class);
     }
 
+    // Relation: Like belongs to a User
     public function user()
     {
         return $this->belongsTo(User::class);

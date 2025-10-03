@@ -1,3 +1,4 @@
+/* ========== ROOT VARIABLES ========== */
 :root {
     --bg: #f8f9fa;
     --text: #1a1a1a;
@@ -12,6 +13,7 @@
     --success: #22c55e;
 }
 
+/* ========== PROFILE CARD ========== */
 .profile-card {
     background: var(--card-bg);
     padding: 24px;
@@ -23,6 +25,7 @@
     overflow: visible;
 }
 
+/* ========== BANNER SECTION ========== */
 .banner-section {
     width: calc(100% + 48px);
     height: 180px;
@@ -53,6 +56,7 @@
     background: linear-gradient(transparent, var(--card-bg));
 }
 
+/* ========== AVATAR SECTION ========== */
 .avatar-section {
     display: flex;
     justify-content: center;
@@ -78,6 +82,7 @@
     transform: translateY(0);
 }
 
+/* ========== BIO DETAILS ========== */
 .bio-details {
     margin-top: 64px;
     padding: 0 16px;
@@ -95,6 +100,7 @@
     font-weight: 600;
 }
 
+/* ========== HEADER ========== */
 .header {
     margin-bottom: 24px;
     text-align: center;
@@ -112,6 +118,7 @@
     font-weight: 500;
 }
 
+/* ========== FRIEND ACTIONS ========== */
 .friend-actions {
     margin-top: 16px;
     display: flex;
@@ -181,6 +188,7 @@
     box-shadow: var(--shadow);
 }
 
+/* ========== POSTS FEED ========== */
 .posts-feed {
     display: flex;
     flex-direction: column;
@@ -290,6 +298,7 @@
     font-weight: 500;
 }
 
+/* ========== COMMENTS ========== */
 .comments {
     margin-top: 12px;
     padding-top: 12px;
@@ -321,6 +330,7 @@
     text-decoration: underline;
 }
 
+/* ========== COMMENT FORM ========== */
 .comment-form {
     display: flex;
     gap: 8px;
@@ -365,6 +375,7 @@
     display: inline;
 }
 
+/* ========== ALERTS ========== */
 .alert-container {
     position: fixed;
     top: 80px;
@@ -397,99 +408,28 @@
     border: 1px solid #ef4444;
 }
 
+/* ========== MEDIA QUERIES ========== */
 @media (max-width: 768px) {
-    .profile-card {
-        padding: 16px;
-    }
-
-    .banner-section {
-        height: 140px;
-        margin: -16px -16px 0 -16px;
-    }
-
-    .banner-section .avatar-section {
-        top: 100px;
-    }
-
-    .avatar-section__image {
-        width: 80px;
-        height: 80px;
-    }
-
-    .bio-details {
-        margin-top: 48px;
-        padding: 0 12px;
-    }
-
-    .friend-actions {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 8px;
-    }
-
-    .friend-btn {
-        width: 100%;
-        justify-content: center;
-        padding: 12px;
-    }
-
-    .friend-status {
-        width: 100%;
-        text-align: center;
-        padding: 10px;
-    }
-
-    .post-actions {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-
-    .comment-form {
-        flex-direction: column;
-    }
-
-    .comment-form__textarea {
-        min-height: 60px;
-    }
-
-    .alert-container {
-        top: 120px;
-        right: 16px;
-        left: 16px;
-        max-width: none;
-    }
+    .profile-card { padding: 16px; }
+    .banner-section { height: 140px; margin: -16px -16px 0 -16px; }
+    .banner-section .avatar-section { top: 100px; }
+    .avatar-section__image { width: 80px; height: 80px; }
+    .bio-details { margin-top: 48px; padding: 0 12px; }
+    .friend-actions { flex-direction: column; align-items: stretch; padding: 8px; }
+    .friend-btn { width: 100%; justify-content: center; padding: 12px; }
+    .friend-status { width: 100%; text-align: center; padding: 10px; }
+    .post-actions { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .comment-form { flex-direction: column; }
+    .comment-form__textarea { min-height: 60px; }
+    .alert-container { top: 120px; right: 16px; left: 16px; max-width: none; }
 }
 
 @media (max-width: 480px) {
-    .header__title {
-        font-size: 1.5rem;
-    }
-
-    .header__username {
-        font-size: 0.9rem;
-    }
-
-    .avatar-section__image {
-        width: 60px;
-        height: 60px;
-    }
-
-    .banner-section .avatar-section {
-        top: 90px;
-    }
-
-    .bio-details {
-        margin-top: 40px;
-    }
-
-    .post-meta__username {
-        font-size: 0.8rem;
-    }
-
-    .comment__head {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-    }
+    .header__title { font-size: 1.5rem; }
+    .header__username { font-size: 0.9rem; }
+    .avatar-section__image { width: 60px; height: 60px; }
+    .banner-section .avatar-section { top: 90px; }
+    .bio-details { margin-top: 40px; }
+    .post-meta__username { font-size: 0.8rem; }
+    .comment__head { flex-direction: column; align-items: flex-start; gap: 4px; }
 }

@@ -9,8 +9,14 @@ class Progress extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'photo', 'description'];
+    // Mass assignable attributes
+    protected $fillable = [
+        'user_id',
+        'photo',        // path to the progress photo
+        'description',  // optional description
+    ];
 
+    // Relation: Progress photo belongs to a User
     public function user()
     {
         return $this->belongsTo(User::class);

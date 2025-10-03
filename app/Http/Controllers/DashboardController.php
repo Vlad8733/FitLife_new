@@ -3,107 +3,65 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\MealLog;
-use App\Models\Sleep;
-use App\Models\Progress;
-use App\Models\Goal;
-use App\Models\WaterLog;
+use App\Models\{MealLog, Sleep, Progress, Goal, WaterLog};
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
+     // Show the main dashboard with user stats and logs
     public function index()
     {
         $user = Auth::user();
 
-        // Подгружаем биографию
-        $biography = $user->biography;
-
-        // Прогресс-фотки
-        $photos = Progress::where('user_id', $user->id)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-
-        // История еды с пагинацией по 10
-        $mealLogs = MealLog::where('user_id', $user->id)
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(10, ['*'], 'meals');
-
-        // История сна с пагинацией по 10
-        $sleepLogs = Sleep::where('user_id', $user->id)
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(10, ['*'], 'sleep');
-
-        // История воды с пагинацией по 10
-        $waterLogs = WaterLog::where('user_id', $user->id)
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(10, ['*'], 'water');
-
-        // Цели пользователя
-        $goals = Goal::where('user_id', $user->id)->get();
-
-        // KPI-блоки
-        $totalCalories = MealLog::where('user_id', $user->id)->sum('calories');
-        $totalSleep = Sleep::where('user_id', $user->id)->sum('duration');
-        $totalWater = WaterLog::where('user_id', $user->id)->sum('amount');
-
-        return view('dashboard', compact(
-            'user',
-            'biography',
-            'photos',
-            'mealLogs',
-            'sleepLogs',
-            'waterLogs',
-            'goals',
-            'totalCalories',
-            'totalSleep',
-            'totalWater'
-        ));
+        return view('dashboard', [
+            'user'          => $user,
+            'biography'     => $user->biography,
+            'photos'        => Progress::where('user_id', $user->id)->latest()->get(),
+            'mealLogs'      => $this->getPaginatedLogs(MealLog::class, $user->id, 'meals'),
+            'sleepLogs'     => $this->getPaginatedLogs(Sleep::class, $user->id, 'sleep'),
+            'waterLogs'     => $this->getPaginatedLogs(WaterLog::class, $user->id, 'water'),
+            'goals'         => Goal::where('user_id', $user->id)->get(),
+            'totalCalories' => MealLog::where('user_id', $user->id)->sum('calories'),
+            'totalSleep'    => Sleep::where('user_id', $user->id)->sum('duration'),
+            'totalWater'    => WaterLog::where('user_id', $user->id)->sum('amount'),
+        ]);
     }
 
-
-    // AJAX подгрузка Meal History
+     // AJAX: Load paginated meal logs
     public function mealLogsAjax(Request $request)
     {
-        $userId = Auth::id();
-        $mealLogs = MealLog::where('user_id', $userId)
-                            ->orderBy('created_at', 'desc')
-                            ->paginate(10, ['*'], 'meals');
-
-        if($request->ajax()) {
-            return view('profile.partials.meal_table', compact('mealLogs'))->render();
-        }
-
-        return redirect()->route('dashboard');
+        return $this->ajaxLogResponse($request, MealLog::class, 'profile.partials.meal_table', 'meals');
     }
 
-    // AJAX подгрузка Sleep History
+     // AJAX: Load paginated sleep logs
     public function sleepLogsAjax(Request $request)
     {
-        $userId = Auth::id();
-        $sleepLogs = Sleep::where('user_id', $userId)
-                            ->orderBy('created_at', 'desc')
-                            ->paginate(10, ['*'], 'sleep');
+        return $this->ajaxLogResponse($request, Sleep::class, 'profile.partials.sleep_table', 'sleep');
+    }
 
-        if($request->ajax()) {
-            return view('profile.partials.sleep_table', compact('sleepLogs'))->render();
+     // AJAX: Load paginated water logs
+    public function waterLogsAjax(Request $request)
+    {
+        return $this->ajaxLogResponse($request, WaterLog::class, 'profile.partials.water_table', 'water');
+    }
+
+     // Generic method for AJAX log rendering
+    private function ajaxLogResponse(Request $request, string $model, string $view, string $pageName)
+    {
+        $logs = $this->getPaginatedLogs($model, Auth::id(), $pageName);
+
+        if ($request->ajax()) {
+            return view($view, [$pageName . 'Logs' => $logs])->render();
         }
 
         return redirect()->route('dashboard');
     }
 
-    // AJAX подгрузка Water History
-    public function waterLogsAjax(Request $request)
+     // Get paginated logs for a specific model
+    private function getPaginatedLogs(string $model, int $userId, string $pageName)
     {
-        $userId = Auth::id();
-        $waterLogs = WaterLog::where('user_id', $userId)
-                            ->orderBy('created_at', 'desc')
-                            ->paginate(10, ['*'], 'water');
-
-        if($request->ajax()) {
-            return view('profile.partials.water_table', compact('waterLogs'))->render();
-        }
-
-        return redirect()->route('dashboard');
+        return $model::where('user_id', $userId)
+            ->latest()
+            ->paginate(10, ['*'], $pageName);
     }
 }

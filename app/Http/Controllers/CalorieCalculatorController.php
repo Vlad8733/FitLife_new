@@ -8,63 +8,65 @@ use App\Models\MealLog;
 
 class CalorieCalculatorController extends Controller
 {
+     // Show today's calorie summary for the authenticated user
     public function index()
     {
         $user = Auth::user();
-        $todayCalories = MealLog::where('user_id', $user->id)
-                            ->whereDate('created_at', now())
-                            ->sum('calories');
+        $todayCalories = $this->getTodayCalories($user->id);
 
         return view('calories.index', compact('user', 'todayCalories'));
     }
 
+     // Calculate daily calorie needs and macronutrients
     public function calculate(Request $request)
     {
-        $request->validate([
-            'weight' => 'required|numeric|min:30|max:300',
-            'height' => 'required|numeric|min:100|max:250',
-            'age' => 'required|numeric|min:10|max:100',
+        // Validate input
+        $data = $request->validate([
+            'weight'         => 'required|numeric|min:30|max:300',
+            'height'         => 'required|numeric|min:100|max:250',
+            'age'            => 'required|numeric|min:10|max:100',
             'activity_level' => 'required|in:sedentary,light,moderate,active',
-            'goal_type' => 'required|in:lose_weight,maintain,gain_weight'
+            'goal_type'      => 'required|in:lose_weight,maintain,gain_weight'
         ]);
 
-        $weight = $request->weight;
-        $height = $request->height;
-        $age = $request->age;
-        $activity = $request->activity_level;
-        $goal = $request->goal_type;
+        // Calculate BMR (Mifflin-St Jeor, male)
+        $bmr = 10 * $data['weight'] + 6.25 * $data['height'] - 5 * $data['age'] + 5;
 
-        // BMR расчет по формуле Mifflin-St Jeor (мужчины)
-        $bmr = 10*$weight + 6.25*$height - 5*$age + 5;
-
-        // Activity factor
-        $activityFactor = match($activity) {
+        // Adjust for activity
+        $activityFactor = match($data['activity_level']) {
             'sedentary' => 1.2,
-            'light' => 1.375,
-            'moderate' => 1.55,
-            'active' => 1.725,
-            default => 1.2
+            'light'     => 1.375,
+            'moderate'  => 1.55,
+            'active'    => 1.725,
         };
 
         $tdee = $bmr * $activityFactor;
 
-        // Коррекция на цель
-        $calories = match($goal) {
+        // Adjust for goal
+        $calories = match($data['goal_type']) {
             'lose_weight' => $tdee - 500,
             'gain_weight' => $tdee + 500,
-            default => $tdee
+            default       => $tdee
         };
 
-        // Макроэлементы (проценты)
-        $protein = round($weight * 1.8); // граммы
-        $fat = round(($calories * 0.25) / 9); // 25% калорий из жиров
-        $carbs = round(($calories - ($protein*4 + $fat*9))/4);
+        // Macronutrients distribution
+        $protein = round($data['weight'] * 1.8);
+        $fat     = round(($calories * 0.25) / 9);
+        $carbs   = round(($calories - ($protein * 4 + $fat * 9)) / 4);
 
         $user = Auth::user();
-        $todayCalories = MealLog::where('user_id', $user->id)
-                            ->whereDate('created_at', now())
-                            ->sum('calories');
+        $todayCalories = $this->getTodayCalories($user->id);
 
-        return view('calories.index', compact('user', 'calories', 'protein', 'fat', 'carbs', 'todayCalories', 'goal'));
+        return view('calories.index', compact(
+            'user', 'calories', 'protein', 'fat', 'carbs', 'todayCalories'
+        ) + ['goal' => $data['goal_type']]);
+    }
+
+     // Get total calories consumed today for a user
+    private function getTodayCalories(int $userId): int
+    {
+        return MealLog::where('user_id', $userId)
+            ->whereDate('created_at', now())
+            ->sum('calories');
     }
 }

@@ -1,12 +1,14 @@
 @extends('layouts.app')
 
 @section('styles')
+    <!-- Page-specific stylesheet for biography -->
     <link href="{{ asset('css/biography.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')
 <div id="fitlife-container" role="application" aria-label="FitLife Biography Settings">
     <main>
+        <!-- Mobile menu toggle button -->
         <button id="mobile-toggle" aria-controls="sidebar" aria-expanded="false">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M4 6h16M4 12h16M4 18h16" />
@@ -14,6 +16,7 @@
         </button>
 
         <header>
+            <!-- Page header -->
             <div class="header-left">
                 <h1><span>FitLife</span> Biography</h1>
                 <p class="muted">Update your personal information</p>
@@ -21,33 +24,45 @@
         </header>
 
         <section aria-labelledby="biography-settings-heading">
+            <!-- Success message -->
             @if(session('success'))
                 <div class="success-msg">{{ session('success') }}</div>
             @endif
 
             <div class="biography-card">
+                <!-- Biography update form container -->
                 <h3 id="biography-settings-heading">Update Biography</h3>
                 @php $bio = Auth::user()->biography ?? new \App\Models\Biography(); @endphp
                 <form action="{{ route('biography.update') }}" method="POST" class="biography-form">
                     @csrf
                     @method('PATCH')
+
+                    <!-- Full name input -->
                     <div class="form-group">
                         <label for="full_name">Full Name</label>
                         <input type="text" id="full_name" name="full_name"
                             value="{{ old('full_name', $bio->full_name ?? Auth::user()->name) }}">
                     </div>
+
+                    <!-- Age input -->
                     <div class="form-group">
                         <label for="age">Age</label>
                         <input type="number" id="age" name="age" value="{{ old('age', $bio->age ?? '') }}">
                     </div>
+
+                    <!-- Height input -->
                     <div class="form-group">
                         <label for="height">Height (cm)</label>
                         <input type="number" step="0.01" id="height" name="height" value="{{ old('height', $bio->height ?? '') }}">
                     </div>
+
+                    <!-- Weight input -->
                     <div class="form-group">
                         <label for="weight">Weight (kg)</label>
                         <input type="number" step="0.01" id="weight" name="weight" value="{{ old('weight', $bio->weight ?? '') }}">
                     </div>
+
+                    <!-- Gender select -->
                     <div class="form-group">
                         <label for="gender">Gender</label>
                         <select id="gender" name="gender">
@@ -57,6 +72,8 @@
                             <option value="other" {{ old('gender', $bio->gender ?? '') == 'other' ? 'selected' : '' }}>Other</option>
                         </select>
                     </div>
+
+                    <!-- Save button -->
                     <button type="submit" class="save-btn">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
@@ -73,5 +90,6 @@
 @endsection
 
 @section('scripts')
+    <!-- Page-specific JavaScript for biography -->
     <script src="{{ asset('js/biography.js') }}"></script>
 @endsection

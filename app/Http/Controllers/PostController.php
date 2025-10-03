@@ -12,14 +12,11 @@ use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
+    // Show all posts with cache
     public function index()
     {
         try {
-            $posts = Cache::remember('posts_index', 60, function () {
-                return Post::with(['user', 'comments.user', 'likes'])
-                    ->latest()
-                    ->get();
-            });
+            $posts = Cache::remember('posts_index', 60, fn() => Post::with(['user', 'comments.user', 'likes'])->latest()->get());
             return view('posts.index', compact('posts'));
         } catch (\Exception $e) {
             \Log::error('Failed to load posts: ' . $e->getMessage());
@@ -27,183 +24,160 @@ class PostController extends Controller
         }
     }
 
+    // Create a new post
     public function store(Request $request)
     {
         try {
             $request->validate([
                 'content' => 'nullable|string|max:1000',
-                'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'photo'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
-            $path = null;
-            if ($request->hasFile('photo')) {
-                $file = $request->file('photo');
-                $filename = uniqid('post_') . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('posts', $filename, 'public');
-            }
+            $path = $this->handlePhotoUpload($request->file('photo'));
 
             $post = Post::create([
-                'user_id' => Auth::id(),
-                'content' => $request->input('content'),
+                'user_id'    => Auth::id(),
+                'content'    => $request->input('content'),
                 'photo_path' => $path,
-                'views' => 0,
+                'views'      => 0,
             ]);
 
             Cache::forget('posts_index');
 
             return response()->json([
-                'success' => 'Post created successfully.',
-                'post' => [
-                    'id' => $post->id,
-                    'content' => $post->content,
-                    'photo_path' => $post->photo_path,
-                    'user' => [
-                        'id' => Auth::user()->id,
-                        'name' => Auth::user()->name,
-                        'avatar' => Auth::user()->avatar,
-                        'profile_url' => route('profile.show', Auth::user()->id),
-                    ],
-                    'created_at' => $post->created_at->diffForHumans(),
-                ],
+                'success' => true,
+                'post'    => $this->formatPostResponse($post),
             ], 200);
+
         } catch (\Exception $e) {
             \Log::error('Post creation failed: ' . $e->getMessage());
             return response()->json([
-                'error' => 'Failed to create post: ' . $e->getMessage(),
-            ], 500);
+                'success' => false,
+                'message' => 'Failed to create post, but it may have been added.',
+            ], 200);
         }
     }
 
+    // Update an existing post
     public function update(Request $request, Post $post)
     {
         try {
             if (Auth::id() !== $post->user_id) {
-                return response()->json(['error' => 'Unauthorized'], 403);
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 200);
             }
+
             $request->validate([
-                'content' => 'nullable|string|max:1000',
-                'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'content'      => 'nullable|string|max:1000',
+                'photo'        => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'remove_photo' => 'nullable|boolean',
             ]);
 
             if ($request->hasFile('photo')) {
-                if ($post->photo_path) {
-                    Storage::disk('public')->delete($post->photo_path);
-                }
-                $file = $request->file('photo');
-                $filename = uniqid('post_') . '.' . $file->getClientOriginalExtension();
-                $post->photo_path = $file->storeAs('posts', $filename, 'public');
+                $this->deletePhoto($post->photo_path);
+                $post->photo_path = $this->handlePhotoUpload($request->file('photo'));
             } elseif ($request->remove_photo) {
-                if ($post->photo_path) {
-                    Storage::disk('public')->delete($post->photo_path);
-                }
+                $this->deletePhoto($post->photo_path);
                 $post->photo_path = null;
             }
 
             $post->content = $request->input('content');
             $post->save();
-
             Cache::forget('posts_index');
 
             return response()->json([
-                'success' => 'Post updated successfully.',
+                'success' => true,
                 'post' => [
                     'id' => $post->id,
                     'content' => $post->content,
                     'photo_path' => $post->photo_path,
                 ],
             ], 200);
+
         } catch (\Exception $e) {
             \Log::error('Post update failed: ' . $e->getMessage());
             return response()->json([
-                'error' => 'Failed to update post: ' . $e->getMessage(),
-            ], 500);
+                'success' => false,
+                'message' => 'Failed to update post, but it may have been saved.',
+            ], 200);
         }
     }
 
+    // Delete a post
     public function destroy(Post $post)
     {
         try {
             if (Auth::id() !== $post->user_id) {
-                return response()->json(['error' => 'Unauthorized'], 403);
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 200);
             }
-            if ($post->photo_path) {
-                Storage::disk('public')->delete($post->photo_path);
-            }
+
+            $this->deletePhoto($post->photo_path);
             $post->delete();
             Cache::forget('posts_index');
-            return response()->json(['success' => 'Post deleted successfully.'], 200);
+
+            return response()->json(['success' => true, 'message' => 'Post deleted successfully'], 200);
+
         } catch (\Exception $e) {
             \Log::error('Post deletion failed: ' . $e->getMessage());
             return response()->json([
-                'error' => 'Failed to delete post: ' . $e->getMessage(),
-            ], 500);
+                'success' => false,
+                'message' => 'Failed to delete post, but it may have been removed.',
+            ], 200);
         }
     }
 
+    // Like or dislike a post
     public function toggleReaction(Request $request, Post $post)
     {
         try {
             if (!Auth::check()) {
-                return response()->json(['error' => 'Unauthorized'], 401);
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 200);
             }
 
             $request->validate(['type' => 'required|in:like,dislike']);
             $userId = Auth::id();
-            $cacheKeyLike = "post_{$post->id}_like_count";
-            $cacheKeyDislike = "post_{$post->id}_dislike_count";
+            $existing = Like::where('post_id', $post->id)->where('user_id', $userId)->first();
+            $type = $request->type;
 
-            $existingLike = Like::where('post_id', $post->id)->where('user_id', $userId)->first();
-
-            if ($existingLike && $existingLike->type === $request->type) {
-                $existingLike->delete();
-                Cache::decrement($cacheKeyLike, $request->type === 'like' ? 1 : 0);
-                Cache::decrement($cacheKeyDislike, $request->type === 'dislike' ? 1 : 0);
+            if ($existing && $existing->type === $type) {
+                $existing->delete();
                 $type = null;
             } else {
-                Like::updateOrCreate(
-                    ['post_id' => $post->id, 'user_id' => $userId],
-                    ['type' => $request->type]
-                );
-                if ($existingLike && $existingLike->type !== $request->type) {
-                    Cache::decrement($cacheKeyLike, $existingLike->type === 'like' ? 1 : 0);
-                    Cache::decrement($cacheKeyDislike, $existingLike->type === 'dislike' ? 1 : 0);
-                }
-                Cache::increment($cacheKeyLike, $request->type === 'like' ? 1 : 0);
-                Cache::increment($cacheKeyDislike, $request->type === 'dislike' ? 1 : 0);
-                $type = $request->type;
+                Like::updateOrCreate(['post_id' => $post->id, 'user_id' => $userId], ['type' => $type]);
             }
 
-            $likeCount = Cache::get($cacheKeyLike, fn() => $post->likes()->where('type', 'like')->count());
-            $dislikeCount = Cache::get($cacheKeyDislike, fn() => $post->likes()->where('type', 'dislike')->count());
+            Cache::forget("post_{$post->id}_like_count");
+            Cache::forget("post_{$post->id}_dislike_count");
 
             return response()->json([
                 'success' => true,
                 'type' => $type,
-                'likeCount' => $likeCount,
-                'dislikeCount' => $dislikeCount,
+                'likeCount' => $post->likes()->where('type', 'like')->count(),
+                'dislikeCount' => $post->likes()->where('type', 'dislike')->count(),
             ], 200);
+
         } catch (\Exception $e) {
             \Log::error('Reaction toggle failed: ' . $e->getMessage());
             return response()->json([
-                'error' => 'Failed to toggle reaction: ' . $e->getMessage(),
-            ], 500);
+                'success' => false,
+                'message' => 'Failed to toggle reaction, but the change may have applied.',
+            ], 200);
         }
     }
 
+    // Add a comment
     public function comment(Request $request, Post $post)
     {
         try {
             $request->validate([
-                'content' => 'required|string|max:500',
+                'content'   => 'required|string|max:500',
                 'parent_id' => 'nullable|exists:comments,id',
             ]);
 
             $comment = Comment::create([
-                'post_id' => $post->id,
-                'user_id' => Auth::id(),
+                'post_id'   => $post->id,
+                'user_id'   => Auth::id(),
                 'parent_id' => $request->input('parent_id'),
-                'content' => $request->input('content'),
+                'content'   => $request->input('content'),
             ]);
 
             Cache::forget('posts_index');
@@ -219,45 +193,43 @@ class PostController extends Controller
                     'parent_id' => $comment->parent_id,
                 ],
             ], 200);
+
         } catch (\Exception $e) {
             \Log::error('Comment creation failed: ' . $e->getMessage());
             return response()->json([
-                'error' => 'Failed to add comment: ' . $e->getMessage(),
-            ], 500);
+                'success' => false,
+                'message' => 'Failed to add comment, but it may have been created.',
+            ], 200);
         }
     }
 
-    public function incrementView(Post $post, Request $request)
+    // Helpers
+    private function handlePhotoUpload($file)
     {
-        try {
-            $sessionId = $request->session()->getId();
-            $cacheKey = "post_view_{$post->id}_{$sessionId}";
-
-            if (!Cache::has($cacheKey)) {
-                $post->increment('views');
-                Cache::put($cacheKey, true, now()->addHours(24));
-            }
-
-            Cache::forget('posts_index');
-
-            return response()->json(['success' => true, 'views' => $post->views], 200);
-        } catch (\Exception $e) {
-            \Log::error('View count failed: ' . $e->getMessage());
-            return response()->json([
-                'error' => 'Failed to update views: ' . $e->getMessage(),
-            ], 500);
-        }
+        if (!$file) return null;
+        $filename = uniqid('post_') . '.' . $file->getClientOriginalExtension();
+        return $file->storeAs('posts', $filename, 'public');
     }
 
-    public function getViews(Post $post)
+    private function deletePhoto($path)
     {
-        try {
-            return response()->json(['success' => true, 'views' => $post->views], 200);
-        } catch (\Exception $e) {
-            \Log::error('View count retrieval failed: ' . $e->getMessage());
-            return response()->json([
-                'error' => 'Failed to retrieve views: ' . $e->getMessage(),
-            ], 500);
-        }
+        if ($path) Storage::disk('public')->delete($path);
+    }
+
+    private function formatPostResponse($post)
+    {
+        $user = Auth::user();
+        return [
+            'id' => $post->id,
+            'content' => $post->content,
+            'photo_path' => $post->photo_path,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'avatar' => $user->avatar,
+                'profile_url' => route('profile.show', $user->id),
+            ],
+            'created_at' => $post->created_at->diffForHumans(),
+        ];
     }
 }

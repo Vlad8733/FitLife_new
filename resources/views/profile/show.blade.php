@@ -6,35 +6,19 @@
 
 @section('content')
 <div id="fitlife-container" role="application" aria-label="FitLife User Profile">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <div class="alert-container" style="display: none;"></div>
     <main id="main-content">
-        <button class="mobile-toggle" aria-controls="sidebar" aria-expanded="false">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-        </button>
+
+        <!-- ================= User Profile Header ================= -->
         <header class="header">
             <h1 class="header__title">{{ $user->name }}'s Profile</h1>
-            <p class="header__username">@{{ $user->username }}</p>
-            @if (Auth::id() !== $user->id)
-                <div class="friend-actions" data-user-id="{{ $user->id }}">
-                    @if (Auth::user()->isFriendWith($user))
-                        <span class="friend-status">Friends</span>
-                        <button class="friend-btn friend-btn--remove" data-action="{{ route('friends.remove', $user) }}" data-method="DELETE">Remove Friend</button>
-                    @elseif (Auth::user()->hasPendingRequestTo($user))
-                        <span class="friend-status">Request Sent</span>
-                    @elseif (Auth::user()->hasPendingRequestFrom($user))
-                        <button class="friend-btn friend-btn--accept" data-action="{{ route('friends.accept', $user) }}" data-method="POST">Accept Friend Request</button>
-                    @else
-                        <button class="friend-btn friend-btn--add" data-action="{{ route('friends.store', $user) }}" data-method="POST">Add Friend</button>
-                    @endif
-                </div>
-            @endif
+            <p class="header__username">{{ '@'.$user->username }}</p>
         </header>
 
+        <!-- ================= User Profile Details ================= -->
         <section aria-labelledby="user-profile-heading">
             <div class="profile-card">
+
+                <!-- Banner + Avatar -->
                 @if($user->banner)
                     <div class="banner-section">
                         <img src="{{ asset('storage/' . $user->banner) . '?t=' . time() }}"
@@ -53,6 +37,8 @@
                              class="avatar-section__image">
                     </div>
                 @endif
+
+                <!-- Profile Info -->
                 <h3 id="user-profile-heading">Profile Details</h3>
                 <div class="bio-details">
                     <p><strong>Full Name:</strong> {{ $user->biography->full_name ?? 'Not set' }}</p>
@@ -64,102 +50,51 @@
             </div>
         </section>
 
+        <!-- ================= User Posts (Просмотры только) ================= -->
         <section class="posts-feed" aria-labelledby="user-posts-heading">
             <h3 id="user-posts-heading">{{ $user->name }}'s Posts</h3>
+
             @forelse($user->posts as $post)
                 <article class="post-card" id="post-{{ $post->id }}" data-post-id="{{ $post->id }}">
+
+                    <!-- Post header -->
                     <div class="post-top">
                         <div class="post-top__avatar">
                             <img src="{{ $post->user->avatar ? asset('storage/' . $post->user->avatar) . '?t=' . time() : asset('storage/logo/defaultPhoto.jpg') }}"
                                  alt="{{ $post->user->name }}'s Avatar">
                         </div>
                         <div class="post-meta">
-                            <a href="{{ route('profile.show', $post->user->id) }}" class="post-meta__name">{{ $post->user->name }} <span class="post-meta__username">@{{ $post->user->username }}</span></a>
+                            <a href="{{ route('profile.show', $post->user->id) }}" class="post-meta__name">
+                                {{ $post->user->name }} <span class="post-meta__username">{{ '@'.$post->user->username }}</span>
+                            </a>
                             <div class="post-meta__time">{{ $post->created_at->diffForHumans() }}</div>
                         </div>
                     </div>
+
+                    <!-- Post content -->
                     <div class="post-body">
                         <p>{{ $post->content }}</p>
                         @if($post->photo_path)
-                            <img src="{{ asset('storage/' . $post->photo_path) }}" alt="Post image" class="post-body__image" loading="lazy" />
+                            <img src="{{ asset('storage/' . $post->photo_path) }}" alt="Post image" class="post-body__image" loading="lazy">
                         @endif
                     </div>
+
+                    <!-- Post views only -->
                     <div class="post-actions">
-                        <button class="post-actions__button like-btn {{ Auth::check() && $post->isLikedBy(Auth::id()) ? 'post-actions__button--active' : '' }}"
-                                data-post-id="{{ $post->id }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                                 fill="{{ Auth::check() && $post->isLikedBy(Auth::id()) ? '#FF0000' : 'currentColor' }}">
-                                <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z" />
-                            </svg>
-                            <span class="post-actions__count count-like">{{ $post->likes()->where('type', 'like')->count() }}</span>
-                        </button>
-                        <button class="post-actions__button dislike-btn {{ Auth::check() && $post->isDislikedBy(Auth::id()) ? 'post-actions__button--active' : '' }}"
-                                data-post-id="{{ $post->id }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                                 fill="{{ Auth::check() && $post->isDislikedBy(Auth::id()) ? '#000000' : 'currentColor' }}">
-                                <path d="M240-840h440v520L400-40l-50-50q-7-7-11.5-19t-4.5-23v-14l44-174H120q-32 0-56-24t-24-56v-80q0-7 2-15t4-15l120-282q9-20 30-34t44-14Zm360 80H240L120-480v80h360l-54 220 174-174v-406Zm0 406v-406 406Zm80 34v-80h120v-360H680v-80h200v520H680Z" />
-                            </svg>
-                            <span class="post-actions__count count-dislike">{{ $post->likes()->where('type', 'dislike')->count() }}</span>
-                        </button>
-                        <button class="post-actions__button comment-toggle" data-post-id="{{ $post->id }}"
-                                data-count="{{ $post->allComments()->count() }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#0000FF">
-                                <path d="M240-400h480v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM880-80 720-240H160q-33 0-56.5-23.5T80-320v-480q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v720ZM160-320h594l46 45v-525H160v480Zm0 0v-480 480Z" />
-                            </svg>
-                            <span class="comment-count">{{ $post->allComments()->count() }}</span> Comments
-                        </button>
-                        <span class="post-actions__button view-count" data-post-id="{{ $post->id }}"
-                              data-action="{{ route('posts.views', $post) }}">
+                        <span class="post-actions__button view-count" data-post-id="{{ $post->id }}">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#696969">
-                                <path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z" />
+                                <path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/>
                             </svg>
                             <span class="post-actions__count count-view">{{ $post->views }}</span> Views
                         </span>
-                        @can('delete', $post)
-                            <form action="{{ route('posts.destroy', $post) }}" method="POST" class="inline-form">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="post-actions__button delete-btn">Delete</button>
-                            </form>
-                        @endcan
                     </div>
-                    <div class="comments" id="comments-{{ $post->id }}" style="display:none">
-                        @foreach($post->comments as $comment)
-                            <div class="comment" style="margin-left: {{ $comment->parent_id ? '20px' : '0' }}">
-                                <div class="comment__head">
-                                    <strong>{{ $comment->user->name }} <span class="post-meta__username">@{{ $comment->user->username }}</span></strong>
-                                    <span class="post-meta__time">{{ $comment->created_at->diffForHumans() }}</span>
-                                </div>
-                                <p>{{ $comment->content }}</p>
-                                @if($comment->replies)
-                                    @foreach($comment->replies as $reply)
-                                        <div class="comment reply" style="margin-left: 40px">
-                                            <div class="comment__head">
-                                                <strong>{{ $reply->user->name }} <span class="post-meta__username">@{{ $reply->user->username }}</span></strong>
-                                                <span class="post-meta__time">{{ $reply->created_at->diffForHumans() }}</span>
-                                            </div>
-                                            <p>{{ $reply->content }}</p>
-                                        </div>
-                                    @endforeach
-                                @endif
-                                <form action="{{ route('posts.comment', $post) }}" method="POST" class="comment-form">
-                                    @csrf
-                                    <input type="hidden" name="parent_id" value="{{ $comment->id }}">
-                                    <textarea name="content" placeholder="Write a reply..." rows="1" maxlength="500" class="comment-form__textarea"></textarea>
-                                    <button type="submit" class="comment-form__button reply-btn">Reply</button>
-                                </form>
-                            </div>
-                        @endforeach
-                        <form action="{{ route('posts.comment', $post) }}" method="POST" class="comment-form">
-                            @csrf
-                            <textarea name="content" placeholder="Write a comment..." rows="1" maxlength="500" class="comment-form__textarea"></textarea>
-                            <button type="submit" class="comment-form__button">Comment</button>
-                        </form>
-                    </div>
+
                 </article>
             @empty
                 <p>No posts yet.</p>
             @endforelse
         </section>
+
     </main>
 </div>
 @endsection

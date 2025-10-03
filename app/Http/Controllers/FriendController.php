@@ -9,30 +9,34 @@ use Illuminate\Support\Facades\Auth;
 
 class FriendController extends Controller
 {
+    // Send a friend request
     public function store(Request $request, User $user)
     {
-        if (Auth::id() === $user->id) {
+        $me = Auth::user();
+
+        if ($me->id === $user->id) {
             return response()->json(['error' => 'Cannot add yourself as a friend'], 400);
         }
 
-        if (Auth::user()->isFriendWith($user) || Auth::user()->hasPendingRequestTo($user)) {
+        if ($me->isFriendWith($user) || $me->hasPendingRequestTo($user)) {
             return response()->json(['error' => 'Friend request already sent or user is already a friend'], 400);
         }
 
         Friend::create([
-            'user_id' => Auth::id(),
+            'user_id'   => $me->id,
             'friend_id' => $user->id,
-            'status' => 'pending',
+            'status'    => 'pending',
         ]);
 
         return response()->json([
-            'status' => 'Friend request sent!',
-            'action' => 'request_sent',
-            'addAction' => route('friends.store', $user),
+            'status'       => 'Friend request sent!',
+            'action'       => 'request_sent',
+            'addAction'    => route('friends.store', $user),
             'removeAction' => route('friends.remove', $user),
         ], 201);
     }
 
+    // Accept a friend request
     public function accept(Request $request, User $user)
     {
         $friendRequest = Friend::where('user_id', $user->id)
@@ -46,25 +50,30 @@ class FriendController extends Controller
 
         $friendRequest->update(['status' => 'accepted']);
 
-        // Create reciprocal friendship record
+        // Create reciprocal friendship
         Friend::create([
-            'user_id' => Auth::id(),
+            'user_id'   => Auth::id(),
             'friend_id' => $user->id,
-            'status' => 'accepted',
+            'status'    => 'accepted',
         ]);
 
         return response()->json([
-            'status' => 'Friend request accepted!',
-            'action' => 'accepted',
+            'status'       => 'Friend request accepted!',
+            'action'       => 'accepted',
             'removeAction' => route('friends.remove', $user),
         ], 200);
     }
 
+    // Remove an existing friendship
     public function remove(Request $request, User $user)
     {
         $friendship = Friend::where(function ($query) use ($user) {
-            $query->where('user_id', Auth::id())->where('friend_id', $user->id)
-                  ->orWhere('user_id', $user->id)->where('friend_id', Auth::id());
+            $query->where('user_id', Auth::id())
+                  ->where('friend_id', $user->id)
+                  ->orWhere(function ($q) use ($user) {
+                      $q->where('user_id', $user->id)
+                        ->where('friend_id', Auth::id());
+                  });
         })->where('status', 'accepted');
 
         if ($friendship->count() === 0) {
@@ -74,8 +83,8 @@ class FriendController extends Controller
         $friendship->delete();
 
         return response()->json([
-            'status' => 'Friend removed',
-            'action' => 'removed',
+            'status'    => 'Friend removed',
+            'action'    => 'removed',
             'addAction' => route('friends.store', $user),
         ], 200);
     }

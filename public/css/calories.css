@@ -5,11 +5,12 @@
   --muted: #6b7280;
   --card-bg: #ffffff;
   --border: #e5e7eb;
-  --radius: 10px; /* Увеличен радиус для согласованности */
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Более мягкая тень */
-  --transition: 0.3s ease; /* Плавные переходы */
+  --radius: 10px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transition: 0.3s ease;
 }
 
+/* ========== GLOBAL ========== */
 * {
   margin: 0;
   padding: 0;
@@ -21,14 +22,22 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
-  font-size: 16px; /* Добавлен базовый размер шрифта */
+  font-size: 16px;
 }
 
+/* ========== LAYOUT ========== */
 #fitlife-container {
   display: flex;
   min-height: 100vh;
 }
 
+main {
+  margin-left: 240px;
+  padding: 32px;
+  flex: 1;
+}
+
+/* ========== SIDEBAR ========== */
 #sidebar {
   width: 240px;
   background: var(--card-bg);
@@ -54,17 +63,18 @@ body {
   color: var(--muted);
 }
 
+/* ========== NAV MENU ========== */
 .nav-menu a,
 .nav-menu button {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  color: var(--text);
-  text-decoration: none;
   font-size: 0.95rem;
   border-radius: var(--radius);
   transition: var(--transition);
+  text-decoration: none;
+  color: var(--text);
 }
 
 .nav-menu a svg,
@@ -102,12 +112,7 @@ body {
   text-align: left;
 }
 
-main {
-  margin-left: 240px;
-  padding: 32px; /* Увеличен отступ для лучшей читаемости */
-  flex: 1;
-}
-
+/* ========== MOBILE TOGGLE ========== */
 #mobile-toggle {
   display: none;
   position: fixed;
@@ -119,7 +124,7 @@ main {
   padding: 8px;
   border-radius: var(--radius);
   cursor: pointer;
-  z-index: 1000; /* Добавлен z-index для наложения */
+  z-index: 1000;
 }
 
 #mobile-toggle svg {
@@ -127,31 +132,36 @@ main {
   height: 20px;
 }
 
+/* ========== HEADER ========== */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px; /* Увеличен отступ для визуального пространства */
+  margin-bottom: 32px;
 }
 
 .header-left h1 {
-  font-size: 2rem; /* Увеличен размер заголовка */
-  font-weight: 700; /* Более выразительный вес */
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.header-left p.muted,
+.header-info {
+  color: var(--muted);
 }
 
 .header-left p.muted {
-  font-size: 1rem; /* Увеличен размер для читаемости */
-  color: var(--muted);
+  font-size: 1rem;
 }
 
 .header-info {
   text-align: right;
   font-size: 0.9rem;
-  color: var(--muted);
 }
 
+/* ========== HEADINGS ========== */
 h3 {
-  font-size: 1.5rem; /* Увеличен размер заголовков секций */
+  font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 20px;
 }
@@ -162,38 +172,60 @@ h4 {
   margin-bottom: 8px;
 }
 
-.biography-card {
+/* ========== CARDS ========== */
+.biography-card,
+.kpi-card {
   background: var(--card-bg);
-  padding: 20px; /* Увеличен отступ */
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow); /* Добавлена тень */
+  box-shadow: var(--shadow);
+  padding: 20px;
   margin-bottom: 20px;
+  transition: var(--transition);
 }
 
-.form-logging {
+.kpi-card {
+  text-align: center;
+  position: relative;
+  clip-path: polygon(10% 0, 90% 0, 100% 30%, 90% 100%, 10% 100%, 0 30%);
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+}
+
+.kpi-card p {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-top: 8px;
+  color: var(--accent);
+}
+
+/* ========== FORMS ========== */
+.form-logging,
+.biography-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px; /* Увеличен зазор для читаемости */
+  gap: 20px;
   align-items: flex-end;
 }
 
 .form-group {
   flex: 1;
-  min-width: 220px; /* Увеличен минимальный размер для удобства */
+  min-width: 220px;
 }
 
 .form-group label {
   display: block;
   font-size: 0.95rem;
-  margin-bottom: 6px; /* Увеличен отступ */
+  margin-bottom: 6px;
   color: var(--muted);
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 10px; /* Увеличен отступ */
+  padding: 10px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   font-size: 0.95rem;
@@ -207,70 +239,52 @@ h4 {
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
-.calculate-btn {
+/* ========== BUTTONS ========== */
+.calculate-btn,
+.save-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   background: var(--accent);
   color: #fff;
   border: none;
-  padding: 12px 20px; /* Увеличен размер кнопки */
+  padding: 12px 20px;
   border-radius: var(--radius);
   font-size: 0.95rem;
   cursor: pointer;
   transition: var(--transition);
 }
 
-.calculate-btn svg {
+.calculate-btn svg,
+.save-btn svg {
   width: 20px;
   height: 20px;
   stroke: #fff;
 }
 
-.calculate-btn:hover {
+.calculate-btn:hover,
+.save-btn:hover {
   background: #1d4ed8;
-  transform: translateY(-1px); /* Лёгкий подъём при наведении */
+  transform: translateY(-1px);
+}
+
+/* ========== STATUS / KPI ========== */
+.status-text {
+  font-size: 0.9rem;
+  color: var(--muted);
+  word-break: break-word;
 }
 
 .kpi-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Увеличена минимальная ширина */
-  gap: 20px; /* Увеличен зазор */
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
 }
 
-.kpi-card {
-  background: var(--card-bg);
-  padding: 20px;
-  border: 1px solid var(--border);
-  text-align: center;
-  transition: var(--transition);
-  position: relative;
-  clip-path: polygon(10% 0, 90% 0, 100% 30%, 90% 100%, 10% 100%, 0 30%); /* Шестиугольная форма */
-  box-shadow: var(--shadow);
-}
-
-.kpi-card:hover {
-  transform: translateY(-2px);
-}
-
-.kpi-card p {
-  font-size: 1.25rem;
-  font-weight: 500;
-  margin-top: 8px;
-  color: var(--accent); /* Цвет для акцента */
-}
-
-.status-text {
-  font-size: 0.9rem;
-  color: var(--muted);
-  word-break: break-word; /* Перенос текста для длинных статусов */
-}
-
+/* ========== RESPONSIVE TABLET ========== */
 @media (max-width: 768px) {
   #sidebar {
-    position: fixed;
     transform: translateX(-100%);
-    transition: var(--transition);
   }
 
   #sidebar.active {
@@ -279,7 +293,7 @@ h4 {
 
   main {
     margin-left: 0;
-    padding: 16px; /* Уменьшен отступ для мобильных */
+    padding: 16px;
   }
 
   #mobile-toggle {
@@ -296,13 +310,16 @@ h4 {
     margin-top: 12px;
   }
 
-  .biography-card {
-    padding: 16px; /* Уменьшен отступ для мобильных */
+  .biography-card,
+  .kpi-card {
+    padding: 16px;
   }
 }
 
+/* ========== RESPONSIVE MOBILE ========== */
 @media (max-width: 480px) {
-  .form-logging {
+  .form-logging,
+  .biography-form {
     flex-direction: column;
     align-items: stretch;
   }
@@ -313,9 +330,5 @@ h4 {
 
   .kpi-container {
     grid-template-columns: 1fr;
-  }
-
-  .kpi-card {
-    padding: 16px;
   }
 }

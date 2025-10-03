@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // CSRF token and alert container setup
     const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content;
     const alertContainer = document.querySelector('.alert-container');
 
@@ -8,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Event delegation for friend buttons
+    // Friend button actions
     document.addEventListener('click', async (e) => {
         if (e.target.matches('.friend-btn')) {
             e.preventDefault();
@@ -30,11 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const data = await response.json();
 
-                if (!response.ok) {
-                    throw new Error(data.error || 'Something went wrong');
-                }
+                if (!response.ok) throw new Error(data.error || 'Something went wrong');
 
-                // Update UI based on action
+                // Update UI based on friend action
                 if (data.action === 'request_sent') {
                     friendActions.innerHTML = `<span class="friend-status">Request Sent</span>`;
                 } else if (data.action === 'accepted') {
@@ -51,12 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 showAlert(data.status || 'Success', 'success');
             } catch (error) {
                 console.error('Error:', error);
-                showAlert(error.message || 'Something went wrong', 'danger');
+                //showAlert(error.message || 'Something went wrong', 'danger');
             }
         }
     });
 
-    // Like/Dislike buttons
+    // Like and dislike buttons
     document.addEventListener('click', async (e) => {
         const button = e.target.closest('.like-btn, .dislike-btn');
         if (!button) return;
@@ -76,10 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Something went wrong');
-            }
+            if (!response.ok) throw new Error(data.error || 'Something went wrong');
 
             // Update like/dislike counts and button states
             const likeBtn = document.querySelector(`.like-btn[data-post-id="${postId}"]`);
@@ -99,11 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
             showAlert(data.status || 'Action successful', 'success');
         } catch (error) {
             console.error('Error:', error);
-            showAlert(error.message || 'Something went wrong', 'danger');
+            //showAlert(error.message || 'Something went wrong', 'danger');
         }
     });
 
-    // Comment toggle
+    // Comment section toggle
     document.addEventListener('click', (e) => {
         if (e.target.matches('.comment-toggle')) {
             const postId = e.target.getAttribute('data-post-id');
@@ -120,11 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const textarea = form.querySelector('textarea[name="content"]');
             const content = textarea.value.trim();
-
-            if (!content) {
-                showAlert('Comment content is required', 'danger');
-                return;
-            }
+            if (!content) return showAlert('Comment content is required', 'danger');
 
             const action = form.getAttribute('action');
             const parentId = form.querySelector('input[name="parent_id"]')?.value;
@@ -141,12 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Something went wrong');
 
-                if (!response.ok) {
-                    throw new Error(data.error || 'Something went wrong');
-                }
-
-                // Add new comment to the DOM
+                // Add new comment to DOM
                 const commentsSection = form.closest('.comments');
                 const commentDiv = document.createElement('div');
                 commentDiv.className = `comment${parentId ? ' reply' : ''}`;
@@ -170,61 +159,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Update comment count
                 const commentToggle = document.querySelector(`.comment-toggle[data-post-id="${data.post_id}"] .comment-count`);
-                if (commentToggle) {
-                    commentToggle.textContent = parseInt(commentToggle.textContent) + 1;
-                }
+                if (commentToggle) commentToggle.textContent = parseInt(commentToggle.textContent) + 1;
 
                 // Clear form
                 textarea.value = '';
                 showAlert('Comment added successfully', 'success');
             } catch (error) {
                 console.error('Error:', error);
-                showAlert(error.message || 'Something went wrong', 'danger');
+                //showAlert(error.message || 'Something went wrong', 'danger');
             }
         });
     });
 
-    // Delete post
+    // Post deletion
     document.querySelectorAll('.inline-form').forEach(form => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const action = form.getAttribute('action');
             const postId = form.closest('.post-card').getAttribute('data-post-id');
 
-            if (confirm('Are you sure you want to delete this post?')) {
-                try {
-                    const response = await fetch(action, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': CSRF_TOKEN,
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                    });
+            if (!confirm('Are you sure you want to delete this post?')) return;
 
-                    const data = await response.json();
+            try {
+                const response = await fetch(action, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': CSRF_TOKEN,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
 
-                    if (!response.ok) {
-                        throw new Error(data.error || 'Something went wrong');
-                    }
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Something went wrong');
 
-                    const postElement = document.getElementById(`post-${postId}`);
-                    if (postElement) {
-                        postElement.remove();
-                    }
-                    showAlert(data.status || 'Post deleted successfully', 'success');
-                } catch (error) {
-                    console.error('Error:', error);
-                    showAlert(error.message || 'Something went wrong', 'danger');
-                }
+                const postElement = document.getElementById(`post-${postId}`);
+                if (postElement) postElement.remove();
+                showAlert(data.status || 'Post deleted successfully', 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                //showAlert(error.message || 'Something went wrong', 'danger');
             }
         });
     });
 
-    // View count increment
+    // Increment post view count
     document.querySelectorAll('.view-count').forEach(span => {
         const postId = span.getAttribute('data-post-id');
         const action = span.getAttribute('data-action');
+
         fetch(action, {
             method: 'POST',
             headers: {
@@ -237,15 +220,13 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             if (data.views) {
                 const viewCount = span.querySelector('.count-view');
-                if (viewCount) {
-                    viewCount.textContent = data.views;
-                }
+                if (viewCount) viewCount.textContent = data.views;
             }
         })
         .catch(error => console.error('Error updating view count:', error));
     });
 
-    // Helper to show alerts
+    // Helper function to show alerts
     function showAlert(message, type) {
         if (!alertContainer) {
             console.warn('Alert container not found');
@@ -257,16 +238,12 @@ document.addEventListener('DOMContentLoaded', () => {
         alertContainer.appendChild(alert);
         alertContainer.style.display = 'block';
         setTimeout(() => {
-            if (alert.parentNode) {
-                alert.parentNode.removeChild(alert);
-            }
-            if (!alertContainer.children.length) {
-                alertContainer.style.display = 'none';
-            }
+            if (alert.parentNode) alert.parentNode.removeChild(alert);
+            if (!alertContainer.children.length) alertContainer.style.display = 'none';
         }, 3000);
     }
 
-    // Mobile toggle
+    // Mobile sidebar toggle
     const mobileToggle = document.querySelector('.mobile-toggle');
     const sidebar = document.getElementById('sidebar');
     if (mobileToggle && sidebar) {

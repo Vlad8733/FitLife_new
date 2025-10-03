@@ -8,14 +8,17 @@ use Illuminate\Support\Facades\Auth;
 
 class WaterController extends Controller
 {
+    // Show water intake history
     public function index()
     {
         $logs = WaterLog::where('user_id', Auth::id())
                         ->orderBy('created_at', 'desc')
                         ->get();
+
         return view('water.index', compact('logs'));
     }
 
+    // Store new water intake
     public function store(Request $request)
     {
         $request->validate([

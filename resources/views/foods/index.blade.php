@@ -8,6 +8,7 @@
 <div id="fitlife-container" role="application" aria-label="FitLife Meal Tracker">
     <main>
         <button id="mobile-toggle" aria-controls="sidebar" aria-expanded="false">Menu</button>
+
         <header>
             <div class="header-left">
                 <h1>Meal Tracker</h1>
@@ -27,6 +28,7 @@
                         <div class="meal-block">
                             <div class="meal-card" data-meal-block="{{ $meal }}">
                                 <h4>{{ $meal }}</h4>
+
                                 <div class="meal-items" data-meal="{{ $meal }}">
                                     <div class="meal-item">
                                         <select class="food-select" name="meals[{{ $meal }}][0][food]" aria-label="Select food for {{ $meal }}">
@@ -37,42 +39,32 @@
                                         </select>
                                         <input type="number" class="quantity-input" name="meals[{{ $meal }}][0][quantity]" placeholder="g/ml" style="display:none;" min="0" step="1" aria-label="Quantity for {{ $meal }} food">
                                         <div class="calorie-preview" data-calories="0">0 kcal</div>
-                                        <button type="button" class="remove-food-btn" style="display:none;" aria-label="Remove food item">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                                                <path d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                        </button>
+                                        <button type="button" class="remove-food-btn" style="display:none;" aria-label="Remove food item">×</button>
                                     </div>
                                 </div>
-                                <button type="button" class="add-food-btn" data-meal="{{ $meal }}">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                                        <path d="M12 5v14M5 12h14"/>
-                                    </svg>
-                                    Add Item
-                                </button>
+
+                                <button type="button" class="add-food-btn" data-meal="{{ $meal }}">Add Item</button>
                                 <div class="total-calories" data-total-calories="0">Total: 0 kcal</div>
+
                                 @error("meals.{$meal}.*")
                                     <div class="error-message">{{ $message }}</div>
                                 @enderror
                             </div>
-                            @if($meal === 'Breakfast')
-                                <div class="calculate-container">
-                                    <button type="submit" class="calculate-btn" id="calculate-btn">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                                            <path d="M12 2v20M5 12h14"/>
-                                        </svg>
-                                        Calculate Calories
-                                    </button>
-                                </div>
-                            @endif
                         </div>
                     @endforeach
                 </div>
+                <button type="submit" class="calculate-btn" id="calculate-btn">Calculate Calories</button>
             </form>
         </section>
 
         <section id="history-section" aria-labelledby="history-heading">
             <h3 id="history-heading">Meal History</h3>
+
+            {{-- Проверяем сначала данные из контроллера, затем из сессии --}}
+            @php
+                $logs = $mealLogs ?? session('mealLogs') ?? collect();
+            @endphp
+
             @include('profile.partials.meal_table', ['mealLogs' => $logs])
         </section>
 
@@ -99,7 +91,6 @@
 
 <script>
     window.foodCalories = @json($foods);
-    window.foodsIndexUrl = '{{ route('foods.index') }}';
     window.foodOptionsHTML = `<option value="">Select Food</option>
         @foreach($foods as $food => $cal)
             <option value="{{ $food }}" data-calories="{{ $cal }}">{{ $food }} ({{ $cal }} kcal)</option>

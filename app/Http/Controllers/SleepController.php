@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 class SleepController extends Controller
 {
-    // Показать страницу трекера сна
+    // Show sleep tracker page
     public function index()
     {
         $sleeps = Sleep::where('user_id', Auth::id())
@@ -22,7 +22,7 @@ class SleepController extends Controller
         return view('sleep.index', compact('sleeps', 'average'));
     }
 
-    // Сохранение нового сна
+    // Store new sleep record
     public function store(Request $request)
     {
         $request->validate([
@@ -31,15 +31,15 @@ class SleepController extends Controller
             'end_time' => 'required',
         ]);
 
-        $start = Carbon::parse($request->date . ' ' . $request->start_time);
-        $end = Carbon::parse($request->date . ' ' . $request->end_time);
+        $start = Carbon::parse("{$request->date} {$request->start_time}");
+        $end = Carbon::parse("{$request->date} {$request->end_time}");
 
-        // Если сон закончился раньше, чем начался (через полночь)
+        // Adjust for overnight sleep
         if ($end->lt($start)) {
             $end->addDay();
         }
 
-        $duration = $start->diffInMinutes($end) / 60; // в часах
+        $duration = $start->diffInMinutes($end) / 60; // in hours
 
         Sleep::create([
             'user_id' => Auth::id(),

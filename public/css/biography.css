@@ -5,11 +5,12 @@
   --muted: #6b7280;
   --card-bg: #ffffff;
   --border: #e5e7eb;
-  --radius: 10px; /* Увеличен радиус для согласованности */
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Более мягкая тень */
-  --transition: 0.3s ease; /* Плавные переходы */
+  --radius: 10px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transition: 0.3s ease;
 }
 
+/* ========== GLOBAL ========== */
 * {
   margin: 0;
   padding: 0;
@@ -21,14 +22,16 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
-  font-size: 16px; /* Добавлен базовый размер шрифта */
+  font-size: 16px;
 }
 
+/* ========== LAYOUT CONTAINER ========== */
 #fitlife-container {
   display: flex;
   min-height: 100vh;
 }
 
+/* ========== SIDEBAR ========== */
 #sidebar {
   width: 240px;
   background: var(--card-bg);
@@ -54,6 +57,7 @@ body {
   color: var(--muted);
 }
 
+/* ========== NAV MENU ========== */
 .nav-menu a,
 .nav-menu button {
   display: flex;
@@ -102,12 +106,14 @@ body {
   text-align: left;
 }
 
+/* ========== MAIN CONTENT ========== */
 main {
   margin-left: 240px;
-  padding: 32px; /* Увеличен отступ для лучшей читаемости */
+  padding: 32px;
   flex: 1;
 }
 
+/* ========== MOBILE TOGGLE ========== */
 #mobile-toggle {
   display: none;
   position: fixed;
@@ -119,7 +125,7 @@ main {
   padding: 8px;
   border-radius: var(--radius);
   cursor: pointer;
-  z-index: 1000; /* Добавлен z-index для наложения */
+  z-index: 1000;
 }
 
 #mobile-toggle svg {
@@ -127,67 +133,74 @@ main {
   height: 20px;
 }
 
+/* ========== HEADER ========== */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px; /* Увеличен отступ для визуального пространства */
+  margin-bottom: 32px;
 }
 
 .header-left h1 {
-  font-size: 2rem; /* Увеличен размер заголовка */
-  font-weight: 700; /* Более выразительный вес */
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.header-left p.muted,
+.header-info {
+  color: var(--muted);
 }
 
 .header-left p.muted {
-  font-size: 1rem; /* Увеличен размер для читаемости */
-  color: var(--muted);
+  font-size: 1rem;
 }
 
 .header-info {
   text-align: right;
   font-size: 0.9rem;
-  color: var(--muted);
 }
 
+/* ========== SECTIONS ========== */
 h3 {
-  font-size: 1.5rem; /* Увеличен размер заголовков секций */
+  font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 20px;
 }
 
+/* ========== BIOGRAPHY CARD ========== */
 .biography-card {
   background: var(--card-bg);
-  padding: 20px; /* Увеличен отступ */
+  padding: 20px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow); /* Добавлена тень */
+  box-shadow: var(--shadow);
   margin-bottom: 20px;
 }
 
+/* ========== FORMS ========== */
 .biography-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px; /* Увеличен зазор для читаемости */
+  gap: 20px;
   align-items: flex-end;
 }
 
 .form-group {
   flex: 1;
-  min-width: 220px; /* Увеличен минимальный размер для удобства */
+  min-width: 220px;
 }
 
 .form-group label {
   display: block;
   font-size: 0.95rem;
-  margin-bottom: 6px; /* Увеличен отступ */
+  margin-bottom: 6px;
   color: var(--muted);
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 10px; /* Увеличен отступ */
+  padding: 10px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   font-size: 0.95rem;
@@ -201,6 +214,7 @@ h3 {
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
+/* ========== BUTTONS ========== */
 .save-btn {
   display: inline-flex;
   align-items: center;
@@ -208,7 +222,7 @@ h3 {
   background: var(--accent);
   color: #fff;
   border: none;
-  padding: 12px 20px; /* Увеличен размер кнопки */
+  padding: 12px 20px;
   border-radius: var(--radius);
   font-size: 0.95rem;
   cursor: pointer;
@@ -223,25 +237,25 @@ h3 {
 
 .save-btn:hover {
   background: #1d4ed8;
-  transform: translateY(-1px); /* Лёгкий подъём при наведении */
+  transform: translateY(-1px);
 }
 
+/* ========== SUCCESS MESSAGES ========== */
 .success-msg {
   background: #e6ffed;
   color: #2e7d32;
   padding: 12px;
   border-radius: var(--radius);
-  border: 1px solid #a5d6a7; /* Добавлена граница для акцента */
+  border: 1px solid #a5d6a7;
   margin-bottom: 20px;
   font-size: 0.95rem;
-  box-shadow: var(--shadow); /* Добавлена тень */
+  box-shadow: var(--shadow);
 }
 
+/* ========== RESPONSIVE: TABLET ========== */
 @media (max-width: 768px) {
   #sidebar {
-    position: fixed;
     transform: translateX(-100%);
-    transition: var(--transition);
   }
 
   #sidebar.active {
@@ -250,7 +264,7 @@ h3 {
 
   main {
     margin-left: 0;
-    padding: 16px; /* Уменьшен отступ для мобильных */
+    padding: 16px;
   }
 
   #mobile-toggle {
@@ -268,10 +282,11 @@ h3 {
   }
 
   .biography-card {
-    padding: 16px; /* Уменьшен отступ для мобильных */
+    padding: 16px;
   }
 }
 
+/* ========== RESPONSIVE: MOBILE ========== */
 @media (max-width: 480px) {
   .biography-form {
     flex-direction: column;

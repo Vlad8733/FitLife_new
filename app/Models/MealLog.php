@@ -9,9 +9,18 @@ class MealLog extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'meal', 'food', 'quantity', 'calories'];
+    // Mass assignable attributes
+    protected $fillable = [
+        'user_id',
+        'meal',
+        'food',
+        'quantity',
+        'calories',
+    ];
 
-    public function user() {
+    // Relation: MealLog belongs to a User
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

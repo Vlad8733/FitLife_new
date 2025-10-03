@@ -1,7 +1,9 @@
+// DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
     // Sidebar Toggle for Mobile
     const mobileToggle = document.getElementById('mobile-toggle');
     const sidebar = document.getElementById('sidebar');
+
     mobileToggle.addEventListener('click', () => {
         const isOpen = sidebar.classList.toggle('active');
         mobileToggle.setAttribute('aria-expanded', isOpen);
@@ -30,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const food = select.value;
         const quantity = parseFloat(quantityInput.value) || 0;
         const calories = food ? Math.round((foodCalories[food] || 0) * quantity / 100) : 0;
+
         preview.textContent = `${calories} kcal`;
         preview.dataset.calories = calories;
 
@@ -73,10 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const count = container.querySelectorAll('.meal-item').length;
             const div = document.createElement('div');
             div.classList.add('meal-item');
+
             let selectHTML = `<select class="food-select" name="meals[${meal}][${count}][food]" aria-label="Select food for ${meal}">
-                <option value="">Select Food</option>`;
-            selectHTML += window.foodOptionsHTML || '';
-            selectHTML += `</select>`;
+                <option value="">Select Food</option>${window.foodOptionsHTML || ''}</select>`;
+
             div.innerHTML = selectHTML + `
                 <input type="number" class="quantity-input" name="meals[${meal}][${count}][quantity]" placeholder="g/ml" style="display:none;" min="0" step="1" aria-label="Quantity for ${meal} food">
                 <div class="calorie-preview" data-calories="0">0 kcal</div>
@@ -85,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <path d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>`;
+
             container.appendChild(div);
             attachMealItemListeners(div);
         });
@@ -93,9 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Form Submission and Validation
     const mealForm = document.getElementById('meal-form');
     const calculateBtn = document.getElementById('calculate-btn');
+
     mealForm.addEventListener('submit', async e => {
         e.preventDefault();
         document.querySelectorAll('.error-message').forEach(e => e.remove());
+
         const formData = new FormData(mealForm);
         const mealsData = {};
         let valid = true;
@@ -145,8 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td>${meal}</td>
                         <td>${item.food}</td>
                         <td>${item.quantity} g/ml</td>
-                        <td>${calories} kcal</td>
-                    `;
+                        <td>${calories} kcal</td>`;
                     historyTbody.insertBefore(row, historyTbody.firstChild);
                 }
             });
@@ -163,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await axios.post(mealForm.action, formData, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             });
+
             if (response.data.success) {
                 showNotification('Meals logged successfully!', 'success');
                 document.getElementById('history-section').innerHTML = response.data.historyHtml;
@@ -207,9 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             try {
-                const response = await axios.get(url, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                });
+                const response = await axios.get(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(response.data, 'text/html');
                 const newHistorySection = doc.getElementById('history-section');
@@ -228,9 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const notification = document.getElementById('notification');
         notification.textContent = message;
         notification.className = `notification ${type} show`;
-        setTimeout(() => {
-            notification.className = 'notification';
-        }, 3000);
+        setTimeout(() => notification.className = 'notification', 3000);
     }
 
     // AJAX Pagination
@@ -245,9 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const scrollPosition = window.scrollY;
 
                 try {
-                    const response = await axios.get(url, {
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                    });
+                    const response = await axios.get(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(response.data, 'text/html');
                     const newHistorySection = doc.getElementById('history-section');

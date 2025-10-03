@@ -9,8 +9,14 @@ class GoalLog extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['goal_id', 'value', 'date'];
+    // Mass assignable attributes
+    protected $fillable = [
+        'goal_id',
+        'value',
+        'date',
+    ];
 
+    // Relation: GoalLog belongs to a Goal
     public function goal()
     {
         return $this->belongsTo(Goal::class);

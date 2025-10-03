@@ -12,21 +12,23 @@ use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
+    // Show edit profile form
     public function edit()
     {
         return view('profile.edit', ['user' => Auth::user()]);
     }
 
+    // Show user profile
     public function show(User $user)
     {
         return view('profile.show', compact('user'));
     }
 
+    // Update user profile info
     public function update(Request $request)
     {
         $user = Auth::user();
 
-        // Валидация
         $request->validate([
             'name' => 'required|string|max:255',
             'username' => [
@@ -46,7 +48,6 @@ class ProfileController extends Controller
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Логирование для отладки
         Log::info('Profile update request:', [
             'has_banner' => $request->hasFile('banner'),
             'has_avatar' => $request->hasFile('avatar'),
@@ -57,37 +58,27 @@ class ProfileController extends Controller
 
         $data = $request->only('name', 'username', 'email');
 
-        // Обработка баннера
+        // Handle banner upload
         if ($request->hasFile('banner')) {
-            Log::info('Processing banner upload');
-            if ($user->banner && Storage::disk('public')->exists($user->banner)) {
-                Storage::disk('public')->delete($user->banner);
-                Log::info('Deleted old banner: ' . $user->banner);
-            }
-            $bannerPath = $request->file('banner')->store('banner', 'public');
-            $data['banner'] = $bannerPath;
-            Log::info('New banner path: ' . $bannerPath);
+            $this->deleteFile($user->banner);
+            $data['banner'] = $request->file('banner')->store('banner', 'public');
+            Log::info('New banner path: ' . $data['banner']);
         }
 
-        // Обработка аватарки
+        // Handle avatar upload
         if ($request->hasFile('avatar')) {
-            Log::info('Processing avatar upload');
-            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-                Storage::disk('public')->delete($user->avatar);
-                Log::info('Deleted old avatar: ' . $user->avatar);
-            }
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-            $data['avatar'] = $avatarPath;
-            Log::info('New avatar path: ' . $avatarPath);
+            $this->deleteFile($user->avatar);
+            $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            Log::info('New avatar path: ' . $data['avatar']);
         }
 
-        // Обновление данных пользователя
         $user->update($data);
         Log::info('User updated:', $data);
 
         return redirect()->back()->with('status', 'Profile updated successfully!');
     }
 
+    // Update user password
     public function updatePassword(Request $request)
     {
         $request->validate([
@@ -96,6 +87,7 @@ class ProfileController extends Controller
         ]);
 
         $user = Auth::user();
+
         if (!Hash::check($request->current_password, $user->password)) {
             return redirect()->back()->withErrors(['current_password' => 'Current password is incorrect.']);
         }
@@ -105,11 +97,22 @@ class ProfileController extends Controller
         return redirect()->back()->with('status', 'Password updated successfully!');
     }
 
+    // Delete user account
     public function destroy(Request $request)
     {
         $user = Auth::user();
         $user->delete();
         Auth::logout();
+
         return redirect('/')->with('status', 'Account deleted successfully!');
+    }
+
+    // Helper: delete a file if it exists
+    private function deleteFile($path)
+    {
+        if ($path && Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+            Log::info('Deleted file: ' . $path);
+        }
     }
 }

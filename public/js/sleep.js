@@ -1,31 +1,44 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // Mobile sidebar toggle
   const mobileToggle = document.getElementById('mobile-toggle');
   const sidebar = document.getElementById('sidebar');
 
-  mobileToggle.addEventListener('click', () => {
+  const toggleSidebar = () => {
     const isOpen = sidebar.classList.toggle('active');
     mobileToggle.setAttribute('aria-expanded', isOpen);
-  });
+  };
 
-  document.addEventListener('click', e => {
-    if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
+  if (mobileToggle && sidebar) {
+    mobileToggle.addEventListener('click', toggleSidebar);
+  }
+
+  // Close sidebar when clicking outside or pressing Escape
+  const closeSidebar = () => {
+    if (sidebar.classList.contains('active')) {
       sidebar.classList.remove('active');
       mobileToggle.setAttribute('aria-expanded', 'false');
+    }
+  };
+
+  document.addEventListener('click', e => {
+    if (!sidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
+      closeSidebar();
     }
   });
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && sidebar.classList.contains('active')) {
-      sidebar.classList.remove('active');
-      mobileToggle.setAttribute('aria-expanded', 'false');
-    }
+    if (e.key === 'Escape') closeSidebar();
   });
 
+  // Animated count-up numbers
   const countUps = document.querySelectorAll('.count-up');
   countUps.forEach(val => {
     const target = parseFloat(val.dataset.target || 0);
+    if (!target) return; // Skip if target is 0 or invalid
+
     let current = 0;
     const step = target / 50;
+
     const update = () => {
       current += step;
       if (current >= target) {
@@ -36,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
       val.textContent = Number.isInteger(target) ? Math.round(current) : current.toFixed(1);
       requestAnimationFrame(update);
     };
+
     requestAnimationFrame(update);
   });
 });

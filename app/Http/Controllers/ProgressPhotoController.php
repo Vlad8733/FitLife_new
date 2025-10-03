@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Storage;
 
 class ProgressPhotoController extends Controller
 {
-    // Show all progress photos for the authenticated user
+    // Show all progress photos for authenticated user
     public function index()
     {
         $progressPhotos = Auth::user()->progress()->latest()->get();
-        return view('progress.index', compact('progressPhotos')); // <-- используем твой существующий Blade
+        return view('progress.index', compact('progressPhotos'));
     }
 
     // Store a new progress photo
@@ -32,20 +32,16 @@ class ProgressPhotoController extends Controller
         return back()->with('success', '');
     }
 
-    // Update description of a photo
+    // Update photo description
     public function update(Request $request, Progress $progress)
     {
-        if ($progress->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        $this->authorizeUser($progress);
 
         $request->validate([
             'description' => 'nullable|string|max:255',
         ]);
 
-        $progress->update([
-            'description' => $request->description,
-        ]);
+        $progress->update(['description' => $request->description]);
 
         return back()->with('success', '');
     }
@@ -53,13 +49,19 @@ class ProgressPhotoController extends Controller
     // Delete a photo
     public function destroy(Progress $progress)
     {
-        if ($progress->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        $this->authorizeUser($progress);
 
         Storage::disk('public')->delete($progress->photo);
         $progress->delete();
 
         return back()->with('success', '');
+    }
+
+    // Helper: check if the authenticated user owns the progress photo
+    private function authorizeUser(Progress $progress)
+    {
+        if ($progress->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
     }
 }
