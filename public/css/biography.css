@@ -2,12 +2,17 @@
   --bg: #f8f9fa;
   --text: #1a1a1a;
   --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --secondary: #10b981;
   --muted: #6b7280;
   --card-bg: #ffffff;
   --border: #e5e7eb;
   --radius: 10px;
   --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --transition: 0.3s ease;
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Poppins', sans-serif;
 }
 
 /* ========== GLOBAL ========== */
@@ -18,11 +23,12 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-primary);
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
   font-size: 16px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ========== LAYOUT CONTAINER ========== */
@@ -41,6 +47,7 @@ body {
   height: 100vh;
   overflow-y: auto;
   transition: var(--transition);
+  z-index: 1000;
 }
 
 .sidebar-header {
@@ -48,6 +55,7 @@ body {
 }
 
 .sidebar-header h2 {
+  font-family: var(--font-heading);
   font-size: 1.5rem;
   font-weight: 600;
 }
@@ -63,12 +71,13 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 12px;
+  padding: 12px 16px;
   color: var(--text);
   text-decoration: none;
   font-size: 0.95rem;
   border-radius: var(--radius);
   transition: var(--transition);
+  touch-action: manipulation;
 }
 
 .nav-menu a svg,
@@ -122,15 +131,17 @@ main {
   background: var(--accent);
   color: #fff;
   border: none;
-  padding: 8px;
+  padding: 12px;
   border-radius: var(--radius);
   cursor: pointer;
-  z-index: 1000;
+  z-index: 1100;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 #mobile-toggle svg {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
 }
 
 /* ========== HEADER ========== */
@@ -142,6 +153,7 @@ header {
 }
 
 .header-left h1 {
+  font-family: var(--font-heading);
   font-size: 2rem;
   font-weight: 700;
 }
@@ -156,12 +168,12 @@ header {
 }
 
 .header-info {
-  text-align: right;
   font-size: 0.9rem;
 }
 
 /* ========== SECTIONS ========== */
 h3 {
+  font-family: var(--font-heading);
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 20px;
@@ -227,6 +239,8 @@ h3 {
   font-size: 0.95rem;
   cursor: pointer;
   transition: var(--transition);
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .save-btn svg {
@@ -236,7 +250,7 @@ h3 {
 }
 
 .save-btn:hover {
-  background: #1d4ed8;
+  background: var(--accent-hover);
   transform: translateY(-1px);
 }
 
@@ -252,10 +266,12 @@ h3 {
   box-shadow: var(--shadow);
 }
 
-/* ========== RESPONSIVE: TABLET ========== */
+/* ========== RESPONSIVE: TABLET (≤768px) ========== */
 @media (max-width: 768px) {
   #sidebar {
     transform: translateX(-100%);
+    width: 280px;
+    box-shadow: var(--shadow);
   }
 
   #sidebar.active {
@@ -264,7 +280,7 @@ h3 {
 
   main {
     margin-left: 0;
-    padding: 16px;
+    padding: 24px 16px;
   }
 
   #mobile-toggle {
@@ -274,26 +290,173 @@ h3 {
   header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .header-left h1 {
+    font-size: 1.75rem;
+  }
+
+  .header-left p.muted {
+    font-size: 0.9rem;
   }
 
   .header-info {
-    text-align: left;
-    margin-top: 12px;
+    font-size: 0.85rem;
   }
 
   .biography-card {
     padding: 16px;
   }
-}
 
-/* ========== RESPONSIVE: MOBILE ========== */
-@media (max-width: 480px) {
   .biography-form {
-    flex-direction: column;
-    align-items: stretch;
+    gap: 16px;
   }
 
   .form-group {
     min-width: 100%;
+  }
+
+  .save-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px;
+    font-size: 1rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+}
+
+/* ========== RESPONSIVE: MOBILE (≤480px) ========== */
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+
+  #fitlife-container {
+    padding: 0;
+  }
+
+  #sidebar {
+    width: 100%;
+    max-width: 300px;
+    padding: 16px;
+  }
+
+  .sidebar-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .sidebar-header p {
+    font-size: 0.85rem;
+  }
+
+  .nav-menu a,
+  .nav-menu button {
+    padding: 14px 12px;
+    font-size: 0.9rem;
+  }
+
+  .nav-menu a svg,
+  .nav-menu button svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  main {
+    padding: 16px;
+  }
+
+  #mobile-toggle {
+    top: 12px;
+    left: 12px;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  #mobile-toggle svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  header {
+    margin-bottom: 20px;
+  }
+
+  .header-left h1 {
+    font-size: 1.5rem;
+  }
+
+  .header-left p.muted {
+    font-size: 0.85rem;
+  }
+
+  .header-info {
+    font-size: 0.8rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+  }
+
+  .biography-card {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .biography-form {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-group {
+    min-width: 100%;
+  }
+
+  .form-group label {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 8px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+
+  .save-btn {
+    padding: 12px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+
+  .success-msg {
+    padding: 10px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+}
+
+/* ========== ACCESSIBILITY AND TOUCH OPTIMIZATION ========== */
+@media (hover: none) {
+  .nav-menu a:hover,
+  .nav-menu button:hover,
+  .save-btn:hover {
+    background: var(--bg);
+    transform: none;
+  }
+
+  .nav-menu a:hover svg,
+  .nav-menu button:hover svg {
+    stroke: var(--muted);
+  }
+
+  .save-btn:active {
+    background: var(--accent-hover);
   }
 }

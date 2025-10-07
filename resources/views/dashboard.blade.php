@@ -31,20 +31,23 @@
         <section class="metrics">
             <h3>Metrics</h3>
             <div class="metrics-grid">
-                <div class="metric-card">
+                <div class="metric-item">
                     <h4>Calories</h4>
-                    <span class="value" data-target="{{ $totalCalories ?? 0 }}">0</span>
-                    <span>kcal</span>
+                    <div class="circular-progress" data-value="{{ $totalCalories ?? 0 }}" data-max="2000" data-unit="kcal">
+                        <span class="progress-value">0 kcal</span>
+                    </div>
                 </div>
-                <div class="metric-card">
+                <div class="metric-item">
                     <h4>Sleep</h4>
-                    <span class="value" data-target="{{ round($totalSleep ?? 0, 1) }}">0</span>
-                    <span>hours</span>
+                    <div class="circular-progress" data-value="{{ round($totalSleep ?? 0, 1) }}" data-max="8" data-unit="hours">
+                        <span class="progress-value">0 hours</span>
+                    </div>
                 </div>
-                <div class="metric-card">
+                <div class="metric-item">
                     <h4>Water</h4>
-                    <span class="value" data-target="{{ $totalWater ?? 0 }}">0</span>
-                    <span>ml</span>
+                    <div class="circular-progress" data-value="{{ $totalWater ?? 0 }}" data-max="2000" data-unit="ml">
+                        <span class="progress-value">0 ml</span>
+                    </div>
                 </div>
             </div>
         </section>

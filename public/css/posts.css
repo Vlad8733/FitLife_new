@@ -1,16 +1,19 @@
 /* ========== ROOT VARIABLES ========== */
 :root {
-    --bg: #f9fafb;
-    --text: #111827;
-    --accent: #3b82f6;
-    --muted: #6b7280;
-    --card-bg: #ffffff;
-    --border: #d1d5db;
-    --radius: 12px;
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    --transition: 0.3s ease;
-    --success: #22c55e;
-    --danger: #ef4444;
+    --bg: #121212; /* Тёмный фон */
+    --text: #e5e5e5; /* Светлый текст */
+    --accent: #00ff00; /* Светло-зелёный акцент */
+    --muted: #a0a0a0; /* Приглушённый текст */
+    --card-bg: #1f1f1f; /* Тёмный фон карточек */
+    --border: #333333; /* Тёмная граница */
+    --radius: 12px; /* Скругление углов */
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Тень */
+    --transition: 0.3s ease; /* Плавные переходы */
+    --success: #22c55e; /* Зелёный для успеха */
+    --danger: #ef4444; /* Красный для ошибок */
+    --svg-fill: var(--muted); /* Цвет SVG по умолчанию */
+    --svg-fill-hover: var(--accent); /* Цвет SVG при наведении */
+    --svg-fill-active: #ffffff; /* Цвет SVG для активного состояния */
 }
 
 /* ========== GLOBAL RESET ========== */
@@ -20,22 +23,31 @@
     box-sizing: border-box;
 }
 
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
 /* ========== HEADER ========== */
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
+    padding: 0 24px;
 }
 
 header h1 {
     font-size: 1.75rem;
     font-weight: 600;
+    color: var(--text);
 }
 
 /* ========== ALERTS ========== */
 .alert-container {
     margin-bottom: 16px;
+    padding: 0 24px;
 }
 
 .alert {
@@ -61,7 +73,7 @@ header h1 {
     padding: 16px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    margin-bottom: 24px;
+    margin: 0 24px 24px;
 }
 
 .create-post textarea {
@@ -71,13 +83,20 @@ header h1 {
     padding: 8px;
     resize: vertical;
     font-size: 1rem;
-    margin-bottom: 8px;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.create-post textarea:focus {
+    outline: none;
+    border-color: var(--accent);
 }
 
 .create-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 8px;
 }
 
 .left-controls {
@@ -92,6 +111,14 @@ header h1 {
 
 .file-label input {
     display: none;
+}
+
+.file-label svg {
+    fill: var(--svg-fill);
+}
+
+.file-label:hover svg {
+    fill: var(--svg-fill-hover);
 }
 
 .char-count {
@@ -110,7 +137,7 @@ header h1 {
 }
 
 .btn:hover {
-    background: #2563eb;
+    background: #00cc00; /* Тёмный зелёный при наведении */
 }
 
 /* ========== IMAGE PREVIEW ========== */
@@ -122,9 +149,8 @@ header h1 {
 .post-img,
 [id^="edit-image-preview-"] {
     max-height: 300px;
-    width: auto;
+    width: 100%;
     display: block;
-    margin-left: 0;
     margin-bottom: 8px;
     object-fit: contain;
     border-radius: var(--radius);
@@ -133,8 +159,8 @@ header h1 {
 #remove-photo,
 .remove-photo {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 8px;
+    right: 8px;
     background: var(--danger);
     color: #fff;
     border: none;
@@ -145,13 +171,13 @@ header h1 {
     font-size: 1rem;
     line-height: 24px;
     text-align: center;
-    display: none;
 }
 
 /* ========== POSTS FEED ========== */
 .posts-feed {
     display: grid;
     gap: 16px;
+    padding: 0 24px;
 }
 
 .post-card {
@@ -192,6 +218,7 @@ header h1 {
     text-decoration: underline;
 }
 
+.username,
 .time {
     font-size: 0.85rem;
     color: var(--muted);
@@ -200,6 +227,7 @@ header h1 {
 /* ========== POST BODY ========== */
 .post-body p {
     margin-bottom: 12px;
+    font-size: 1rem;
 }
 
 /* ========== POST ACTIONS ========== */
@@ -222,9 +250,24 @@ header h1 {
     transition: var(--transition);
 }
 
-.action-btn.active,
+.action-btn svg {
+    fill: var(--svg-fill);
+}
+
 .action-btn:hover {
-    color: var(--accent);
+    color: var(--svg-fill-hover);
+}
+
+.action-btn:hover svg {
+    fill: var(--svg-fill-hover);
+}
+
+.action-btn.active {
+    color: var(--svg-fill-active);
+}
+
+.action-btn.active svg {
+    fill: var(--svg-fill-active);
 }
 
 .count-like,
@@ -239,6 +282,10 @@ header h1 {
     gap: 4px;
     color: var(--muted);
     font-size: 0.9rem;
+}
+
+.view-count svg {
+    fill: var(--svg-fill);
 }
 
 /* ========== EDIT/DELETE BUTTONS ========== */
@@ -265,8 +312,13 @@ header h1 {
 
 .comment-head {
     display: flex;
-    justify-content: space-between;
+    gap: 8px;
+    align-items: center;
     font-size: 0.9rem;
+}
+
+.comment-head strong {
+    font-weight: 600;
 }
 
 .comment-actions {
@@ -287,6 +339,13 @@ header h1 {
     border-radius: var(--radius);
     padding: 4px;
     font-size: 0.9rem;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.comment-form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
 }
 
 .reply-btn {
@@ -310,31 +369,383 @@ header h1 {
 
 .cancel-edit {
     background: var(--muted);
+    color: var(--text);
 }
 
-/* ========== RESPONSIVE MOBILE ========== */
+.cancel-edit:hover {
+    background: #4b5563;
+}
+
+/* ========== RESPONSIVE: TABLET (≤768px) ========== */
 @media (max-width: 768px) {
     header {
+        padding: 0 12px;
+        margin-bottom: 20px;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .alert-container {
+        padding: 0 12px;
+        margin-bottom: 12px;
+    }
+
+    .alert {
+        padding: 10px;
+        font-size: 0.85rem;
+        border-radius: 10px;
+    }
+
+    .create-post {
+        margin: 0 12px 20px;
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    .create-post textarea {
+        font-size: 0.95rem;
+        min-height: 80px;
+        padding: 6px;
+    }
+
+    .create-footer {
         flex-direction: column;
         align-items: flex-start;
+        gap: 10px;
+    }
+
+    .left-controls {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .file-label {
+        padding: 8px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    .char-count {
+        font-size: 0.85rem;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 0.9rem;
+        min-height: 44px;
+    }
+
+    #image-preview,
+    .post-img,
+    [id^="edit-image-preview-"] {
+        max-height: 250px;
+    }
+
+    #remove-photo,
+    .remove-photo {
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        font-size: 0.9rem;
     }
 
     .posts-feed {
-        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 0 12px;
+    }
+
+    .post-card {
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    .post-top {
+        gap: 10px;
+    }
+
+    .avatar img {
+        width: 36px;
+        height: 36px;
+    }
+
+    .name {
+        font-size: 0.95rem;
+    }
+
+    .username,
+    .time {
+        font-size: 0.8rem;
+    }
+
+    .post-body p {
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    .post-actions {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        padding: 6px;
+        font-size: 0.85rem;
+        min-height: 44px;
+    }
+
+    .view-count {
+        font-size: 0.85rem;
+    }
+
+    .edit-post-btn,
+    .edit-comment-btn,
+    .delete-btn {
+        font-size: 0.85rem;
+        padding: 6px;
+        min-height: 44px;
+    }
+
+    .comments {
+        margin-top: 10px;
+    }
+
+    .comment {
+        padding: 6px;
+        margin-top: 6px;
+        border-radius: 10px;
+    }
+
+    .comment-head {
+        font-size: 0.85rem;
+    }
+
+    .comment-head .username {
+        font-size: 0.75rem;
+    }
+
+    .comment-actions {
+        gap: 6px;
+    }
+
+    .comment-form {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .comment-form textarea {
+        font-size: 0.85rem;
+        min-height: 50px;
+        padding: 6px;
+    }
+
+    .reply-btn {
+        width: 100%;
+        padding: 8px;
+        font-size: 0.9rem;
+        min-height: 44px;
+    }
+
+    .cancel-edit {
+        padding: 8px;
+        font-size: 0.9rem;
+        min-height: 44px;
     }
 }
 
-/* ========== META USERNAMES ========== */
-.meta .username {
-    display: block;
-    font-size: 0.8rem;
-    color: var(--muted);
-    font-weight: normal;
+/* ========== RESPONSIVE: MOBILE (≤480px) ========== */
+@media (max-width: 480px) {
+    body {
+        font-size: 14px;
+    }
+
+    header {
+        padding: 0 8px;
+        margin-bottom: 16px;
+    }
+
+    header h1 {
+        font-size: 1.25rem;
+    }
+
+    .alert-container {
+        padding: 0 8px;
+        margin-bottom: 10px;
+    }
+
+    .alert {
+        padding: 8px;
+        font-size: 0.8rem;
+        border-radius: 8px;
+    }
+
+    .create-post {
+        margin: 0 8px 16px;
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .create-post textarea {
+        font-size: 0.9rem;
+        min-height: 70px;
+        padding: 6px;
+        border-radius: 8px;
+    }
+
+    .create-footer {
+        gap: 8px;
+    }
+
+    .file-label {
+        padding: 6px;
+        min-height: 40px;
+    }
+
+    .char-count {
+        font-size: 0.8rem;
+    }
+
+    .btn {
+        padding: 8px;
+        font-size: 0.85rem;
+        border-radius: 8px;
+    }
+
+    #image-preview,
+    .post-img,
+    [id^="edit-image-preview-"] {
+        max-height: 200px;
+    }
+
+    .posts-feed {
+        gap: 10px;
+        padding: 0 8px;
+    }
+
+    .post-card {
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .post-top {
+        gap: 8px;
+    }
+
+    .avatar img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .name {
+        font-size: 0.9rem;
+    }
+
+    .username,
+    .time {
+        font-size: 0.75rem;
+    }
+
+    .post-body p {
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+    }
+
+    .post-actions {
+        gap: 6px;
+    }
+
+    .action-btn {
+        padding: 4px;
+        font-size: 0.8rem;
+        min-height: 40px;
+    }
+
+    .view-count {
+        font-size: 0.8rem;
+    }
+
+    .edit-post-btn,
+    .edit-comment-btn,
+    .delete-btn {
+        font-size: 0.8rem;
+        padding: 4px;
+        min-height: 40px;
+    }
+
+    .comments {
+        margin-top: 8px;
+    }
+
+    .comment {
+        padding: 6px;
+        border-radius: 8px;
+    }
+
+    .comment-head {
+        font-size: 0.8rem;
+    }
+
+    .comment-head .username {
+        font-size: 0.7rem;
+    }
+
+    .comment-actions {
+        gap: 4px;
+    }
+
+    .comment-form textarea {
+        font-size: 0.8rem;
+        min-height: 40px;
+        border-radius: 8px;
+    }
+
+    .reply-btn,
+    .cancel-edit {
+        padding: 6px;
+        font-size: 0.85rem;
+        border-radius: 8px;
+    }
 }
 
-.comment-head .username {
-    font-size: 0.8rem;
-    color: var(--muted);
-    font-weight: normal;
-    margin-left: 0.5rem;
+/* ========== ACCESSIBILITY AND TOUCH OPTIMIZATION ========== */
+@media (hover: none) {
+    .btn:hover,
+    .action-btn:hover,
+    .edit-post-btn:hover,
+    .edit-comment-btn:hover,
+    .delete-btn:hover,
+    .cancel-edit:hover {
+        background: none;
+        color: inherit;
+    }
+
+    .btn:active {
+        background: #00cc00;
+    }
+
+    .action-btn.active,
+    .action-btn:active {
+        color: var(--svg-fill-active);
+    }
+
+    .action-btn:active svg {
+        fill: var(--svg-fill-active);
+    }
+
+    .edit-post-btn:active,
+    .edit-comment-btn:active {
+        color: var(--accent);
+    }
+
+    .delete-btn:active {
+        color: var(--danger);
+    }
+
+    .cancel-edit:active {
+        background: #4b5563;
+    }
 }

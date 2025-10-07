@@ -1,13 +1,13 @@
 :root {
-    --bg: #f9fafb;
-    --text: #111827;
-    --accent: #3b82f6;
-    --muted: #6b7280;
-    --card-bg: #ffffff;
-    --border: #d1d5db;
-    --radius: 12px;
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    --transition: 0.3s ease;
+    --bg: #121212; /* Тёмный фон */
+    --text: #e5e5e5; /* Светлый текст */
+    --accent: #00ff00; /* Светло-зелёный акцент */
+    --muted: #a0a0a0; /* Приглушённый текст */
+    --card-bg: #1f1f1f; /* Тёмный фон карточек */
+    --border: #333333; /* Тёмная граница */
+    --radius: 12px; /* Скругление углов */
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Тень */
+    --transition: 0.3s ease; /* Плавные переходы */
 }
 
 /* ========== GLOBAL ========== */
@@ -19,6 +19,8 @@
 
 body {
     font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
 }
 
 /* ========== HEADER ========== */
@@ -40,35 +42,63 @@ header h1 {
 }
 
 .metrics-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Увеличено для больших кругов */
 }
 
-.stats-grid div,
-.metric-card {
+.stats-grid div {
     background: var(--card-bg);
     padding: 16px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
+    transition: var(--transition);
 }
 
-.stats-grid div span,
-.metric-card span:last-child {
+.stats-grid div:hover {
+    box-shadow: var(--shadow);
+}
+
+.stats-grid div span {
     display: block;
     color: var(--muted);
     font-size: 0.85rem;
     margin-bottom: 4px;
 }
 
-.metric-card h4 {
+.metric-item h4 {
     font-size: 1rem;
     font-weight: 500;
     margin-bottom: 8px;
+    text-align: center;
+    color: var(--text);
 }
 
-.metric-card .value {
-    font-size: 1.5rem;
+.circular-progress {
+    position: relative;
+    height: 120px; /* Увеличен размер круга */
+    width: 120px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin: 0 auto;
+    background: conic-gradient(var(--accent) 0deg, var(--border) 0deg);
+}
+
+.circular-progress::before {
+    content: "";
+    position: absolute;
+    height: 100px; /* Увеличен внутренний круг */
+    width: 100px;
+    background-color: var(--bg);
+    border-radius: 50%;
+}
+
+.progress-value {
+    position: relative;
+    font-size: clamp(0.85rem, 2vw, 1rem); /* Увеличен адаптивный размер шрифта */
     font-weight: 600;
-    color: var(--accent);
+    color: var(--muted); /* Серый цвет текста */
+    text-align: center;
+    white-space: nowrap; /* Предотвращает перенос текста */
 }
 
 /* ========== GALLERY ========== */
@@ -108,6 +138,11 @@ header h1 {
     padding: 16px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
+    transition: var(--transition);
+}
+
+.goal-item:hover {
+    box-shadow: var(--shadow);
 }
 
 .goal-progress {
@@ -162,7 +197,7 @@ header h1 {
 
 .friend-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
 }
 
 .friend-avatar {
@@ -171,7 +206,7 @@ header h1 {
     margin-right: 16px;
     border-radius: 50%;
     overflow: hidden;
-    border: 2px solid var(--border);
+    border: 2px solid var(--accent);
 }
 
 .friend-avatar img {
@@ -249,7 +284,7 @@ header h1 {
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: var(--text);
+    color: var(--accent);
     cursor: pointer;
 }
 
@@ -274,15 +309,53 @@ header h1 {
     top: 50%;
     transform: translateY(-50%);
     background: var(--accent);
-    color: #fff;
+    color: var(--bg);
     border: none;
     padding: 8px;
     border-radius: var(--radius);
     cursor: pointer;
+    transition: var(--transition);
+}
+
+.lightbox-nav:hover {
+    background: #00cc00;
 }
 
 .lightbox-nav.prev { left: 8px; }
 .lightbox-nav.next { right: 8px; }
+
+/* ========== ALERTS ========== */
+.alert-container {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1000;
+}
+
+.alert {
+    background: var(--card-bg);
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    color: var(--text);
+    margin-bottom: 8px;
+    box-shadow: var(--shadow);
+}
+
+.alert--danger {
+    border-color: #ff5555;
+    color: #ff5555;
+}
+
+.replies {
+    margin-left: 20px;
+}
+.comment-form {
+    margin-top: 10px;
+}
+.reply-toggle {
+    cursor: pointer;
+}
 
 /* ========== RESPONSIVE MOBILE ========== */
 @media (max-width: 480px) {
@@ -310,5 +383,19 @@ header h1 {
     .friend-avatar {
         width: 40px;
         height: 40px;
+    }
+
+    .circular-progress {
+        height: 100px; /* Увеличен размер круга на мобильных */
+        width: 100px;
+    }
+
+    .circular-progress::before {
+        height: 84px; /* Увеличен внутренний круг на мобильных */
+        width: 84px;
+    }
+
+    .progress-value {
+        font-size: clamp(0.75rem, 1.8vw, 0.9rem); /* Адаптивный размер для мобильных */
     }
 }

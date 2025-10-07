@@ -20,7 +20,7 @@ class CommentController extends Controller
 
             $request->validate(['content' => 'required|string|max:500']);
             $comment->update(['content' => $request->input('content')]);
-            Cache::forget('posts_index');
+            Cache::forget('posts_page_1');
 
             return response()->json([
                 'success' => true,
@@ -45,7 +45,7 @@ class CommentController extends Controller
             }
 
             $comment->delete();
-            Cache::forget('posts_index');
+            Cache::forget('posts_page_1');
 
             return response()->json(['success' => true], 200);
 
@@ -100,6 +100,8 @@ class CommentController extends Controller
             $dislikeCount = Cache::remember($cacheKeys['dislike'], 60, fn() =>
                 $comment->likes()->where('type', 'dislike')->count()
             );
+
+            Cache::forget('posts_page_1');
 
             return response()->json([
                 'success' => true,

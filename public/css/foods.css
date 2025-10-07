@@ -9,7 +9,6 @@
     --radius: 12px;
     --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     --transition: all 0.3s ease;
-    --sidebar-width: 260px;
     --primary: #3b82f6;
     --success: #10b981;
     --error: #ef4444;
@@ -36,90 +35,7 @@ body {
     min-height: 100vh;
 }
 
-/* ========== SIDEBAR ========== */
-#sidebar {
-    width: var(--sidebar-width);
-    background: var(--card-bg);
-    padding: 24px;
-    border-right: 1px solid var(--border);
-    position: fixed;
-    height: 100vh;
-    overflow-y: auto;
-    transition: var(--transition);
-}
-
-.sidebar-header {
-    margin-bottom: 32px;
-    text-align: center;
-}
-
-.sidebar-header h2 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--accent);
-}
-
-.sidebar-header p {
-    font-size: 0.9rem;
-    color: var(--muted);
-}
-
-.nav-menu a,
-.nav-menu button {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    color: var(--text);
-    text-decoration: none;
-    font-size: 0.95rem;
-    border-radius: var(--radius);
-    transition: var(--transition);
-}
-
-.nav-menu a svg,
-.nav-menu button svg {
-    width: 20px;
-    height: 20px;
-    stroke: var(--muted);
-    transition: var(--transition);
-}
-
-.nav-menu a:hover,
-.nav-menu button:hover {
-    background: var(--bg);
-    color: var(--accent);
-}
-
-.nav-menu a:hover svg,
-.nav-menu button:hover svg {
-    stroke: var(--accent);
-}
-
-.nav-menu a.active {
-    background: var(--accent);
-    color: #ffffff;
-}
-
-.nav-menu a.active svg {
-    stroke: #ffffff;
-}
-
-.nav-menu button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    text-align: left;
-}
-
 /* ========== MAIN CONTENT ========== */
-main {
-    margin-left: var(--sidebar-width);
-    padding: 32px;
-    flex: 1;
-}
-
 #mobile-toggle {
     display: none;
     position: fixed;
@@ -460,15 +376,6 @@ header {
 
 /* ========== RESPONSIVE MOBILE ========== */
 @media (max-width: 768px) {
-    #sidebar {
-        transform: translateX(-100%);
-        width: var(--sidebar-width);
-    }
-
-    #sidebar.active {
-        transform: translateX(0);
-    }
-
     main {
         margin-left: 0;
         padding: 16px;

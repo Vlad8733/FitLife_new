@@ -1,4 +1,3 @@
-// DOMContentLoaded event
 document.addEventListener('DOMContentLoaded', () => {
     const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content;
     const alertContainer = document.querySelector('.alert-container');
@@ -9,21 +8,27 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Animate metric values
+    // Animate circular metrics
     const animateMetrics = () => {
-        document.querySelectorAll('.metric-card .value').forEach(value => {
-            const target = parseFloat(value.getAttribute('data-target'));
+        document.querySelectorAll('.circular-progress').forEach(circle => {
+            const targetValue = parseFloat(circle.getAttribute('data-value'));
+            const maxValue = parseFloat(circle.getAttribute('data-max'));
+            const unit = circle.getAttribute('data-unit');
+            const precision = unit === 'hours' ? 1 : 0;
             let current = 0;
-            const increment = target / 50;
+            const increment = targetValue / 50;
 
             const update = () => {
                 current += increment;
-                if (current >= target) {
-                    value.textContent = target.toFixed(target % 1 === 0 ? 0 : 1);
-                    return;
+                if (current >= targetValue) {
+                    current = targetValue;
                 }
-                value.textContent = current.toFixed(target % 1 === 0 ? 0 : 1);
-                requestAnimationFrame(update);
+                const percent = Math.min(100, (current / maxValue) * 100);
+                circle.style.background = `conic-gradient(var(--accent) ${percent * 3.6}deg, var(--border) 0deg)`;
+                circle.querySelector('.progress-value').textContent = `${current.toFixed(precision)} ${unit}`;
+                if (current < targetValue) {
+                    requestAnimationFrame(update);
+                }
             };
 
             requestAnimationFrame(update);
@@ -71,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lightboxDesc.textContent = photo.getAttribute('data-desc') || 'No description';
         lightboxDate.textContent = photo.getAttribute('data-date');
         lightbox.setAttribute('aria-hidden', 'false');
-        lightbox.style.display = 'block';
+        lightbox.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     };
 

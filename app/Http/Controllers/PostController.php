@@ -13,10 +13,25 @@ use Illuminate\Support\Facades\Storage;
 class PostController extends Controller
 {
     // Show all posts with cache
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $posts = Cache::remember('posts_index', 60, fn() => Post::with(['user', 'comments.user', 'likes'])->latest()->get());
+            $perPage = 10;
+            $page = $request->input('page', 1);
+            $cacheKey = "posts_page_{$page}";
+            
+            $posts = Cache::remember($cacheKey, 60, function () use ($perPage) {
+                return Post::with(['user', 'allComments.user', 'likes'])->latest()->paginate($perPage);
+            });
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'posts' => $posts->items()->map(function ($post) {
+                        return $this->formatPostForJson($post);
+                    }),
+                ]);
+            }
+
             return view('posts.index', compact('posts'));
         } catch (\Exception $e) {
             \Log::error('Failed to load posts: ' . $e->getMessage());
@@ -42,7 +57,7 @@ class PostController extends Controller
                 'views'      => 0,
             ]);
 
-            Cache::forget('posts_index');
+            Cache::forget('posts_page_1'); // Обновляем кэш
 
             return response()->json([
                 'success' => true,
@@ -82,7 +97,7 @@ class PostController extends Controller
 
             $post->content = $request->input('content');
             $post->save();
-            Cache::forget('posts_index');
+            Cache::forget('posts_page_1');
 
             return response()->json([
                 'success' => true,
@@ -112,7 +127,7 @@ class PostController extends Controller
 
             $this->deletePhoto($post->photo_path);
             $post->delete();
-            Cache::forget('posts_index');
+            Cache::forget('posts_page_1');
 
             return response()->json(['success' => true, 'message' => 'Post deleted successfully'], 200);
 
@@ -173,6 +188,21 @@ class PostController extends Controller
                 'parent_id' => 'nullable|exists:comments,id',
             ]);
 
+            // Проверяем, не существует ли уже такой комментарий от пользователя
+            $existingComment = Comment::where([
+                'post_id'   => $post->id,
+                'user_id'   => Auth::id(),
+                'content'   => $request->input('content'),
+                'parent_id' => $request->input('parent_id'),
+            ])->first();
+
+            if ($existingComment) {
+                return response()->json([
+                    'success' => true,
+                    'comment' => $this->formatCommentForJson($existingComment),
+                ], 200);
+            }
+
             $comment = Comment::create([
                 'post_id'   => $post->id,
                 'user_id'   => Auth::id(),
@@ -180,18 +210,11 @@ class PostController extends Controller
                 'content'   => $request->input('content'),
             ]);
 
-            Cache::forget('posts_index');
+            Cache::forget('posts_page_1');
 
             return response()->json([
                 'success' => true,
-                'comment' => [
-                    'id' => $comment->id,
-                    'content' => $comment->content,
-                    'user_name' => Auth::user()->name,
-                    'user_id' => Auth::id(),
-                    'created_at' => $comment->created_at->diffForHumans(),
-                    'parent_id' => $comment->parent_id,
-                ],
+                'comment' => $this->formatCommentForJson($comment),
             ], 200);
 
         } catch (\Exception $e) {
@@ -227,9 +250,65 @@ class PostController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'avatar' => $user->avatar,
+                'username' => $user->username,
                 'profile_url' => route('profile.show', $user->id),
             ],
-            'created_at' => $post->created_at->diffForHumans(),
+            'created_at_diff' => $post->created_at->diffForHumans(),
+            'views' => $post->views,
+            'like_count' => $post->likes()->where('type', 'like')->count(),
+            'dislike_count' => $post->likes()->where('type', 'dislike')->count(),
+            'comment_count' => $post->allComments()->count(),
+            'user_liked' => $post->isLikedBy(Auth::id()),
+            'user_disliked' => $post->isDislikedBy(Auth::id()),
+            'can_update' => Auth::id() === $post->user_id,
+            'can_delete' => Auth::id() === $post->user_id,
+        ];
+    }
+
+    private function formatPostForJson($post)
+    {
+        return [
+            'id' => $post->id,
+            'content' => $post->content,
+            'photo_path' => $post->photo_path,
+            'user' => [
+                'name' => $post->user->name,
+                'username' => $post->user->username,
+                'avatar' => $post->user->avatar,
+                'profile_url' => route('profile.show', $post->user->id),
+            ],
+            'created_at_diff' => $post->created_at->diffForHumans(),
+            'views' => $post->views,
+            'like_count' => $post->likes()->where('type', 'like')->count(),
+            'dislike_count' => $post->likes()->where('type', 'dislike')->count(),
+            'comment_count' => $post->allComments()->count(),
+            'user_liked' => $post->isLikedBy(Auth::id()),
+            'user_disliked' => $post->isDislikedBy(Auth::id()),
+            'can_update' => Auth::id() === $post->user_id,
+            'can_delete' => Auth::id() === $post->user_id,
+            'comments' => $post->allComments->map(function ($comment) {
+                return $this->formatCommentForJson($comment);
+            })->toArray(),
+        ];
+    }
+
+    private function formatCommentForJson($comment)
+    {
+        return [
+            'id' => $comment->id,
+            'content' => $comment->content,
+            'user_name' => $comment->user->name,
+            'user' => [
+                'username' => $comment->user->username,
+            ],
+            'created_at_diff' => $comment->created_at->diffForHumans(),
+            'parent_id' => $comment->parent_id,
+            'like_count' => $comment->likes()->where('type', 'like')->count(),
+            'dislike_count' => $comment->likes()->where('type', 'dislike')->count(),
+            'user_liked' => $comment->likes()->where('user_id', Auth::id())->where('type', 'like')->exists(),
+            'user_disliked' => $comment->likes()->where('user_id', Auth::id())->where('type', 'dislike')->exists(),
+            'can_update' => Auth::id() === $comment->user_id,
+            'can_delete' => Auth::id() === $comment->user_id,
         ];
     }
 }

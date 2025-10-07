@@ -108,11 +108,11 @@
                     <span class="count-dislike">{{ $post->likes()->where('type', 'dislike')->count() }}</span>
                 </button>
 
-                <button class="action-btn comment-toggle" data-post-id="{{ $post->id }}" data-count="{{ $post->comments()->count() }}">
+                <button class="action-btn comment-toggle" data-post-id="{{ $post->id }}" data-count="{{ $post->allComments()->count() }}">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#3b82f6">
                         <path d="M240-400h480v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM880-80 720-240H160q-33 0-56.5-23.5T80-320v-480q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v720ZM160-320h594l46 45v-525H160v480Zm0 0v-480 480Z"/>
                     </svg>
-                    <span class="comment-count">{{ $post->comments()->count() }}</span> Comments
+                    <span class="comment-count">{{ $post->allComments()->count() }}</span> Comments
                 </button>
 
                 <span class="view-count">
@@ -136,60 +136,7 @@
             <!-- Comments -->
             <div class="comments" id="comments-{{ $post->id }}" style="display:none">
                 @foreach($post->comments as $comment)
-                <div class="comment" id="comment-{{ $comment->id }}" data-comment-id="{{ $comment->id }}" style="margin-left: {{ $comment->parent_id ? '20px' : '0' }};">
-                    <div class="comment-head">
-                        <strong>{{ $comment->user->name }}</strong>
-                        <div class="username" style="color: #6b7280; font-size: 0.75rem;">{{ '@'.$comment->user->username }}</div>
-                        <span class="time">{{ $comment->created_at->diffForHumans() }}</span>
-                    </div>
-                    <div class="comment-body">
-                        <p>{{ $comment->content }}</p>
-                    </div>
-
-                    <form id="edit-comment-form-{{ $comment->id }}" action="{{ route('comments.update', $comment) }}" method="POST" style="display: none;">
-                        @csrf
-                        @method('PUT')
-                        <textarea name="content" rows="2" maxlength="500">{{ $comment->content }}</textarea>
-                        <button type="submit" class="btn">Save</button>
-                        <button type="button" class="btn cancel-edit-comment" data-comment-id="{{ $comment->id }}">Cancel</button>
-                    </form>
-
-                    <div class="comment-actions">
-                        <button class="action-btn like-btn {{ Auth::check() && $comment->likes()->where('user_id', Auth::id())->where('type', 'like')->exists() ? 'active' : '' }}" data-comment-id="{{ $comment->id }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"
-                                 fill="{{ Auth::check() && $comment->likes()->where('user_id', Auth::id())->where('type', 'like')->exists() ? '#ef4444' : 'currentColor' }}">
-                                <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z"/>
-                            </svg>
-                            <span class="count-like">{{ $comment->likes()->where('type', 'like')->count() }}</span>
-                        </button>
-
-                        <button class="action-btn dislike-btn {{ Auth::check() && $comment->likes()->where('user_id', Auth::id())->where('type', 'dislike')->exists() ? 'active' : '' }}" data-comment-id="{{ $comment->id }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"
-                                 fill="{{ Auth::check() && $comment->likes()->where('user_id', Auth::id())->where('type', 'dislike')->exists() ? '#111827' : 'currentColor' }}">
-                                <path d="M240-840h440v520L400-40l-50-50q-7-7-11.5-19t-4.5-23v-14l44-174H120q-32 0-56-24t-24-56v-80q0-7 2-15t4-15l120-282q9-20 30-34t44-14Zm360 80H240L120-480v80h360l-54 220 174-174v-406Zm0 406v-406 406Zm80 34v-80h120v-360H680v-80h200v520H680Z"/>
-                            </svg>
-                            <span class="count-dislike">{{ $comment->likes()->where('type', 'dislike')->count() }}</span>
-                        </button>
-
-                        @can('update', $comment)
-                            <button type="button" class="action-btn edit-comment-btn" data-comment-id="{{ $comment->id }}">Edit</button>
-                        @endcan
-
-                        @can('delete', $comment)
-                            <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="inline-form delete-comment-form">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="action-btn delete-btn">Delete</button>
-                            </form>
-                        @endcan
-                    </div>
-
-                    <form action="{{ route('posts.comment', $post) }}" method="POST" class="comment-form" data-post-id="{{ $post->id }}" data-parent-id="{{ $comment->id }}">
-                        @csrf
-                        <input type="hidden" name="parent_id" value="{{ $comment->id }}">
-                        <textarea name="content" placeholder="Write a reply..." rows="1" maxlength="500"></textarea>
-                        <button type="submit" class="btn reply-btn">Reply</button>
-                    </form>
-                </div>
+                @include('posts.partials.comment', ['comment' => $comment, 'post' => $post])
                 @endforeach
 
                 <!-- Main comment form for post -->
