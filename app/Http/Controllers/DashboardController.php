@@ -3,15 +3,25 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{MealLog, Sleep, Progress, Goal, WaterLog};
+use App\Models\{MealLog, Sleep, Progress, Goal, WaterLog, Calendar};
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-     // Show the main dashboard with user stats and logs
+    // Show the main dashboard with user stats and logs
     public function index()
     {
         $user = Auth::user();
+
+        $today = Carbon::today();
+        $weekLater = $today->copy()->addDays(7);
+
+        $upcomingEvents = Calendar::where('user_id', $user->id)
+            ->whereBetween('date', [$today, $weekLater])
+            ->orderBy('date')
+            ->take(3)
+            ->get();
 
         return view('dashboard', [
             'user'          => $user,
@@ -24,28 +34,29 @@ class DashboardController extends Controller
             'totalCalories' => MealLog::where('user_id', $user->id)->sum('calories'),
             'totalSleep'    => Sleep::where('user_id', $user->id)->sum('duration'),
             'totalWater'    => WaterLog::where('user_id', $user->id)->sum('amount'),
+            'upcomingEvents' => $upcomingEvents,
         ]);
     }
 
-     // AJAX: Load paginated meal logs
+    // AJAX: Load paginated meal logs
     public function mealLogsAjax(Request $request)
     {
         return $this->ajaxLogResponse($request, MealLog::class, 'profile.partials.meal_table', 'meals');
     }
 
-     // AJAX: Load paginated sleep logs
+    // AJAX: Load paginated sleep logs
     public function sleepLogsAjax(Request $request)
     {
         return $this->ajaxLogResponse($request, Sleep::class, 'profile.partials.sleep_table', 'sleep');
     }
 
-     // AJAX: Load paginated water logs
+    // AJAX: Load paginated water logs
     public function waterLogsAjax(Request $request)
     {
         return $this->ajaxLogResponse($request, WaterLog::class, 'profile.partials.water_table', 'water');
     }
 
-     // Generic method for AJAX log rendering
+    // Generic method for AJAX log rendering
     private function ajaxLogResponse(Request $request, string $model, string $view, string $pageName)
     {
         $logs = $this->getPaginatedLogs($model, Auth::id(), $pageName);
@@ -57,7 +68,7 @@ class DashboardController extends Controller
         return redirect()->route('dashboard');
     }
 
-     // Get paginated logs for a specific model
+    // Get paginated logs for a specific model
     private function getPaginatedLogs(string $model, int $userId, string $pageName)
     {
         return $model::where('user_id', $userId)

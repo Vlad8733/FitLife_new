@@ -89,8 +89,8 @@ header .muted {
     color: var(--muted);
 }
 
-/* ========== BIOGRAPHY FORM SECTION ========== */
-section[aria-labelledby="biography-settings-heading"] {
+/* ========== GOAL FORM SECTION ========== */
+section[aria-labelledby="goal-form-heading"] {
     margin: 32px 0;
 }
 
@@ -102,20 +102,7 @@ section h3 {
     text-align: left;
 }
 
-/* Success Message */
-.success-msg {
-    background: var(--success);
-    color: var(--bg);
-    padding: 12px;
-    border-radius: var(--radius);
-    margin-bottom: 16px;
-    font-size: 0.9rem;
-    text-align: center;
-    animation: fadeIn 0.5s ease;
-}
-
-/* Biography Card */
-.biography-card {
+.goal-card {
     background: var(--card-bg);
     padding: 16px;
     border-radius: var(--radius);
@@ -124,12 +111,12 @@ section h3 {
     transition: transform var(--transition), box-shadow var(--transition);
 }
 
-.biography-card:hover {
+.goal-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
 }
 
-.biography-form {
+.goal-form {
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
@@ -151,7 +138,8 @@ section h3 {
 }
 
 .form-group input,
-.form-group select {
+.form-group select,
+.form-group textarea {
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -161,17 +149,19 @@ section h3 {
     transition: border-color var(--transition);
 }
 
+.form-group textarea {
+    resize: vertical;
+}
+
 .form-group input:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group textarea:focus {
     border-color: var(--accent);
     outline: none;
     box-shadow: 0 0 8px var(--accent);
 }
 
-.save-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+.calculate-btn {
     background: var(--accent);
     color: var(--bg);
     padding: 10px 16px;
@@ -182,23 +172,17 @@ section h3 {
     transition: background-color var(--transition), transform var(--transition);
 }
 
-.save-btn svg {
-    width: 24px;
-    height: 24px;
-    stroke: var(--bg);
-}
-
-.save-btn:hover {
+.calculate-btn:hover {
     background: var(--highlight);
     transform: translateY(-1px);
 }
 
-.save-btn:focus {
+.calculate-btn:focus {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
 }
 
-.save-btn:disabled {
+.calculate-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
@@ -237,16 +221,16 @@ p {
     to { opacity: 1; }
 }
 
-.biography-card, .form-group, .success-msg {
+.goal-card, .form-group {
     animation: slideIn 0.5s ease-out;
 }
 
-.biography-form {
+.goal-form {
     animation: fadeIn 0.3s ease;
 }
 
 /* ========== ACCESSIBILITY ========== */
-a:focus, button:focus, input:focus, select:focus {
+a:focus, button:focus, input:focus, select:focus, textarea:focus {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
 }
@@ -419,21 +403,18 @@ a:focus, button:focus, input:focus, select:focus {
         font-size: 1.3rem;
     }
 
-    .biography-card {
+    .goal-card {
         padding: 12px;
     }
 
     .form-group input,
-    .form-group select {
+    .form-group select,
+    .form-group textarea {
         font-size: 0.85rem;
     }
 
-    .save-btn {
+    .calculate-btn {
         padding: 8px 12px;
-        font-size: 0.85rem;
-    }
-
-    .success-msg {
         font-size: 0.85rem;
     }
 }
@@ -455,7 +436,7 @@ a:focus, button:focus, input:focus, select:focus {
         font-size: 1.1rem;
     }
 
-    .biography-form {
+    .goal-form {
         flex-direction: column;
         align-items: stretch;
     }
@@ -469,16 +450,13 @@ a:focus, button:focus, input:focus, select:focus {
     }
 
     .form-group input,
-    .form-group select {
+    .form-group select,
+    .form-group textarea {
         font-size: 0.8rem;
     }
 
-    .save-btn {
+    .calculate-btn {
         padding: 6px 10px;
-        font-size: 0.8rem;
-    }
-
-    .success-msg {
         font-size: 0.8rem;
     }
 }
@@ -492,18 +470,18 @@ a:focus, button:focus, input:focus, select:focus {
         --muted: #cccccc;
     }
 
-    .biography-card, .form-group input, .form-group select {
+    .goal-card, .form-group input, .form-group select, .form-group textarea {
         border-color: var(--accent);
     }
 
-    .save-btn, .success-msg {
+    .calculate-btn {
         background: var(--accent);
     }
 }
 
 /* ========== REDUCED MOTION ========== */
 @media (prefers-reduced-motion: reduce) {
-    .biography-card, .biography-form, .form-group, .save-btn, .success-msg {
+    .goal-card, .goal-form, .form-group, .calculate-btn {
         transition: none;
         animation: none;
     }
@@ -515,16 +493,12 @@ a:focus, button:focus, input:focus, select:focus {
         padding: 8px;
     }
 
-    .biography-card {
+    .goal-card {
         border: 1px solid #000;
         box-shadow: none;
     }
 
-    .save-btn, #mobile-toggle {
+    .calculate-btn, #mobile-toggle {
         display: none;
-    }
-
-    .success-msg {
-        border: 1px solid #000;
     }
 }

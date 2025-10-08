@@ -1,198 +1,164 @@
-/* ========== ROOT VARIABLES ========== */
+/* Root variables for consistent theming */
 :root {
-    --bg: #f8f9fa;
-    --text: #1a1a1a;
-    --accent: #2563eb;
-    --muted: #6b7280;
-    --card-bg: #ffffff;
-    --border: #e5e7eb;
-    --radius: 8px;
-    --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    --transition: 0.2s ease;
-    --danger: #dc3545;
-    --success: #22c55e;
+    --bg: #121212; /* Dark background */
+    --text: #e5e5e5; /* Light text */
+    --accent: #00ff00; /* Salatovy green accent */
+    --muted: #a0a0a0; /* Muted text */
+    --card-bg: #1f1f1f; /* Dark card background */
+    --border: #333333; /* Dark border */
+    --radius: 12px; /* Rounded corners */
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    --transition: 0.3s ease; /* Smooth transitions */
+    --highlight: #00cc00; /* Darker green for hover */
+    --danger: #ff5555; /* Red for errors */
+    --success: #00ff00; /* Green for success */
+    --hover-bg: #2a2a2a; /* Hover background */
+    --focus: #33ff33; /* Focus state green */
+    --action-icon: #3b82f6; /* Blue for action icons */
 }
 
-/* ========== PROFILE CARD ========== */
+/* ========== GLOBAL ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Arial', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* ========== MOBILE TOGGLE BUTTON ========== */
+.mobile-toggle {
+    display: none; /* Handled by layouts.app, styled for consistency */
+    background: var(--accent);
+    color: var(--bg);
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color var(--transition), transform var(--transition);
+}
+
+.mobile-toggle svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--bg);
+}
+
+.mobile-toggle:hover {
+    background: var(--highlight);
+    transform: translateY(-1px);
+}
+
+.mobile-toggle:focus {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+
+/* ========== HEADER ========== */
+.header {
+    padding: 24px 0;
+    text-align: center;
+}
+
+.header__title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text);
+    text-shadow: 0 1px 2px var(--shadow);
+}
+
+.header__username {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+/* ========== PROFILE SECTION ========== */
+section[aria-labelledby="user-profile-heading"] {
+    margin: 32px 0;
+}
+
+section h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 16px;
+    text-align: left;
+}
+
 .profile-card {
     background: var(--card-bg);
-    padding: 24px;
+    padding: 16px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    margin-bottom: 24px;
-    position: relative;
     box-shadow: var(--shadow);
-    overflow: visible;
+    transition: transform var(--transition), box-shadow var(--transition);
+    margin-bottom: 24px;
 }
 
-/* ========== BANNER SECTION ========== */
+.profile-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Banner and Avatar */
 .banner-section {
-    width: calc(100% + 48px);
-    height: 180px;
-    margin: -24px -24px 0 -24px;
     position: relative;
-    border-radius: var(--radius) var(--radius) 0 0;
-    overflow: hidden;
-    background: linear-gradient(180deg, var(--accent) 0%, var(--bg) 100%);
+    margin-bottom: 60px;
 }
 
 .banner-section__image {
     width: 100%;
-    height: 100%;
+    height: 250px;
     object-fit: cover;
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
+    border-radius: var(--radius);
 }
 
-.banner-section::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 20px;
-    background: linear-gradient(transparent, var(--card-bg));
-}
-
-/* ========== AVATAR SECTION ========== */
 .avatar-section {
-    display: flex;
-    justify-content: center;
-    margin: 24px 0 16px;
+    position: absolute;
+    bottom: 60px;
+    left: 710px;
 }
 
 .avatar-section__image {
     width: 100px;
     height: 100px;
     border-radius: 50%;
+    border: 3px solid var(--card-bg);
     object-fit: cover;
-    border: 4px solid var(--card-bg);
-    background: var(--card-bg);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    position: relative;
-    z-index: 1;
 }
 
-.banner-section .avatar-section {
-    position: relative;
-    margin: 0 auto;
-    top: 40px;
-    transform: translateY(0);
-}
-
-/* ========== BIO DETAILS ========== */
 .bio-details {
-    margin-top: 64px;
-    padding: 0 16px;
-    text-align: left;
+    margin-top: 16px;
 }
 
 .bio-details p {
-    margin: 8px 0;
-    color: var(--text);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
 }
 
-.bio-details strong {
+.bio-details p strong {
     color: var(--accent);
-    font-weight: 600;
-}
-
-/* ========== HEADER ========== */
-.header {
-    margin-bottom: 24px;
-    text-align: center;
-}
-
-.header__title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--text);
-}
-
-.header__username {
-    font-size: 1rem;
-    color: var(--accent);
-    font-weight: 500;
-}
-
-/* ========== FRIEND ACTIONS ========== */
-.friend-actions {
-    margin-top: 16px;
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    padding: 10px;
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-}
-
-.friend-btn {
-    padding: 10px 24px;
-    border: none;
-    border-radius: var(--radius);
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.friend-btn--add {
-    background: var(--accent);
-    color: #ffffff;
-}
-
-.friend-btn--add:hover {
-    background: #1d4ed8;
-    transform: translateY(-2px);
-}
-
-.friend-btn--accept {
-    background: var(--success);
-    color: #ffffff;
-}
-
-.friend-btn--accept:hover {
-    background: #16a34a;
-    transform: translateY(-2px);
-}
-
-.friend-btn--remove {
-    background: var(--danger);
-    color: #ffffff;
-}
-
-.friend-btn--remove:hover {
-    background: #b91c1c;
-    transform: translateY(-2px);
-}
-
-.friend-status {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--text);
-    background: var(--bg);
-    padding: 8px 16px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
 }
 
 /* ========== POSTS FEED ========== */
 .posts-feed {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    margin: 32px 0;
+}
+
+.posts-feed h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 16px;
+    text-align: left;
 }
 
 .post-card {
@@ -201,6 +167,13 @@
     border-radius: var(--radius);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
 }
 
 .post-top {
@@ -211,225 +184,445 @@
 }
 
 .post-top__avatar img {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--border);
 }
 
 .post-meta {
-    display: flex;
-    flex-direction: column;
+    flex: 1;
 }
 
 .post-meta__name {
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--accent);
     text-decoration: none;
-    transition: var(--transition);
 }
 
 .post-meta__name:hover {
+    color: var(--highlight);
     text-decoration: underline;
 }
 
 .post-meta__username {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--muted);
-    margin-left: 0.5rem;
 }
 
 .post-meta__time {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--muted);
 }
 
 .post-body p {
+    font-size: 0.9rem;
     margin-bottom: 12px;
-    white-space: pre-wrap;
 }
 
 .post-body__image {
-    max-width: 100%;
+    max-width: 80%; /* Reduced from 100% to make images smaller */
+    max-height: 400px; /* Limit height to keep images smaller */
+    width: auto; /* Respect original image width */
+    object-fit: contain; /* Preserve original size and proportions */
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    margin-top: 8px;
 }
 
 .post-actions {
     display: flex;
-    gap: 12px;
-    align-items: center;
+    gap: 16px;
     margin-top: 12px;
-    flex-wrap: wrap;
 }
 
 .post-actions__button {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 4px;
-    background: none;
-    border: none;
+    gap: 6px;
     color: var(--muted);
+    font-size: 0.85rem;
     cursor: pointer;
-    font-size: 0.9rem;
-    transition: var(--transition);
-    padding: 4px 8px;
-    border-radius: 4px;
+    transition: color var(--transition);
 }
 
-.post-actions__button:hover,
-.post-actions__button--active {
+.post-actions__button svg {
+    width: 24px;
+    height: 24px;
+    fill: #696969;
+}
+
+.post-actions__button:hover {
     color: var(--accent);
-    background: var(--bg);
 }
 
-.post-actions__button.delete-btn {
-    background: var(--danger);
-    color: #fff;
-    padding: 4px 12px;
-}
-
-.post-actions__button.delete-btn:hover {
-    background: #b91c1c;
+.post-actions__button:hover svg {
+    fill: var(--accent);
 }
 
 .post-actions__count {
-    font-weight: 500;
+    font-size: 0.85rem;
 }
 
-/* ========== COMMENTS ========== */
-.comments {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-}
-
-.comment {
-    background: var(--bg);
-    padding: 12px;
-    border-radius: var(--radius);
-    margin-top: 8px;
-    position: relative;
-}
-
-.comment__head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 4px;
-    font-size: 0.9rem;
-}
-
-.comment__head strong a {
+/* ========== LINKS ========== */
+a {
     color: var(--accent);
     text-decoration: none;
+    transition: color var(--transition), text-decoration var(--transition);
 }
 
-.comment__head strong a:hover {
+a:hover {
+    color: var(--highlight);
     text-decoration: underline;
 }
 
-/* ========== COMMENT FORM ========== */
-.comment-form {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-    align-items: flex-end;
-}
-
-.comment-form__textarea {
-    flex: 1;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 8px;
-    font-size: 0.9rem;
-    resize: vertical;
-    min-height: 40px;
-    max-height: 120px;
-}
-
-.comment-form__textarea:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-}
-
-.comment-form__button {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    border-radius: var(--radius);
-    cursor: pointer;
+/* ========== TYPOGRAPHY ========== */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', 'Arial', sans-serif;
     font-weight: 600;
-    min-height: 40px;
-    transition: var(--transition);
 }
 
-.comment-form__button:hover {
-    background: #1d4ed8;
+p {
+    color: var(--text);
+    margin: 8px 0;
 }
 
-.inline-form {
-    display: inline;
-}
-
-/* ========== ALERTS ========== */
-.alert-container {
-    position: fixed;
-    top: 80px;
-    right: 24px;
-    z-index: 10000;
-    max-width: 300px;
-}
-
-.alert {
-    padding: 12px 16px;
-    border-radius: var(--radius);
-    margin-bottom: 8px;
-    animation: slideIn 0.3s ease;
-}
-
+/* ========== ANIMATIONS ========== */
 @keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
+    from { transform: translateX(20px); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
 }
 
-.alert--success {
-    background: #d1fae5;
-    color: #065f46;
-    border: 1px solid #10b981;
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-.alert--danger {
-    background: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #ef4444;
+.profile-card, .post-card {
+    animation: slideIn 0.5s ease-out;
 }
 
-/* ========== MEDIA QUERIES ========== */
+.posts-feed {
+    animation: fadeIn 0.3s ease;
+}
+
+/* ========== ACCESSIBILITY ========== */
+a:focus, button:focus, input:focus, select:focus {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* ========== SCROLLBAR ========== */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--border);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--highlight);
+}
+
+/* ========== UTILITY CLASSES ========== */
+.text-accent { color: var(--accent); }
+.text-muted { color: var(--muted); }
+.text-primary { color: var(--text); }
+.text-danger { color: var(--danger); }
+.bg-card { background: var(--card-bg); }
+.bg-border { background: var(--border); }
+.bg-hover { background: var(--hover-bg); }
+.border-accent { border-color: var(--accent); }
+.border-muted { border-color: var(--muted); }
+.border-danger { border-color: var(--danger); }
+.border-success { border-color: var(--success); }
+
+.p-05 { padding: 2px; }
+.p-1 { padding: 4px; }
+.p-2 { padding: 8px; }
+.p-3 { padding: 16px; }
+.p-4 { padding: 24px; }
+.p-5 { padding: 32px; }
+.m-05 { margin: 2px; }
+.m-1 { margin: 4px; }
+.m-2 { margin: 8px; }
+.m-3 { margin: 16px; }
+.m-4 { margin: 24px; }
+.m-5 { margin: 32px; }
+
+.pt-05 { padding-top: 2px; }
+.pt-1 { padding-top: 4px; }
+.pt-2 { padding-top: 8px; }
+.pt-3 { padding-top: 16px; }
+.pt-4 { padding-top: 24px; }
+.pb-05 { padding-bottom: 2px; }
+.pb-1 { padding-bottom: 4px; }
+.pb-2 { padding-bottom: 8px; }
+.pb-3 { padding-bottom: 16px; }
+.pb-4 { padding-bottom: 24px; }
+.pl-05 { padding-left: 2px; }
+.pl-1 { padding-left: 4px; }
+.pl-2 { padding-left: 8px; }
+.pl-3 { padding-left: 16px; }
+.pl-4 { padding-left: 24px; }
+.pr-05 { padding-right: 2px; }
+.pr-1 { padding-right: 4px; }
+.pr-2 { padding-right: 8px; }
+.pr-3 { padding-right: 16px; }
+.pr-4 { padding-right: 24px; }
+
+.mt-05 { margin-top: 2px; }
+.mt-1 { margin-top: 4px; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 16px; }
+.mt-4 { margin-top: 24px; }
+.mb-05 { margin-bottom: 2px; }
+.mb-1 { margin-bottom: 4px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 16px; }
+.mb-4 { margin-bottom: 24px; }
+.ml-05 { margin-left: 2px; }
+.ml-1 { margin-left: 4px; }
+.ml-2 { margin-left: 8px; }
+.ml-3 { margin-left: 16px; }
+.ml-4 { margin-left: 24px; }
+.mr-05 { margin-right: 2px; }
+.mr-1 { margin-right: 4px; }
+.mr-2 { margin-right: 8px; }
+.mr-3 { margin-right: 16px; }
+.mr-4 { margin-right: 24px; }
+
+.fs-xs { font-size: 0.75rem; }
+.fs-sm { font-size: 0.85rem; }
+.fs-md { font-size: 1rem; }
+.fs-lg { font-size: 1.25rem; }
+.fs-xl { font-size: 1.5rem; }
+.fs-2xl { font-size: 1.75rem; }
+
+.br-4 { border-radius: 4px; }
+.br-8 { border-radius: 8px; }
+.br-12 { border-radius: 12px; }
+.br-16 { border-radius: 16px; }
+.br-20 { border-radius: 20px; }
+
+.shadow-xs { box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1); }
+.shadow-sm { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+.shadow-md { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); }
+.shadow-lg { box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3); }
+
+.opacity-25 { opacity: 0.25; }
+.opacity-50 { opacity: 0.5; }
+.opacity-75 { opacity: 0.75; }
+.opacity-100 { opacity: 1; }
+
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+.fw-light { font-weight: 300; }
+.fw-normal { font-weight: 400; }
+.fw-medium { font-weight: 500; }
+.fw-bold { font-weight: 600; }
+.fw-extrabold { font-weight: 700; }
+
+/* ========== RESPONSIVE DESIGN ========== */
+@media (max-width: 1024px) {
+    #fitlife-container main {
+        padding: 16px;
+    }
+}
+
 @media (max-width: 768px) {
-    .profile-card { padding: 16px; }
-    .banner-section { height: 140px; margin: -16px -16px 0 -16px; }
-    .banner-section .avatar-section { top: 100px; }
-    .avatar-section__image { width: 80px; height: 80px; }
-    .bio-details { margin-top: 48px; padding: 0 12px; }
-    .friend-actions { flex-direction: column; align-items: stretch; padding: 8px; }
-    .friend-btn { width: 100%; justify-content: center; padding: 12px; }
-    .friend-status { width: 100%; text-align: center; padding: 10px; }
-    .post-actions { flex-direction: column; align-items: flex-start; gap: 8px; }
-    .comment-form { flex-direction: column; }
-    .comment-form__textarea { min-height: 60px; }
-    .alert-container { top: 120px; right: 16px; left: 16px; max-width: none; }
+    #fitlife-container main {
+        padding: 12px;
+        margin-left: 0;
+    }
+
+    .mobile-toggle {
+        display: block;
+        position: fixed;
+        top: 16px;
+        left: 16px;
+    }
+
+    .header__title {
+        font-size: 1.5rem;
+    }
+
+    .header__username {
+        font-size: 0.85rem;
+    }
+
+    .posts-feed h3 {
+        font-size: 1.3rem;
+    }
+
+    .profile-card, .post-card {
+        padding: 12px;
+    }
+
+    .banner-section__image {
+        height: 120px;
+    }
+
+    .avatar-section__image {
+        width: 80px;
+        height: 80px;
+    }
+
+    .avatar-section {
+        bottom: -40px;
+    }
+
+    .post-top__avatar img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .post-meta__name {
+        font-size: 0.85rem;
+    }
+
+    .post-meta__username, .post-meta__time {
+        font-size: 0.75rem;
+    }
+
+    .post-body p {
+        font-size: 0.85rem;
+    }
+
+    .post-body__image {
+        max-width: 70%; /* Reduced from 80% for smaller screens */
+        max-height: 300px; /* Adjusted for smaller screens */
+        width: auto;
+        object-fit: contain;
+    }
 }
 
 @media (max-width: 480px) {
-    .header__title { font-size: 1.5rem; }
-    .header__username { font-size: 0.9rem; }
-    .avatar-section__image { width: 60px; height: 60px; }
-    .banner-section .avatar-section { top: 90px; }
-    .bio-details { margin-top: 40px; }
-    .post-meta__username { font-size: 0.8rem; }
-    .comment__head { flex-direction: column; align-items: flex-start; gap: 4px; }
+    #fitlife-container main {
+        padding: 8px;
+    }
+
+    .header__title {
+        font-size: 1.3rem;
+    }
+
+    .header__username {
+        font-size: 0.8rem;
+    }
+
+    .posts-feed h3 {
+        font-size: 1.1rem;
+    }
+
+    .banner-section__image {
+        height: 100px;
+    }
+
+    .avatar-section__image {
+        width: 60px;
+        height: 60px;
+    }
+
+    .avatar-section {
+        bottom: -30px;
+    }
+
+    .bio-details p {
+        font-size: 0.8rem;
+    }
+
+    .post-top__avatar img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .post-meta__name {
+        font-size: 0.8rem;
+    }
+
+    .post-meta__username, .post-meta__time {
+        font-size: 0.7rem;
+    }
+
+    .post-body p {
+        font-size: 0.8rem;
+    }
+
+    .post-body__image {
+        max-width: 60%; /* Reduced from 70% for smaller screens */
+        max-height: 200px; /* Adjusted for smaller screens */
+        width: auto;
+        object-fit: contain;
+    }
+
+    .post-actions__button {
+        font-size: 0.8rem;
+    }
+
+    .post-actions__button svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* ========== HIGH CONTRAST MODE ========== */
+@media (prefers-contrast: high) {
+    :root {
+        --accent: #33ff33;
+        --highlight: #66ff66;
+        --border: #000000;
+        --muted: #cccccc;
+    }
+
+    .profile-card, .post-card {
+        border-color: var(--accent);
+    }
+
+    .post-actions__button svg {
+        fill: var(--accent);
+    }
+}
+
+/* ========== REDUCED MOTION ========== */
+@media (prefers-reduced-motion: reduce) {
+    .profile-card, .post-card, .posts-feed {
+        transition: none;
+        animation: none;
+    }
+}
+
+/* ========== PRINT STYLES ========== */
+@media print {
+    #fitlife-container main {
+        padding: 8px;
+    }
+
+    .profile-card, .post-card {
+        border: 1px solid #000;
+        box-shadow: none;
+    }
+
+    .mobile-toggle, .post-actions {
+        display: none;
+    }
 }

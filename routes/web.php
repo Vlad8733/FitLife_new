@@ -12,27 +12,28 @@ use App\Http\Controllers\BiographyController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FriendController;
+use App\Http\Controllers\CalendarController;
 use Illuminate\Support\Facades\Route;
 
-// Главная страница
+// Main page
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
-// Аутентификация
+// Authentication routes
 require __DIR__ . '/auth.php';
 
-// Все маршруты, требующие авторизации
+// All routes requiring authentication and email verification
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // AJAX для пагинации
+    // AJAX for pagination
     Route::get('/meal-logs', [DashboardController::class, 'mealLogsAjax'])->name('meal.logs.ajax');
     Route::get('/sleep-logs', [DashboardController::class, 'sleepLogsAjax'])->name('sleep.logs.ajax');
     Route::get('/water-logs', [DashboardController::class, 'waterLogsAjax'])->name('water.logs.ajax');
 
-    // Профиль
+    // Profile routes
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::get('/{user}', [ProfileController::class, 'show'])->name('profile.show');
@@ -41,33 +42,33 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar.update');
     });
 
-    // Друзья
+    // Friends routes
     Route::prefix('friends')->group(function () {
         Route::post('/{user}', [FriendController::class, 'store'])->name('friends.store');
         Route::post('/{user}/accept', [FriendController::class, 'accept'])->name('friends.accept');
         Route::delete('/{user}', [FriendController::class, 'remove'])->name('friends.remove');
     });
 
-    // Трекер еды
+    // Food tracker routes
     Route::prefix('tracker/foods')->group(function () {
         Route::get('/', [FoodController::class, 'index'])->name('foods.index');
         Route::post('/calculate', [FoodController::class, 'calculate'])->name('foods.calculate');
         Route::get('/history', [FoodController::class, 'history'])->name('foods.history');
     });
 
-    // Трекер сна
+    // Sleep tracker routes
     Route::prefix('tracker/sleep')->group(function () {
         Route::get('/', [SleepController::class, 'index'])->name('sleep.index');
         Route::post('/', [SleepController::class, 'store'])->name('sleep.store');
     });
 
-    // Трекер воды
+    // Water tracker routes
     Route::prefix('tracker/water')->group(function () {
         Route::get('/', [WaterController::class, 'index'])->name('water.index');
         Route::post('/', [WaterController::class, 'store'])->name('water.store');
     });
 
-    // Прогресс-фотки
+    // Progress photos routes
     Route::prefix('progress-photos')->group(function () {
         Route::get('/', [ProgressPhotoController::class, 'index'])->name('progress.index');
         Route::post('/', [ProgressPhotoController::class, 'store'])->name('progress.store');
@@ -75,7 +76,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/{progress}', [ProgressPhotoController::class, 'destroy'])->name('progress.destroy');
     });
 
-    // Цели
+    // Goals routes
     Route::prefix('goals')->group(function () {
         Route::get('/', [GoalController::class, 'index'])->name('goals.index');
         Route::get('/create', [GoalController::class, 'create'])->name('goals.create');
@@ -86,19 +87,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/{goal}', [GoalController::class, 'destroy'])->name('goals.destroy');
     });
 
-    // Калькулятор калорий
+    // Calorie calculator routes
     Route::prefix('calories')->group(function () {
         Route::get('/', [CalorieCalculatorController::class, 'index'])->name('calories.index');
         Route::post('/', [CalorieCalculatorController::class, 'calculate'])->name('calories.calculate');
     });
 
-    // Биография
+    // Biography routes
     Route::prefix('biography')->group(function () {
         Route::get('/', [BiographyController::class, 'edit'])->name('biography.edit');
         Route::patch('/', [BiographyController::class, 'update'])->name('biography.update');
     });
 
-    // Посты
+    // Posts routes
     Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
@@ -108,8 +109,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/posts/{post}/views', [PostController::class, 'incrementView'])->name('posts.views');
     Route::get('/posts/{post}/views', [PostController::class, 'getViews'])->name('posts.getViews');
 
-    // Комментарии
+    // Comments routes
     Route::put('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
     Route::post('/comments/{comment}/toggle-reaction', [CommentController::class, 'toggleReaction'])->name('comments.toggle-reaction');
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+
+    // Activity Calendar routes
+    Route::prefix('calendar')->group(function () {
+        Route::get('/', [CalendarController::class, 'index'])->name('activity-calendar');
+        Route::post('/', [CalendarController::class, 'store'])->name('calendar.store');
+        Route::patch('/{calendar}', [CalendarController::class, 'update'])->name('calendar.update');
+        Route::get('/events', [CalendarController::class, 'getEvents'])->name('calendar.events');
+    });
 });

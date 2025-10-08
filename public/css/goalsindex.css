@@ -89,8 +89,8 @@ header .muted {
     color: var(--muted);
 }
 
-/* ========== BIOGRAPHY FORM SECTION ========== */
-section[aria-labelledby="biography-settings-heading"] {
+/* ========== CREATE GOAL SECTION ========== */
+section[aria-labelledby="create-goal-heading"] {
     margin: 32px 0;
 }
 
@@ -102,20 +102,48 @@ section h3 {
     text-align: left;
 }
 
-/* Success Message */
-.success-msg {
-    background: var(--success);
+.create-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
     color: var(--bg);
-    padding: 12px;
+    padding: 10px 16px;
     border-radius: var(--radius);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: background-color var(--transition), transform var(--transition);
     margin-bottom: 16px;
-    font-size: 0.9rem;
-    text-align: center;
-    animation: fadeIn 0.5s ease;
 }
 
-/* Biography Card */
-.biography-card {
+.create-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--bg);
+}
+
+.create-btn:hover {
+    background: var(--highlight);
+    transform: translateY(-1px);
+}
+
+.create-btn:focus {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+
+/* ========== GOALS LIST SECTION ========== */
+section[aria-labelledby="goals-heading"] {
+    margin: 32px 0;
+}
+
+.goals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.goal-card {
     background: var(--card-bg);
     padding: 16px;
     border-radius: var(--radius);
@@ -124,51 +152,42 @@ section h3 {
     transition: transform var(--transition), box-shadow var(--transition);
 }
 
-.biography-card:hover {
+.goal-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
 }
 
-.biography-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    align-items: flex-end;
+.goal-card h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 8px;
 }
 
-.form-group {
-    flex: 1;
-    min-width: 200px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.form-group label {
+.goal-card p {
     font-size: 0.9rem;
-    color: var(--text);
-    font-weight: 500;
+    margin-bottom: 4px;
 }
 
-.form-group input,
-.form-group select {
-    background: var(--bg);
-    border: 1px solid var(--border);
+.goal-card p em {
+    color: var(--muted);
+}
+
+.progress-bar {
+    height: 8px;
+    background: var(--border);
     border-radius: var(--radius);
-    padding: 8px;
-    color: var(--text);
-    font-size: 0.9rem;
-    transition: border-color var(--transition);
+    overflow: hidden;
+    margin: 12px 0;
 }
 
-.form-group input:focus,
-.form-group select:focus {
-    border-color: var(--accent);
-    outline: none;
-    box-shadow: 0 0 8px var(--accent);
+.progress {
+    height: 100%;
+    background: var(--accent);
+    transition: width var(--transition);
 }
 
-.save-btn {
+.log-btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -176,31 +195,26 @@ section h3 {
     color: var(--bg);
     padding: 10px 16px;
     border-radius: var(--radius);
-    border: none;
-    font-size: 0.9rem;
-    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.95rem;
     transition: background-color var(--transition), transform var(--transition);
 }
 
-.save-btn svg {
-    width: 24px;
-    height: 24px;
-    stroke: var(--bg);
-}
-
-.save-btn:hover {
+.log-btn:hover {
     background: var(--highlight);
     transform: translateY(-1px);
 }
 
-.save-btn:focus {
+.log-btn:focus {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
 }
 
-.save-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.no-data {
+    font-size: 0.9rem;
+    color: var(--muted);
+    text-align: center;
+    padding: 16px;
 }
 
 /* ========== LINKS ========== */
@@ -237,16 +251,16 @@ p {
     to { opacity: 1; }
 }
 
-.biography-card, .form-group, .success-msg {
+.goal-card, .create-btn, .log-btn {
     animation: slideIn 0.5s ease-out;
 }
 
-.biography-form {
+.goals-grid {
     animation: fadeIn 0.3s ease;
 }
 
 /* ========== ACCESSIBILITY ========== */
-a:focus, button:focus, input:focus, select:focus {
+a:focus, button:focus {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
 }
@@ -387,6 +401,10 @@ a:focus, button:focus, input:focus, select:focus {
     #fitlife-container main {
         padding: 16px;
     }
+
+    .goals-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
 }
 
 @media (max-width: 768px) {
@@ -419,21 +437,16 @@ a:focus, button:focus, input:focus, select:focus {
         font-size: 1.3rem;
     }
 
-    .biography-card {
+    .goal-card {
         padding: 12px;
     }
 
-    .form-group input,
-    .form-group select {
-        font-size: 0.85rem;
-    }
-
-    .save-btn {
+    .create-btn, .log-btn {
         padding: 8px 12px;
         font-size: 0.85rem;
     }
 
-    .success-msg {
+    .goal-card p {
         font-size: 0.85rem;
     }
 }
@@ -455,30 +468,16 @@ a:focus, button:focus, input:focus, select:focus {
         font-size: 1.1rem;
     }
 
-    .biography-form {
-        flex-direction: column;
-        align-items: stretch;
+    .goals-grid {
+        grid-template-columns: 1fr;
     }
 
-    .form-group {
-        min-width: 100%;
-    }
-
-    .form-group label {
-        font-size: 0.85rem;
-    }
-
-    .form-group input,
-    .form-group select {
+    .goal-card p {
         font-size: 0.8rem;
     }
 
-    .save-btn {
+    .create-btn, .log-btn {
         padding: 6px 10px;
-        font-size: 0.8rem;
-    }
-
-    .success-msg {
         font-size: 0.8rem;
     }
 }
@@ -492,18 +491,18 @@ a:focus, button:focus, input:focus, select:focus {
         --muted: #cccccc;
     }
 
-    .biography-card, .form-group input, .form-group select {
+    .goal-card, .progress-bar {
         border-color: var(--accent);
     }
 
-    .save-btn, .success-msg {
+    .create-btn, .log-btn {
         background: var(--accent);
     }
 }
 
 /* ========== REDUCED MOTION ========== */
 @media (prefers-reduced-motion: reduce) {
-    .biography-card, .biography-form, .form-group, .save-btn, .success-msg {
+    .goal-card, .goals-grid, .create-btn, .log-btn {
         transition: none;
         animation: none;
     }
@@ -515,16 +514,12 @@ a:focus, button:focus, input:focus, select:focus {
         padding: 8px;
     }
 
-    .biography-card {
+    .goal-card {
         border: 1px solid #000;
         box-shadow: none;
     }
 
-    .save-btn, #mobile-toggle {
+    .create-btn, .log-btn, #mobile-toggle {
         display: none;
-    }
-
-    .success-msg {
-        border: 1px solid #000;
     }
 }

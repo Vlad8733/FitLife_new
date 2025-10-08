@@ -1,0 +1,249 @@
+:root {
+    --bg: #121212;
+    --text: #e5e5e5;
+    --accent: #00ff00;
+    --muted: #a0a0a0;
+    --card-bg: #1f1f1f;
+    --border: #333333;
+    --radius: 12px;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    --transition: 0.3s ease;
+    --highlight: #00cc00;
+    --focus: #33ff33;
+}
+
+/* Main container */
+#fitlife-container main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+/* Calendar controls */
+.calendar-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+}
+
+.calendar-nav-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 8px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background-color var(--transition), transform var(--transition);
+}
+
+.calendar-nav-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--bg);
+}
+
+.calendar-nav-btn:hover {
+    background: var(--highlight);
+    transform: translateY(-1px);
+}
+
+.calendar-nav-btn:focus {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+
+.calendar-month {
+    color: var(--text);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    background: var(--card-bg);
+    padding: 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+.calendar-header {
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--muted);
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color var(--transition);
+}
+
+.calendar-day:hover {
+    background: var(--border);
+}
+
+.calendar-day--selected {
+    background: var(--accent);
+    color: var(--bg);
+}
+
+.calendar-day--event {
+    border: 2px solid var(--accent);
+}
+
+.calendar-day--completed {
+    background: var(--accent);
+    color: var(--bg);
+}
+
+.calendar-day--empty {
+    background: transparent;
+    cursor: default;
+}
+
+/* Event form */
+.calendar-event-form {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px;
+    color: var(--text);
+    font-size: 0.9rem;
+    transition: border-color var(--transition);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+
+.save-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: var(--radius);
+    border: none;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color var(--transition), transform var(--transition);
+}
+
+.save-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--bg);
+}
+
+.save-btn:hover {
+    background: var(--highlight);
+    transform: translateY(-1px);
+}
+
+.save-btn:focus {
+    outline: 2px solid var(--focus);
+}
+
+/* Event list */
+.event-list {
+    list-style: none;
+    padding: 0;
+}
+
+.event-item {
+    background: var(--card-bg);
+    padding: 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.event-item__details {
+    font-size: 0.9rem;
+    color: var(--text);
+}
+
+.event-item__type--workout { color: var(--accent); }
+.event-item__type--rest { color: var(--muted); }
+.event-item__type--goal { color: var(--focus); }
+
+.event-item__complete {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.event-item__complete svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--accent);
+}
+
+.event-item__complete:hover svg {
+    stroke: var(--highlight);
+}
+
+/* Animations */
+@keyframes slideIn {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.event-item {
+    animation: slideIn 0.5s ease-out;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #fitlife-container main {
+        padding: 12px;
+    }
+
+    .calendar-grid {
+        gap: 4px;
+        padding: 12px;
+    }
+
+    .calendar-day {
+        font-size: 0.85rem;
+    }
+}

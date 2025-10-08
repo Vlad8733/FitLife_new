@@ -145,4 +145,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize animations
     animateMetrics();
     animateProgressBars();
+
+    // Animate calendar events
+    document.querySelectorAll('.event-item').forEach((item, idx) => {
+        item.style.animationDelay = `${idx * 0.1}s`;
+    });
 });

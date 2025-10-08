@@ -14,6 +14,29 @@
             <h1>Hello, {{ Auth::user()->name }}!</h1>
         </header>
 
+        <!-- Calendar Preview -->
+        <section class="calendar-preview">
+            <h3>Upcoming Events</h3>
+            @if($upcomingEvents->isEmpty())
+                <p>No upcoming events. <a href="{{ route('activity-calendar') }}">Plan one</a></p>
+            @else
+                <div class="calendar-events-grid">
+                    @foreach($upcomingEvents as $event)
+                        <div class="event-item event-item__type--{{ $event->type }}">
+                            <span class="event-date">
+                                {{ \Carbon\Carbon::parse($event->date)->isToday() ? 'Today' : (\Carbon\Carbon::parse($event->date)->isTomorrow() ? 'Tomorrow' : \Carbon\Carbon::parse($event->date)->format('M d, Y')) }}
+                            </span>
+                            <span class="event-type">{{ ucfirst($event->type) }}</span>
+                            <span class="event-description">{{ $event->description ?? 'No description' }}</span>
+                            @if($event->completed)
+                                <span class="event-completed">Completed</span>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </section>
+
         <!-- User stats -->
         <section class="stats">
             <h3>Your Stats</h3>
