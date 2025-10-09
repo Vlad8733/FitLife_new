@@ -17,26 +17,19 @@
         <!-- ================= User Profile Details ================= -->
         <section aria-labelledby="user-profile-heading">
             <div class="profile-card">
-
                 <!-- Banner + Avatar -->
-                @if($user->banner)
-                    <div class="banner-section">
+                <div class="banner-section">
+                    @if($user->banner)
                         <img src="{{ asset('storage/' . $user->banner) . '?t=' . time() }}"
                              alt="{{ $user->name }}'s Banner"
                              class="banner-section__image">
-                        <div class="avatar-section">
-                            <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) . '?t=' . time() : asset('storage/logo/defaultPhoto.jpg') }}"
-                                 alt="{{ $user->name }}'s Profile Photo"
-                                 class="avatar-section__image">
-                        </div>
-                    </div>
-                @else
+                    @endif
                     <div class="avatar-section">
                         <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) . '?t=' . time() : asset('storage/logo/defaultPhoto.jpg') }}"
                              alt="{{ $user->name }}'s Profile Photo"
                              class="avatar-section__image">
                     </div>
-                @endif
+                </div>
 
                 <!-- Profile Info -->
                 <h3 id="user-profile-heading">Profile Details</h3>

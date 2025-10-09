@@ -51,11 +51,6 @@ body {
     stroke: var(--bg);
 }
 
-.mobile-toggle:hover {
-    background: var(--highlight);
-    transform: translateY(-1px);
-}
-
 .mobile-toggle:focus {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
@@ -103,28 +98,31 @@ section h3 {
     margin-bottom: 24px;
 }
 
-.profile-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
-}
-
 /* Banner and Avatar */
 .banner-section {
     position: relative;
+    width: 100%;
+    height: 250px; /* Fixed height even without banner */
+    background: var(--card-bg); /* Fallback background if no banner */
+    border-radius: var(--radius);
     margin-bottom: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center avatar if no banner */
 }
 
 .banner-section__image {
     width: 100%;
-    height: 250px;
+    height: 100%;
     object-fit: cover;
     border-radius: var(--radius);
 }
 
 .avatar-section {
     position: absolute;
-    bottom: 60px;
-    left: 710px;
+    bottom: 50px; /* Adjusted to position avatar partially overlapping banner */
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally */
 }
 
 .avatar-section__image {
@@ -133,19 +131,6 @@ section h3 {
     border-radius: 50%;
     border: 3px solid var(--card-bg);
     object-fit: cover;
-}
-
-.bio-details {
-    margin-top: 16px;
-}
-
-.bio-details p {
-    font-size: 0.9rem;
-    margin-bottom: 8px;
-}
-
-.bio-details p strong {
-    color: var(--accent);
 }
 
 /* ========== POSTS FEED ========== */
@@ -171,11 +156,6 @@ section h3 {
     transition: transform var(--transition), box-shadow var(--transition);
 }
 
-.post-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
-}
-
 .post-top {
     display: flex;
     align-items: center;
@@ -199,11 +179,6 @@ section h3 {
     font-weight: 600;
     color: var(--accent);
     text-decoration: none;
-}
-
-.post-meta__name:hover {
-    color: var(--highlight);
-    text-decoration: underline;
 }
 
 .post-meta__username {
@@ -448,6 +423,15 @@ a:focus, button:focus, input:focus, select:focus {
     #fitlife-container main {
         padding: 16px;
     }
+
+    .banner-section {
+        height: 200px; /* Reduced height for smaller screens */
+    }
+
+    .avatar-section__image {
+        width: 80px;
+        height: 80px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -479,17 +463,17 @@ a:focus, button:focus, input:focus, select:focus {
         padding: 12px;
     }
 
-    .banner-section__image {
+    .banner-section {
         height: 120px;
+    }
+
+    .avatar-section {
+        bottom: -40px;
     }
 
     .avatar-section__image {
         width: 80px;
         height: 80px;
-    }
-
-    .avatar-section {
-        bottom: -40px;
     }
 
     .post-top__avatar img {
@@ -534,17 +518,17 @@ a:focus, button:focus, input:focus, select:focus {
         font-size: 1.1rem;
     }
 
-    .banner-section__image {
+    .banner-section {
         height: 100px;
+    }
+
+    .avatar-section {
+        bottom: -30px;
     }
 
     .avatar-section__image {
         width: 60px;
         height: 60px;
-    }
-
-    .avatar-section {
-        bottom: -30px;
     }
 
     .bio-details p {
