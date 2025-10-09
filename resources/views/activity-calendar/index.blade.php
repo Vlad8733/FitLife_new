@@ -2,14 +2,14 @@
 
 @section('content')
     <header class="header">
-        <h1 class="header__title">Activity Calendar</h1>
-        <span class="header__username">Plan workouts and track progress</span>
+        <h1 class="header__title fs-2xl fw-bold">Activity Calendar</h1>
+        <span class="header__username fs-sm text-muted">Plan workouts and track progress</span>
     </header>
 
     <section aria-labelledby="calendar-heading">
-        <h3 id="calendar-heading" class="fs-xl fw-bold">Your Calendar</h3>
+        <h3 id="calendar-heading" class="fs-xl fw-bold m-3">Your Calendar</h3>
 
-        <div class="calendar-controls p-2">
+        <div class="calendar-controls p-3 bg-card br-12 shadow-md">
             <button class="calendar-nav-btn prev-month" aria-label="Previous month">
                 <svg><use xlink:href="#chevron-left"></use></svg>
             </button>
@@ -19,20 +19,20 @@
             </button>
         </div>
 
-        <div class="calendar-grid" role="grid">
+        <div class="calendar-grid role-grid p-3 bg-card br-12 shadow-md mt-3">
             <!-- Days will be added via JS -->
         </div>
 
-        <div class="calendar-event-form bg-card p-3 mt-3 br-12">
-            <h4 class="fs-md fw-medium mb-2">Add Event</h4>
+        <div class="calendar-event-form bg-card p-4 mt-4 br-12 shadow-md">
+            <h4 class="fs-md fw-medium mb-3">Add Event</h4>
             <form id="event-form" action="{{ route('calendar.store') }}" method="POST">
                 @csrf
                 <div class="form-group">
-                    <label for="event-date">Date</label>
+                    <label for="event-date" class="fs-sm fw-medium">Date</label>
                     <input type="date" id="event-date" name="date" class="fs-sm" required>
                 </div>
                 <div class="form-group">
-                    <label for="event-type">Event Type</label>
+                    <label for="event-type" class="fs-sm fw-medium">Event Type</label>
                     <select id="event-type" name="type" class="fs-sm" required>
                         <option value="" disabled selected>Select an event type</option>
                         <option value="workout">Workout</option>
@@ -63,19 +63,19 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="event-description">Description</label>
-                    <input type="text" id="event-description" name="description" class="fs-sm" placeholder="E.g., Strength Training">
+                    <label for="event-description" class="fs-sm fw-medium">Description</label>
+                    <input type="text" id="event-description" name="description" class="fs-sm" placeholder="E.g., Strength Training or Run 5km">
                 </div>
-                <button type="submit" class="save-btn fs-sm">
+                <button type="submit" class="save-btn fs-sm fw-medium">
                     <svg><use xlink:href="#save"></use></svg>
-                    Save
+                    Save Event
                 </button>
             </form>
-            <div id="form-message" class="mt-2"></div>
+            <div id="form-message" class="mt-3 fs-sm"></div>
         </div>
 
-        <div class="calendar-events mt-3">
-            <h4 class="fs-md fw-medium mb-2">Events</h4>
+        <div class="calendar-events mt-4">
+            <h4 class="fs-md fw-medium mb-3">Your Events</h4>
             <ul class="event-list"></ul>
         </div>
     </section>
@@ -84,8 +84,8 @@
 @section('styles')
     <link href="{{ asset('css/activity-calendar.css') }}" rel="stylesheet">
     <style>
-        #form-message.success { color: #00ff00; }
-        #form-message.error { color: #ff0000; }
+        #form-message.success { color: var(--success); }
+        #form-message.error { color: var(--error); }
     </style>
 @endsection
 
