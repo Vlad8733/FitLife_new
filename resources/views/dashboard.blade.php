@@ -18,7 +18,7 @@
         <section class="calendar-preview">
             <h3>Upcoming Events</h3>
             @if($upcomingEvents->isEmpty())
-                <p>No upcoming events. <a href="{{ route('activity-calendar') }}">Plan one</a></p>
+                <p><a href="{{ route('activity-calendar') }}">No upcoming events.</a></p>
             @else
                 <div class="calendar-events-grid">
                     @foreach($upcomingEvents as $event)
@@ -87,7 +87,7 @@
                         <img src="{{ asset('storage/' . $photo->photo) }}" alt="Progress photo" loading="lazy">
                     </div>
                 @empty
-                    <p>No photos yet. <a href="{{ route('progress.index') }}">Add one</a></p>
+                    <p><a href="{{ route('progress.index') }}">No photos yet.</a></p>
                 @endforelse
             </div>
         </section>
@@ -96,7 +96,7 @@
         <section class="goals">
             <h3>Goals</h3>
             @if($goals->isEmpty())
-                <p>No goals set. <a href="{{ route('goals.index') }}">Set one</a></p>
+                <p><a href="{{ route('goals.index') }}">No goals set.</a></p>
             @else
                 <div class="goals-grid">
                     @foreach($goals as $goal)
@@ -130,7 +130,7 @@
                     </div>
                 </div>
             @empty
-                <p>No friends yet. Find friends in the <a href="{{ route('posts.index') }}">Community</a>.</p>
+                <p><a href="{{ route('posts.index') }}">No friends yet.</a></p>
             @endforelse
         </section>
 

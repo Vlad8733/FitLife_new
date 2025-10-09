@@ -33,6 +33,7 @@
             font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
+            overflow-x: hidden;
         }
 
         #sidebar {
@@ -44,6 +45,7 @@
             height: 100vh;
             overflow-y: auto;
             transition: var(--transition);
+            z-index: 1000;
         }
 
         .sidebar-header {
@@ -113,6 +115,7 @@
             margin-left: 100px;
             padding: 24px;
             flex: 1;
+            z-index: 1;
         }
 
         #mobile-toggle {
@@ -155,10 +158,27 @@
             font-size: 0.95rem;
         }
 
+        .admin-btn {
+            padding: 6px 12px;
+            background: var(--accent);
+            color: var(--svg-fill-active);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .admin-btn:hover {
+            background: #00cc00;
+        }
+
         .alert {
             padding: 10px;
             margin: 10px 0;
             border-radius: var(--radius);
+            z-index: 2;
         }
 
         .alert.success {
@@ -193,6 +213,11 @@
             .user-info {
                 top: 64px;
                 right: 16px;
+            }
+
+            .admin-btn {
+                padding: 4px 8px;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -254,6 +279,9 @@
                              alt="Avatar">
                     </a>
                     <span>{{ Auth::user()->name }}</span>
+                    @if(Auth::user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="admin-btn">Admin Panel</a>
+                    @endif
                 </div>
             @endauth
 

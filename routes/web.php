@@ -13,6 +13,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\Admin\AdminPanelController;
 use Illuminate\Support\Facades\Route;
 
 // Main page
@@ -22,6 +23,9 @@ Route::get('/', function () {
 
 // Authentication routes
 require __DIR__ . '/auth.php';
+
+// Admin routes
+require __DIR__ . '/admin.php';
 
 // All routes requiring authentication and email verification
 Route::middleware(['auth', 'verified'])->group(function () {

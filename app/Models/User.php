@@ -23,6 +23,7 @@ class User extends Authenticatable
         'age',
         'activity_level',
         'goal_type',
+        'role',
     ];
 
     // Hidden attributes for serialization
