@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                 } else if (data.action === 'accepted') {
                     friendActions.innerHTML = `
-                        <span class="friend-status">Вы друзья</span>
+                        <span class="friend-status">You are friends</span>
                         <form action="${data.removeAction}" method="POST" class="friend-form" data-action="remove">
                             <input type="hidden" name="_token" value="${token}">
                             <input type="hidden" name="_method" value="DELETE">
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <form action="${data.addAction}" method="POST" class="friend-form" data-action="add">
                             <input type="hidden" name="_token" value="${token}">
                             <input type="hidden" name="friend_id" value="${userId}">
-                            <button type="submit" class="friend-btn friend-btn-primary">Add as friend</button>
+                            <button type="submit" class="friend-btn friend-btn-primary">Add friend</button>
                         </form>
                     `;
                 }
