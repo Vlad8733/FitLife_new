@@ -8,22 +8,29 @@
 
     <!-- Page title -->
     <title>FitLife - Welcome</title>
-
+    <title>{{ config('app.name', 'Welcome') }}</title>
+    <link rel="icon" href="{{ asset('favicon.PNG') }}" type="image/png">
     <!-- External font import -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Inline CSS styles with modernized design: updated color palette for a fresher look, smoother transitions, and subtle gradients -->
     <style>
         :root {
-            --bg: #f9fafb;
-            --text: #111827;
-            --accent: #3b82f6;
-            --muted: #6b7280;
-            --card-bg: #ffffff;
-            --border: #e5e7eb;
+            --bg: #121212;
+            --text: #e5e5e5;
+            --accent: #00ff00;
+            --muted: #a0a0a0;
+            --card-bg: #1f1f1f;
+            --border: #333333;
             --radius: 12px;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             --transition: 0.3s ease;
+            --highlight: #00cc00;
+            --danger: #ff5555;
+            --success: #00ff00;
+            --hover-bg: #2a2a2a;
+            --focus: #33ff33;
+            --action-icon: #3b82f6;
         }
 
         * {

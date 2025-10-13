@@ -40,6 +40,32 @@
                     <p><strong>Weight:</strong> {{ $user->biography->weight ?? 'Not set' }} kg</p>
                     <p><strong>Gender:</strong> {{ $user->biography->gender ?? 'Not set' }}</p>
                 </div>
+
+                <!-- Friend Actions -->
+                @if (Auth::user() && Auth::id() != $user->id)
+                    <div class="friend-actions" data-user-id="{{ $user->id }}">
+                        @if (Auth::user()->friends->contains($user->id))
+                            <span class="friend-status">You are friends</span>
+                            <form action="{{ route('friends.remove', $user->id) }}" method="POST" class="friend-form" data-action="remove">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="friend-btn friend-btn-danger">Remove from friends</button>
+                            </form>
+                        @elseif (\App\Models\Friend::where('user_id', $user->id)->where('friend_id', Auth::id())->where('status', 'pending')->exists())
+                            <span class="friend-status">Friend request received</span>
+                            <form action="{{ route('friends.accept', $user->id) }}" method="POST" class="friend-form" data-action="accept">
+                                @csrf
+                                <button type="submit" class="friend-btn friend-btn-accept">Accept request</button>
+                            </form>
+                        @else
+                            <form action="{{ route('friends.store', $user->id) }}" method="POST" class="friend-form" data-action="add">
+                                @csrf
+                                <input type="hidden" name="friend_id" value="{{ $user->id }}">
+                                <button type="submit" class="friend-btn friend-btn-primary">Add friend</button>
+                            </form>
+                        @endif
+                    </div>
+                @endif
             </div>
         </section>
 

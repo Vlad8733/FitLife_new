@@ -133,6 +133,71 @@ section h3 {
     object-fit: cover;
 }
 
+/* Friend Actions */
+.friend-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 0 16px;
+}
+
+.friend-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color var(--transition), transform var(--transition);
+}
+
+.friend-btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+}
+
+.friend-btn-primary:hover {
+    background: var(--highlight);
+    transform: translateY(-1px);
+}
+
+.friend-btn-accept {
+    background: #1e88e5; /* Blue for accept button */
+    color: var(--bg);
+}
+
+.friend-btn-accept:hover {
+    background: #1565c0; /* Darker blue for hover */
+    transform: translateY(-1px);
+}
+
+.friend-btn-danger {
+    background: var(--danger);
+    color: var(--bg);
+}
+
+.friend-btn-danger:hover {
+    background: #cc4444;
+    transform: translateY(-1px);
+}
+
+.friend-btn:focus {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+
+.friend-status {
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.friend-error {
+    font-size: 0.8rem;
+    color: var(--danger);
+    margin-top: 8px;
+}
+
 /* ========== POSTS FEED ========== */
 .posts-feed {
     margin: 32px 0;
@@ -476,6 +541,12 @@ a:focus, button:focus, input:focus, select:focus {
         height: 80px;
     }
 
+    .friend-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0 12px;
+    }
+
     .post-top__avatar img {
         width: 32px;
         height: 32px;
@@ -535,6 +606,23 @@ a:focus, button:focus, input:focus, select:focus {
         font-size: 0.8rem;
     }
 
+    .friend-actions {
+        padding: 0 8px;
+    }
+
+    .friend-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+
+    .friend-status {
+        font-size: 0.8rem;
+    }
+
+    .friend-error {
+        font-size: 0.7rem;
+    }
+
     .post-top__avatar img {
         width: 28px;
         height: 28px;
@@ -582,6 +670,14 @@ a:focus, button:focus, input:focus, select:focus {
         border-color: var(--accent);
     }
 
+    .friend-btn-primary, .friend-btn-accept {
+        background: var(--accent);
+    }
+
+    .friend-btn-danger {
+        background: #ff3333;
+    }
+
     .post-actions__button svg {
         fill: var(--accent);
     }
@@ -589,7 +685,7 @@ a:focus, button:focus, input:focus, select:focus {
 
 /* ========== REDUCED MOTION ========== */
 @media (prefers-reduced-motion: reduce) {
-    .profile-card, .post-card, .posts-feed {
+    .profile-card, .post-card, .posts-feed, .friend-btn {
         transition: none;
         animation: none;
     }
@@ -606,7 +702,7 @@ a:focus, button:focus, input:focus, select:focus {
         box-shadow: none;
     }
 
-    .mobile-toggle, .post-actions {
+    .mobile-toggle, .post-actions, .friend-actions {
         display: none;
     }
 }

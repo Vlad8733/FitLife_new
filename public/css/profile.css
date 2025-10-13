@@ -51,11 +51,6 @@ body {
     stroke: var(--bg);
 }
 
-.mobile-toggle:hover {
-    background: var(--highlight);
-    transform: translateY(-1px);
-}
-
 .mobile-toggle:focus {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
@@ -107,11 +102,6 @@ section h3 {
     box-shadow: var(--shadow);
     transition: transform var(--transition), box-shadow var(--transition);
     margin-bottom: 24px;
-}
-
-.profile-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
 }
 
 /* Banner and Avatar */

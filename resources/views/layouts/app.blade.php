@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'FitLife') }}</title>
+    <title>@yield('title', 'FitLife')</title>
+    <link rel="icon" href="{{ asset('favicon.PNG') }}" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -229,8 +230,9 @@
         @auth
         <aside id="sidebar">
             <div class="sidebar-header">
-                <h2>FitLife</h2>
-                <p>Power Your Performance</p>
+                <a href="{{ route('dashboard') }}">
+                <img src="{{ asset('faviconFULL.PNG') }}" alt="FitLife Logo" style="width: 50px; height: auto; display: block;">
+                </a>
             </div>
             <nav class="nav-menu">
                 @foreach([

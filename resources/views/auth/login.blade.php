@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
-    <!-- Meta tags for encoding and responsive viewport -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Page title -->
     <title>FitLife - Login</title>
-    
-    <!-- External font import -->
+    <title>{{ config('app.name', 'FitLife - Login') }}</title>
+    <link rel="icon" href="{{ asset('favicon.PNG') }}" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Inline CSS styles with modernized design: updated colors, smoother transitions, and accessibility enhancements -->
     <style>
         :root {
-            --bg: #f9fafb;
-            --text: #111827;
-            --accent: #3b82f6;
-            --muted: #6b7280;
-            --card-bg: #ffffff;
-            --border: #d1d5db;
+            --bg: #121212;
+            --text: #e5e5e5;
+            --accent: #00ff00;
+            --muted: #a0a0a0;
+            --card-bg: #1f1f1f;
+            --border: #333333;
             --radius: 12px;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            --transition: 0.3s ease; 
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --transition: 0.3s ease;
+            --highlight: #00cc00;
+            --danger: #ff5555;
+            --success: #00ff00;
+            --hover-bg: #2a2a2a;
+            --focus: #33ff33;
+            --action-icon: #3b82f6;
         }
 
         * {
@@ -63,11 +65,6 @@
             box-shadow: var(--shadow);
             text-align: center;
             transition: var(--transition);
-        }
-
-        .login-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
         }
 
         /* Logo styling */
@@ -267,7 +264,7 @@
     <div class="login-wrapper" role="main" aria-label="FitLife Login">
         <!-- Login card with form -->
         <div class="login-card">
-            <img src="{{ asset('storage/logo/logoFitLife.jpg') }}" alt="FitLife Logo" class="logo">
+            <img src="{{ asset('storage/logo/logoFitLife.png') }}" alt="FitLife Logo" class="logo">
             <h2>Welcome Back</h2>
             <p class="subtitle">Log in to your <span>FitLife account</span></p>
 

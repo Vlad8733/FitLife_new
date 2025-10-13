@@ -1,33 +1,44 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FitLife - Register</title>
+    <link rel="icon" href="{{ asset('favicon.PNG') }}" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #f9fafb;
-            --text: #111827;
-            --accent: #3b82f6;
-            --muted: #6b7280;
-            --card-bg: #ffffff;
-            --border: #d1d5db;
+            --bg: #121212;
+            --text: #e5e5e5;
+            --accent: #00ff00;
+            --muted: #a0a0a0;
+            --card-bg: #1f1f1f;
+            --border: #333333;
             --radius: 12px;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             --transition: 0.3s ease;
-            --danger: #dc2626;
+            --highlight: #00cc00;
+            --danger: #ff5555;
+            --success: #00ff00;
+            --hover-bg: #2a2a2a;
+            --focus: #33ff33;
+            --action-icon: #3b82f6;
         }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        html, body {
+
+        html,
+        body {
             height: 100%;
             width: 100%;
             overflow-x: hidden;
         }
+
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg);
@@ -37,11 +48,13 @@
             align-items: center;
             justify-content: center;
         }
+
         .register-wrapper {
             width: 100%;
             max-width: 450px;
             padding: 1.5rem;
         }
+
         .register-card {
             background: var(--card-bg);
             padding: 2rem;
@@ -51,29 +64,30 @@
             text-align: center;
             transition: var(--transition);
         }
-        .register-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
-        }
+
         .register-card .logo {
             width: 80px;
             margin-bottom: 1rem;
             border-radius: var(--radius);
         }
+
         .register-card h2 {
             font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
         }
+
         .register-card .subtitle {
             font-size: 0.9rem;
             color: var(--muted);
             margin-bottom: 1.5rem;
         }
+
         .register-card .subtitle span {
             color: var(--accent);
             font-weight: 600;
         }
+
         .register-card label {
             display: block;
             text-align: left;
@@ -81,6 +95,7 @@
             color: var(--muted);
             margin: 0.5rem 0 0.25rem;
         }
+
         .register-card input[type="text"],
         .register-card input[type="email"],
         .register-card input[type="password"] {
@@ -93,36 +108,43 @@
             background: var(--card-bg);
             transition: var(--transition);
         }
+
         .register-card input:focus {
             outline: none;
             border-color: var(--accent);
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
+
         .register-card input::placeholder {
             color: var(--muted);
         }
+
         .error {
             color: var(--danger);
             font-size: 0.85rem;
             margin-top: 0.25rem;
             text-align: left;
         }
+
         .footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 1rem;
         }
+
         .footer a {
             color: var(--accent);
             font-size: 0.9rem;
             text-decoration: none;
             transition: var(--transition);
         }
+
         .footer a:hover {
             color: #2563eb;
             text-decoration: underline;
         }
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -137,77 +159,96 @@
             cursor: pointer;
             transition: var(--transition);
         }
+
         .btn svg {
             width: 20px;
             height: 20px;
             stroke: #fff;
         }
+
         .btn:hover {
             background: #2563eb;
             transform: translateY(-1px);
         }
+
         @media (max-width: 768px) {
             .register-wrapper {
                 padding: 1rem;
             }
+
             .register-card {
                 padding: 1.5rem;
             }
+
             .register-card h2 {
                 font-size: 1.4rem;
             }
         }
+
         @media (max-width: 480px) {
             .register-card {
                 padding: 1rem;
             }
+
             .register-card h2 {
                 font-size: 1.3rem;
             }
+
             .register-card .subtitle {
                 font-size: 0.85rem;
             }
         }
+
         @media (prefers-reduced-motion: reduce) {
-            .register-card, .btn {
+
+            .register-card,
+            .btn {
                 transition: none;
             }
         }
+
         @media (prefers-contrast: high) {
             .register-card {
                 border: 2px solid var(--text);
             }
+
             .register-card input {
                 border: 2px solid var(--text);
             }
+
             .btn {
                 background: var(--text);
                 color: var(--bg);
             }
+
             .btn svg {
                 stroke: var(--bg);
             }
+
             .footer a {
                 color: var(--text);
             }
         }
     </style>
 </head>
+
 <body>
     <div class="register-wrapper" role="main" aria-label="FitLife Register">
         <div class="register-card">
-            <img src="{{ asset('storage/logo/logoFitLife.jpg') }}" alt="FitLife Logo" class="logo">
+            <img src="{{ asset('storage/logo/logoFitLife.png') }}" alt="FitLife Logo" class="logo">
             <h2>Create Your Account</h2>
             <p class="subtitle">Join <span>FitLife</span> and start your journey</p>
             <form method="POST" action="{{ route('register') }}">
                 @csrf
                 <label for="name">Name</label>
-                <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name">
+                <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus
+                    autocomplete="name">
                 @error('name')
                     <span class="error">{{ $message }}</span>
                 @enderror
                 <label for="username">Username</label>
-                <input id="username" type="text" name="username" value="{{ old('username') }}" required autocomplete="username">
+                <input id="username" type="text" name="username" value="{{ old('username') }}" required
+                    autocomplete="username">
                 @error('username')
                     <span class="error">{{ $message }}</span>
                 @enderror
@@ -222,7 +263,8 @@
                     <span class="error">{{ $message }}</span>
                 @enderror
                 <label for="password_confirmation">Confirm Password</label>
-                <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password">
+                <input id="password_confirmation" type="password" name="password_confirmation" required
+                    autocomplete="new-password">
                 @error('password_confirmation')
                     <span class="error">{{ $message }}</span>
                 @enderror
@@ -230,8 +272,9 @@
                     <a href="{{ route('login') }}">Already registered?</a>
                     <button type="submit" class="btn">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                            <path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/>
+                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                            <path d="M17 21v-8H7v8" />
+                            <path d="M7 3v5h8" />
                         </svg>
                         Register
                     </button>
@@ -240,4 +283,5 @@
         </div>
     </div>
 </body>
+
 </html>

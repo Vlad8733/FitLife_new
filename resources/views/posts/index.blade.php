@@ -6,11 +6,6 @@
 
 @section('content')
 <main id="main-content">
-    <!-- Header -->
-    <header>
-        <h1>Community</h1>
-    </header>
-
     <!-- Alert container for messages -->
     <div class="alert-container" style="display: none;"></div>
 
