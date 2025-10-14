@@ -313,46 +313,11 @@
     margin-top: 16px;
 }
 
-.admin-sidebar {
-    width: 250px; /* Фиксированная ширина сайдбара */
-    position: sticky;
-    top: 24px;
-    align-self: flex-start; /* Предотвращает "улёт" вниз */
-}
-
-.admin-sidebar ul {
-    list-style: none;
-    padding: 0;
-}
-
-.admin-sidebar li {
-    margin-bottom: 8px;
-}
-
-.admin-sidebar a {
-    color: var(--text);
-    text-decoration: none;
-    font-size: 0.9rem;
-    padding: 8px;
-    display: block;
-    border-radius: var(--radius);
-}
-
-.admin-sidebar a:hover {
-    background: var(--hover-bg);
-    color: var(--accent);
-}
-
 /* Responsive */
 @media (max-width: 768px) {
     .admin-container {
         flex-direction: column; /* Сайдбар и контент в столбец */
         padding: 16px;
-    }
-
-    .admin-sidebar {
-        width: 100%; /* Сайдбар на всю ширину */
-        position: static;
     }
 
     .admin-title {

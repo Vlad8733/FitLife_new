@@ -1,27 +1,62 @@
 :root {
-    --bg: #121212; /* Dark background */
-    --text: #e5e5e5; /* Light text */
-    --accent: #00ff00; /* Salatovy green accent */
-    --muted: #a0a0a0; /* Muted text */
-    --card-bg: #1f1f1f; /* Dark card background */
-    --border: #333333; /* Dark border */
-    --radius: 12px; /* Rounded corners */
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-    --transition: 0.3s ease; /* Smooth transitions */
-    --highlight: #00cc00; /* Darker green for hover */
-    --focus: #33ff33; /* Focus state green */
-    --success: #00ff00; /* Green for success */
-    --error: #ff5555; /* Red for errors */
+    --bg: #121212;
+    --text: #e5e5e5;
+    --accent: #00ff00;
+    --muted: #a0a0a0;
+    --card-bg: #1f1f1f;
+    --border: #333333;
+    --radius: 8px;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    --transition: 0.3s ease;
+    --success: #00ff00;
+    --error: #ff5555;
 }
 
-/* Main container */
-#fitlife-container main {
-    max-width: 900px; /* Slightly wider for better layout */
-    margin: 0 auto;
-    padding: 32px 24px;
+/* Light mode support */
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg: #f4faff;
+        --text: #2c3e50;
+        --card-bg: #ffffff;
+        --border: #e0e0e0;
+        --muted: #7f8c8d;
+    }
 }
 
-/* Calendar controls */
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 4px;
+}
+
+/* Header */
+.header {
+    padding: 16px 0;
+    text-align: center;
+}
+
+.header__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.header__username {
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+/* Calendar Controls */
 .calendar-controls {
     display: flex;
     align-items: center;
@@ -29,56 +64,57 @@
     background: var(--card-bg);
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    padding: 12px;
-    margin-bottom: 24px;
+    padding: 6px;
+    margin-bottom: 16px;
     box-shadow: var(--shadow);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    overflow-x: auto;
 }
 
 .calendar-nav-btn {
     background: var(--accent);
     color: var(--bg);
     border: none;
-    padding: 10px;
+    padding: 6px;
     border-radius: var(--radius);
     cursor: pointer;
-    transition: background-color var(--transition), transform var(--transition);
+    transition: background-color var(--transition);
 }
 
-.calendar-nav-btn svg {
-    width: 22px;
-    height: 22px;
-    stroke: var(--bg);
-}
-
-.calendar-nav-btn:focus {
-    outline: 2px solid var(--focus);
-    outline-offset: 2px;
+.calendar-nav-btn i {
+    font-size: 0.9rem;
+    color: var(--bg);
 }
 
 .calendar-month {
     color: var(--text);
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-weight: 600;
 }
 
-/* Calendar grid */
+/* Calendar Grid */
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
+    gap: 6px;
     background: var(--card-bg);
-    padding: 20px;
+    padding: 12px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
+    max-width: 600px;
+    margin: 0 auto;
+    overflow-x: auto;
 }
 
 .calendar-header {
     text-align: center;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--muted);
-    padding-bottom: 8px;
+    padding-bottom: 6px;
 }
 
 .calendar-day {
@@ -86,62 +122,65 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     color: var(--text);
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color var(--transition), box-shadow var(--transition);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     background: var(--bg);
+    transition: background-color var(--transition);
 }
 
 .calendar-day--selected {
-    background: linear-gradient(135deg, var(--accent) 0%, var(--highlight) 100%);
+    background: var(--accent);
     color: var(--bg);
-    box-shadow: 0 3px 10px rgba(0, 255, 0, 0.3);
 }
 
 .calendar-day--event {
-    border: 2px solid var(--accent);
+    border: 1px solid var(--accent);
     background: var(--card-bg);
     color: var(--text);
 }
 
 .calendar-day--completed {
-    background: linear-gradient(135deg, var(--success) 0%, var(--highlight) 100%);
+    background: var(--success);
     color: var(--bg);
-    box-shadow: 0 3px 10px rgba(0, 255, 0, 0.3);
 }
 
 .calendar-day--empty {
     background: transparent;
     color: var(--muted);
     cursor: default;
-    box-shadow: none;
 }
 
-/* Event form */
+/* Event Form */
 .calendar-event-form {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: 24px;
-    margin-top: 24px;
+    padding: 16px;
+    margin-top: 16px;
     animation: slideIn 0.5s ease-out;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 12px;
 }
 
 .form-group label {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: var(--text);
     font-weight: 500;
+}
+
+.input-group {
+    position: relative;
 }
 
 .form-group input,
@@ -149,60 +188,102 @@
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 12px;
+    padding: 10px 10px 10px 32px;
     color: var(--text);
-    font-size: 1rem;
-    transition: border-color var(--transition), box-shadow var(--transition);
+    font-size: 0.9rem;
+    transition: border-color var(--transition);
 }
 
 .form-group input:focus,
 .form-group select:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
     outline: none;
+}
+
+.input-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.error-message {
+    color: var(--error);
+    font-size: 0.8rem;
+    margin-top: 2px;
 }
 
 .save-btn {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 20px;
+    gap: 8px;
+    padding: 10px 16px;
     border-radius: var(--radius);
     border: none;
     background: var(--accent);
     color: var(--bg);
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color var(--transition), transform var(--transition);
+    transition: background-color var(--transition);
 }
 
-.save-btn svg {
-    width: 22px;
-    height: 22px;
-    stroke: var(--bg);
+.save-btn i {
+    font-size: 1rem;
 }
 
-.save-btn:focus {
-    outline: 2px solid var(--focus);
-    outline-offset: 2px;
+#form-message.success { color: var(--success); }
+#form-message.error { color: var(--error); }
+
+/* Event Filter */
+.event-filter {
+    margin-bottom: 12px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* Event list */
+.event-filter label {
+    font-size: 0.9rem;
+    color: var(--text);
+    font-weight: 500;
+    margin-right: 8px;
+}
+
+.event-filter select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px;
+    color: var(--text);
+    font-size: 0.9rem;
+    transition: border-color var(--transition);
+}
+
+.event-filter select:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+
+/* Event List */
 .event-list {
     list-style: none;
     padding: 0;
-    margin-top: 24px;
+    margin-top: 12px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .event-item {
     background: var(--card-bg);
-    padding: 16px;
+    padding: 12px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
     box-shadow: var(--shadow);
     animation: slideIn 0.5s ease-out;
@@ -221,85 +302,27 @@
 }
 
 .event-item__details {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--text);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
-.event-item__type--workout::before,
-.event-item__type--running::before,
-.event-item__type--gym::before,
-.event-item__type--cardio::before,
-.event-item__type--weightlifting::before,
-.event-item__type--crossfit::before,
-.event-item__type--boxing::before { 
-    content: '💪';
-    font-size: 1rem;
-}
-
-.event-item__type--rest::before,
-.event-item__type--recovery::before,
-.event-item__type--meditation::before { 
-    content: '🛌';
-    font-size: 1rem;
-}
-
-.event-item__type--goal::before { 
-    content: '🎯';
-    font-size: 1rem;
-}
-
-.event-item__type--yoga::before,
-.event-item__type--stretching::before,
-.event-item__type--pilates::before { 
-    content: '🧘';
-    font-size: 1rem;
-}
-
-.event-item__type--cycling::before,
-.event-item__type--hiking::before,
-.event-item__type--climbing::before,
-.event-item__type--rowing::before { 
-    content: '🚴';
-    font-size: 1rem;
-}
-
-.event-item__type--swimming::before { 
-    content: '🏊';
-    font-size: 1rem;
-}
-
-.event-item__type--dance::before { 
-    content: '💃';
-    font-size: 1rem;
-}
-
-.event-item__type--tennis::before,
-.event-item__type--basketball::before,
-.event-item__type--soccer::before,
-.event-item__type--martial_arts::before { 
-    content: '🎾';
-    font-size: 1rem;
-}
-
-.event-item__type--walking::before { 
-    content: '🚶';
-    font-size: 1rem;
-}
-
-.event-item__complete {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-}
-
-.event-item__complete svg {
-    width: 22px;
-    height: 22px;
-    stroke: var(--accent);
-}
+.event-item__type--workout::before { content: '💪'; }
+.event-item__type--running::before { content: '🏃'; }
+.event-item__type--yoga::before { content: '🧘'; }
+.event-item__type--cycling::before { content: '🚴'; }
+.event-item__type--swimming::before { content: '🏊'; }
+.event-item__type--weightlifting::before { content: '🏋️'; }
+.event-item__type--hiking::before { content: '🥾'; }
+.event-item__type--boxing::before { content: '🥊'; }
+.event-item__type--dance::before { content: '💃'; }
+.event-item__type--crossfit::before { content: '🏋️‍♂️'; }
+.event-item__type--walking::before { content: '🚶'; }
+.event-item__type--meditation::before { content: '🧘‍♂️'; }
+.event-item__type--rest::before { content: '🛌'; }
+.event-item__type--goal::before { content: '🎯'; }
 
 /* Animations */
 @keyframes slideIn {
@@ -307,130 +330,136 @@
     to { transform: translateX(0); opacity: 1; }
 }
 
-/* Responsive design */
+.fade-in {
+    animation: slideIn 0.5s ease-out;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    #fitlife-container main {
-        padding: 16px;
-    }
-
-    .calendar-grid {
-        gap: 6px;
-        padding: 16px;
-    }
-
-    .calendar-day {
-        font-size: 0.9rem;
+    main {
+        padding: 12px;
     }
 
     .calendar-controls {
-        padding: 10px;
-    }
-
-    .calendar-month {
-        font-size: 1.1rem;
-    }
-
-    .calendar-event-form {
-        padding: 16px;
-    }
-
-    .form-group label {
-        font-size: 0.95rem;
-    }
-
-    .form-group input,
-    .form-group select {
-        padding: 10px;
-        font-size: 0.95rem;
-    }
-
-    .save-btn {
-        padding: 10px 16px;
-        font-size: 0.95rem;
-    }
-}
-
-@media (max-width: 480px) {
-    #fitlife-container main {
-        padding: 12px;
+        padding: 4px;
+        max-width: 500px;
     }
 
     .calendar-grid {
         gap: 4px;
-        padding: 12px;
+        padding: 10px;
+        max-width: 500px;
     }
 
     .calendar-day {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
 
     .calendar-month {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
 
     .calendar-event-form {
         padding: 12px;
+        max-width: 500px;
     }
 
-    .form-group label {
-        font-size: 0.9rem;
+    .form-group label, .event-filter label {
+        font-size: 0.85rem;
     }
 
-    .form-group input,
-    .form-group select {
-        padding: 8px;
-        font-size: 0.9rem;
+    .form-group input, .form-group select, .event-filter select {
+        padding: 8px 8px 8px 28px;
+        font-size: 0.85rem;
     }
 
     .save-btn {
         padding: 8px 12px;
-        font-size: 0.9rem;
-    }
-
-    .event-item__details {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
 }
 
-/* High contrast mode */
+@media (max-width: 480px) {
+    main {
+        padding: 8px;
+    }
+
+    .calendar-controls {
+        padding: 4px;
+        max-width: 100%;
+    }
+
+    .calendar-grid {
+        gap: 3px;
+        padding: 8px;
+        max-width: 100%;
+    }
+
+    .calendar-day {
+        font-size: 0.75rem;
+    }
+
+    .calendar-month {
+        font-size: 0.85rem;
+    }
+
+    .calendar-event-form {
+        padding: 10px;
+        max-width: 100%;
+    }
+
+    .form-group label, .event-filter label {
+        font-size: 0.8rem;
+    }
+
+    .form-group input, .form-group select, .event-filter select {
+        padding: 6px 6px 6px 24px;
+        font-size: 0.8rem;
+    }
+
+    .save-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .event-item__details {
+        font-size: 0.8rem;
+    }
+}
+
+/* High Contrast Mode */
 @media (prefers-contrast: high) {
     :root {
         --accent: #33ff33;
-        --highlight: #66ff66;
         --border: #000000;
         --muted: #cccccc;
     }
 
-    .calendar-day--selected,
-    .calendar-day--completed {
+    .calendar-day--selected, .calendar-day--completed, .event-item::before, .save-btn {
         background: var(--accent);
         color: #000000;
     }
 }
 
-/* Reduced motion */
+/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-    .calendar-event-form,
-    .event-item {
+    .calendar-event-form, .event-item, .calendar-day, .save-btn {
         animation: none;
         transition: none;
     }
 }
 
-/* Print styles */
+/* Print Styles */
 @media print {
-    #fitlife-container main {
+    main {
         padding: 8px;
     }
 
-    .calendar-controls,
-    .calendar-event-form,
-    .event-item__complete {
+    .calendar-controls, .calendar-event-form {
         display: none;
     }
 
-    .calendar-grid,
-    .event-item {
+    .calendar-grid, .event-item {
         border: 1px solid #000;
         box-shadow: none;
     }

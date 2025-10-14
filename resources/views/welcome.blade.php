@@ -852,7 +852,7 @@
 
 <body>
     <header>
-        <div class="logo">FitLife</div>
+        <img src="{{ asset('faviconFULL.PNG') }}" alt="FitLife Logo" style="width: 50px; height: auto; display: block;">
         <div class="nav-links">
             <a href="#features">Features</a>
             <a href="#testimonials">Testimonials</a>
