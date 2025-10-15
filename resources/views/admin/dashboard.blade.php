@@ -25,12 +25,6 @@
                 <a href="{{ route('admin.posts') }}" class="admindashboard-btn admindashboard-btn-primary">Manage Posts</a>
             </div>
             <div class="admindashboard-stat-card">
-                <div class="admindashboard-stat-icon">📅</div>
-                <h3 class="admindashboard-stat-number">{{ $totalEvents }}</h3>
-                <p class="admindashboard-stat-label">Total Events</p>
-                <a href="{{ route('admin.events') }}" class="admindashboard-btn admindashboard-btn-primary">Manage Events</a>
-            </div>
-            <div class="admindashboard-stat-card">
                 <div class="admindashboard-stat-icon">🟢</div>
                 <h3 class="admindashboard-stat-number">{{ $activeUsers }}</h3>
                 <p class="admindashboard-stat-label">Active Users (30 days)</p>
@@ -68,45 +62,6 @@
                             @empty
                                 <tr>
                                     <td colspan="4">No recent posts.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="admindashboard-section">
-                <h2 class="admindashboard-section-title">Recent Events</h2>
-                <div class="admindashboard-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Type</th>
-                                <th>Date</th>
-                                <th>Description</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($recentEvents as $event)
-                                <tr>
-                                    <td>{{ $event->user->name }}</td>
-                                    <td>{{ ucfirst($event->type) }}</td>
-                                    <td>{{ $event->date }}</td>
-                                    <td>{{ Str::limit($event->description, 30) }}</td>
-                                    <td>
-                                        <a href="{{ route('profile.show', $event->user) }}" class="admindashboard-btn admindashboard-btn-primary">View Profile</a>
-                                        <form action="{{ route('admin.events.delete', $event) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="admindashboard-btn admindashboard-btn-danger" onclick="return confirm('Are you sure you want to delete this event?')">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5">No recent events.</td>
                                 </tr>
                             @endforelse
                         </tbody>
