@@ -51,11 +51,6 @@ body {
     stroke: var(--bg);
 }
 
-#mobile-toggle:hover {
-    background: var(--highlight);
-    transform: translateY(-1px);
-}
-
 #mobile-toggle:focus {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
@@ -124,11 +119,6 @@ section h3 {
     transition: transform var(--transition), box-shadow var(--transition);
 }
 
-.biography-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
-}
-
 .biography-form {
     display: flex;
     flex-wrap: wrap;
@@ -188,11 +178,6 @@ section h3 {
     stroke: var(--bg);
 }
 
-.save-btn:hover {
-    background: var(--highlight);
-    transform: translateY(-1px);
-}
-
 .save-btn:focus {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
@@ -208,11 +193,6 @@ a {
     color: var(--accent);
     text-decoration: none;
     transition: color var(--transition), text-decoration var(--transition);
-}
-
-a:hover {
-    color: var(--highlight);
-    text-decoration: underline;
 }
 
 /* ========== TYPOGRAPHY ========== */

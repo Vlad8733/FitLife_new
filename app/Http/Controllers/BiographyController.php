@@ -39,6 +39,6 @@ class BiographyController extends Controller
 
         return redirect()
             ->route('biography.edit')
-            ->with('success', 'Biography updated successfully!');
+            ->with('success', '');
     }
 }
