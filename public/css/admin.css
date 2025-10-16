@@ -16,7 +16,7 @@
 }
 
 .admin-container {
-    max-width: 1200px;
+    max-width: 300px;
     margin: 0 auto;
     padding: 24px;
     display: flex; /* Для корректной компоновки с сайдбаром */
