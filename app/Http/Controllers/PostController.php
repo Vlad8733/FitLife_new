@@ -46,18 +46,20 @@ class PostController extends Controller
             $request->validate([
                 'content' => 'nullable|string|max:1000',
                 'photo'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'video'   => 'nullable|mimetypes:video/mp4,video/mpeg,video/ogg,video/webm|max:10240', // 10MB max
             ]);
 
-            $path = $this->handlePhotoUpload($request->file('photo'));
+            $media = $this->handleMediaUpload($request->file('photo'), $request->file('video'));
 
             $post = Post::create([
                 'user_id'    => Auth::id(),
                 'content'    => $request->input('content'),
-                'photo_path' => $path,
+                'media_path' => $media['path'],
+                'media_type' => $media['type'],
                 'views'      => 0,
             ]);
 
-            Cache::forget('posts_page_1'); // Обновляем кэш
+            Cache::forget('posts_page_1');
 
             return response()->json([
                 'success' => true,
@@ -84,18 +86,27 @@ class PostController extends Controller
             $request->validate([
                 'content'      => 'nullable|string|max:1000',
                 'photo'        => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'remove_photo' => 'nullable|boolean',
+                'video'        => 'nullable|mimetypes:video/mp4,video/mpeg,video/ogg,video/webm|max:10240',
+                'remove_media' => 'nullable|boolean',
             ]);
 
-            if ($request->hasFile('photo')) {
-                $this->deletePhoto($post->photo_path);
-                $post->photo_path = $this->handlePhotoUpload($request->file('photo'));
-            } elseif ($request->remove_photo) {
-                $this->deletePhoto($post->photo_path);
-                $post->photo_path = null;
+            $mediaPath = $post->media_path;
+            $mediaType = $post->media_type;
+
+            if ($request->hasFile('photo') || $request->hasFile('video')) {
+                $this->deleteMedia($post->media_path);
+                $media = $this->handleMediaUpload($request->file('photo'), $request->file('video'));
+                $mediaPath = $media['path'];
+                $mediaType = $media['type'];
+            } elseif ($request->remove_media) {
+                $this->deleteMedia($post->media_path);
+                $mediaPath = null;
+                $mediaType = null;
             }
 
             $post->content = $request->input('content');
+            $post->media_path = $mediaPath;
+            $post->media_type = $mediaType;
             $post->save();
             Cache::forget('posts_page_1');
 
@@ -104,7 +115,8 @@ class PostController extends Controller
                 'post' => [
                     'id' => $post->id,
                     'content' => $post->content,
-                    'photo_path' => $post->photo_path,
+                    'media_path' => $post->media_path,
+                    'media_type' => $post->media_type,
                 ],
             ], 200);
 
@@ -125,7 +137,7 @@ class PostController extends Controller
                 return response()->json(['success' => false, 'message' => 'Unauthorized'], 200);
             }
 
-            $this->deletePhoto($post->photo_path);
+            $this->deleteMedia($post->media_path);
             $post->delete();
             Cache::forget('posts_page_1');
 
@@ -188,7 +200,6 @@ class PostController extends Controller
                 'parent_id' => 'nullable|exists:comments,id',
             ]);
 
-            // Проверяем, не существует ли уже такой комментарий от пользователя
             $existingComment = Comment::where([
                 'post_id'   => $post->id,
                 'user_id'   => Auth::id(),
@@ -227,14 +238,25 @@ class PostController extends Controller
     }
 
     // Helpers
-    private function handlePhotoUpload($file)
+    private function handleMediaUpload($photo, $video)
     {
-        if (!$file) return null;
-        $filename = uniqid('post_') . '.' . $file->getClientOriginalExtension();
-        return $file->storeAs('posts', $filename, 'public');
+        if ($photo) {
+            $filename = uniqid('post_') . '.' . $photo->getClientOriginalExtension();
+            return [
+                'path' => $photo->storeAs('posts', $filename, 'public'),
+                'type' => 'image'
+            ];
+        } elseif ($video) {
+            $filename = uniqid('post_') . '.' . $video->getClientOriginalExtension();
+            return [
+                'path' => $video->storeAs('posts', $filename, 'public'),
+                'type' => 'video'
+            ];
+        }
+        return ['path' => null, 'type' => null];
     }
 
-    private function deletePhoto($path)
+    private function deleteMedia($path)
     {
         if ($path) Storage::disk('public')->delete($path);
     }
@@ -245,7 +267,8 @@ class PostController extends Controller
         return [
             'id' => $post->id,
             'content' => $post->content,
-            'photo_path' => $post->photo_path,
+            'media_path' => $post->media_path,
+            'media_type' => $post->media_type,
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -270,7 +293,8 @@ class PostController extends Controller
         return [
             'id' => $post->id,
             'content' => $post->content,
-            'photo_path' => $post->photo_path,
+            'media_path' => $post->media_path,
+            'media_type' => $post->media_type,
             'user' => [
                 'name' => $post->user->name,
                 'username' => $post->user->username,

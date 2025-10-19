@@ -1,4 +1,3 @@
-// posts.js
 document.addEventListener("DOMContentLoaded", () => {
     const main = document.querySelector('#main-content');
     if (!main) return;
@@ -9,14 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
         sidebar: document.getElementById('sidebar'),
         postForm: document.getElementById('post-form'),
         postPhoto: document.getElementById('post-photo'),
+        postVideo: document.getElementById('post-video'),
         imagePreview: document.getElementById('image-preview'),
-        removePhoto: document.getElementById('remove-photo'),
+        videoPreview: document.getElementById('video-preview'),
+        removeMedia: document.getElementById('remove-media'),
         postCharCount: document.getElementById('post-char-count'),
         postTextarea: document.querySelector('#post-form textarea[name="content"]'),
         alert: document.querySelector('.alert-container')
     };
 
-    // Get user ID from meta tag or session
     const userId = document.querySelector('meta[name="user-id"]')?.content || 'guest';
     const viewedPostsKey = `viewedPosts_${userId}`;
     const viewedPosts = new Set(JSON.parse(localStorage.getItem(viewedPostsKey) || '[]'));
@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    // Displays a temporary alert message
     const showAlert = (message, type) => {
         if (!els.alert) return;
         els.alert.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
@@ -38,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 5000);
     };
 
-    // Toggles mobile sidebar menu
     const setupMobileMenu = () => {
         if (!els.mobileToggle || !els.sidebar) return;
         els.mobileToggle.addEventListener('click', () => {
@@ -63,9 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    // Handles image preview for post creation
-    const setupImagePreview = () => {
-        if (!els.postPhoto || !els.imagePreview || !els.removePhoto) return;
+    const setupMediaPreview = () => {
+        if (!els.postPhoto || !els.postVideo || !els.imagePreview || !els.videoPreview || !els.removeMedia) return;
         const previewContainer = els.imagePreview.parentElement;
 
         els.postPhoto.addEventListener('change', e => {
@@ -74,24 +71,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 const reader = new FileReader();
                 reader.onload = e => {
                     els.imagePreview.src = e.target.result;
+                    els.imagePreview.style.display = 'block';
+                    els.videoPreview.style.display = 'none';
                     previewContainer.style.display = 'block';
-                    els.removePhoto.style.display = 'block';
+                    els.removeMedia.style.display = 'block';
+                    els.postVideo.value = '';
                 };
                 reader.readAsDataURL(file);
-            } else {
-                previewContainer.style.display = 'none';
-                els.removePhoto.style.display = 'none';
             }
         });
 
-        els.removePhoto.addEventListener('click', () => {
+        els.postVideo.addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    els.videoPreview.src = e.target.result;
+                    els.videoPreview.style.display = 'block';
+                    els.imagePreview.style.display = 'none';
+                    previewContainer.style.display = 'block';
+                    els.removeMedia.style.display = 'block';
+                    els.postPhoto.value = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        els.removeMedia.addEventListener('click', () => {
             els.postPhoto.value = '';
+            els.postVideo.value = '';
+            els.imagePreview.src = '';
+            els.videoPreview.src = '';
+            els.imagePreview.style.display = 'none';
+            els.videoPreview.style.display = 'none';
             previewContainer.style.display = 'none';
-            els.removePhoto.style.display = 'none';
+            els.removeMedia.style.display = 'none';
         });
     };
 
-    // Updates character count for post textarea
     const setupCharCounter = () => {
         if (!els.postTextarea || !els.postCharCount) return;
         els.postTextarea.addEventListener('input', () => {
@@ -99,9 +116,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    // Toggles comment section visibility
-    const setupCommentToggle = () => {
-        main.querySelectorAll('.comment-toggle').forEach(btn => {
+    const setupCommentToggle = (scope = main) => {
+        scope.querySelectorAll('.comment-toggle').forEach(btn => {
             btn.addEventListener('click', () => {
                 const comments = document.getElementById(`comments-${btn.dataset.postId}`);
                 comments.style.display = comments.style.display === 'none' ? 'block' : 'none';
@@ -109,7 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    // Handles like/dislike reactions for posts or comments
     const handleReaction = async (btn, type, id, isComment) => {
         try {
             const response = await fetch(isComment ? `/comments/${id}/toggle-reaction` : `/posts/${id}/reaction`, {
@@ -131,10 +146,11 @@ document.addEventListener("DOMContentLoaded", () => {
             dislikeBtn.querySelector('.count-dislike').textContent = data.dislikeCount;
             likeBtn.querySelector('svg').setAttribute('fill', data.type === 'like' ? '#ef4444' : 'currentColor');
             dislikeBtn.querySelector('svg').setAttribute('fill', data.type === 'dislike' ? '#ffffffff' : 'currentColor');
-        } catch {}
+        } catch {
+            showAlert('Failed to toggle reaction', 'error');
+        }
     };
 
-    // Sets up reaction buttons for posts or a specific scope
     const setupReactionButtons = (scope = main) => {
         scope.querySelectorAll('.like-btn, .dislike-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -144,7 +160,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    // Tracks post views using IntersectionObserver with debounce
     const setupViewCounter = () => {
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
@@ -160,7 +175,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             document.querySelectorAll(`[data-post-id="${postId}"] .count-view`).forEach(el => el.textContent = data.views);
                             viewedPosts.add(postId);
                             localStorage.setItem(viewedPostsKey, JSON.stringify([...viewedPosts]));
-                        } catch {}
+                        } catch {
+                            console.error('Failed to increment view count');
+                        }
                     }, 5000);
                     entry.target.dataset.viewTimer = timer;
                 } else {
@@ -172,7 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
         main.querySelectorAll('.post-card').forEach(post => observer.observe(post));
     };
 
-    // Handles post creation
     const setupPostForm = () => {
         if (!els.postForm) return;
         els.postForm.addEventListener('submit', async e => {
@@ -185,10 +201,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 const data = await response.json();
                 if (data.success) {
-                    showAlert(data.success, 'success');
+                    showAlert('Post created successfully', 'success');
                     els.postForm.reset();
-                    if (els.imagePreview) els.imagePreview.parentElement.style.display = 'none';
-                    if (els.removePhoto) els.removePhoto.style.display = 'none';
+                    els.imagePreview.src = '';
+                    els.videoPreview.src = '';
+                    els.imagePreview.style.display = 'none';
+                    els.videoPreview.style.display = 'none';
+                    els.removeMedia.style.display = 'none';
                     els.postCharCount.textContent = '0/1000';
 
                     const postsFeed = document.querySelector('.posts-feed');
@@ -200,12 +219,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     setupCommentToggle(newPost);
                     setupReplyButtons(newPost);
                     restoreReplyDrafts(newPost);
+                } else {
+                    showAlert(data.message || 'Failed to create post', 'error');
                 }
-            } catch {}
+            } catch {
+                showAlert('Failed to create post', 'error');
+            }
         });
     };
 
-    // Creates a new post element
     const createPostElement = (post, csrfToken) => {
         const postElement = document.createElement('article');
         postElement.className = 'post-card';
@@ -224,20 +246,33 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="post-body" id="post-body-${post.id}">
                 <p>${post.content}</p>
-                ${post.photo_path ? `<img src="/storage/${post.photo_path}" alt="Post image" class="post-img" loading="lazy" />` : ''}
+                ${post.media_path ? (post.media_type === 'image' ? 
+                    `<img src="/storage/${post.media_path}" alt="Post image" class="post-img" loading="lazy" />` : 
+                    `<video src="/storage/${post.media_path}" controls class="post-video" style="max-height: 200px; border-radius: var(--radius);"></video>`) : ''}
             </div>
             <form id="edit-post-form-${post.id}" action="/posts/${post.id}" method="POST" enctype="multipart/form-data" style="display: none;">
                 <input type="hidden" name="_token" value="${csrfToken}">
                 <input type="hidden" name="_method" value="PUT">
                 <textarea name="content" rows="3" maxlength="1000">${post.content}</textarea>
-                <div class="preview-container">
-                    ${post.photo_path ? `<img id="edit-image-preview-${post.id}" src="/storage/${post.photo_path}" alt="Image preview" />` : `<img id="edit-image-preview-${post.id}" alt="Image preview" style="display: none;" />`}
-                    <button type="button" class="remove-photo" data-post-id="${post.id}">×</button>
+                <div class="preview-container" style="position: relative;">
+                    ${post.media_path && post.media_type === 'image' ? 
+                        `<img id="edit-image-preview-${post.id}" src="/storage/${post.media_path}" alt="Image preview" />` : 
+                        `<img id="edit-image-preview-${post.id}" alt="Image preview" style="display: none;" />`}
+                    ${post.media_path && post.media_type === 'video' ? 
+                        `<video id="edit-video-preview-${post.id}" src="/storage/${post.media_path}" controls style="max-height: 200px; border-radius: var(--radius);"></video>` : 
+                        `<video id="edit-video-preview-${post.id}" controls style="display: none; max-height: 200px; border-radius: var(--radius);" alt="Video preview"></video>`}
+                    <button type="button" class="remove-media" data-post-id="${post.id}">×</button>
                 </div>
                 <label class="file-label" title="Attach photo">
                     <input type="file" name="photo" accept="image/*" class="edit-post-photo">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#3b82f6">
                         <path d="M160-160q-33 0-56.5-23.5T80-240v-400q0-33 23.5-56.5T160-720h240l80-80h320q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm73-280h207v-207L233-440Zm-73-40 160-160H160v160Zm0 120v120h640v-480H520v280q0 33-23.5 56.5T440-360H160Zm280-160Z"/>
+                    </svg>
+                </label>
+                <label class="file-label" title="Attach video">
+                    <input type="file" name="video" accept="video/mp4,video/mpeg,video/ogg,video/webm" class="edit-post-video">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#3b82f6">
+                        <path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm160-80 240-160-240-160v320Zm-160 80v-480 480Z"/>
                     </svg>
                 </label>
                 <button type="submit" class="btn">Save</button>
@@ -257,16 +292,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span class="count-dislike">${post.dislike_count || 0}</span>
                 </button>
                 <button class="action-btn comment-toggle" data-post-id="${post.id}" data-count="${post.comment_count || 0}">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#3b82f6">
                         <path d="M240-400h480v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM880-80 720-240H160q-33 0-56.5-23.5T80-320v-480q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v720ZM160-320h594l46 45v-525H160v480Zm0 0v-480 480Z"/>
                     </svg>
                     <span class="comment-count">${post.comment_count || 0}</span> Comments
                 </button>
                 <span class="view-count">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#6b7280">
                         <path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/>
                     </svg>
-                    <span class="count-view">${post.views || 0}</span> Views
+                    <span class="count-view">${post.views || 0}</span>
                 </span>
                 ${post.can_update ? `<button type="button" class="action-btn edit-post-btn" data-post-id="${post.id}">Edit</button>` : ''}
                 ${post.can_delete ? `<form action="/posts/${post.id}" method="POST" class="inline-form delete-post-form"><input type="hidden" name="_token" value="${csrfToken}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="action-btn delete-btn">Delete</button></form>` : ''}
@@ -275,14 +310,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 <form action="/posts/${post.id}/comment" method="POST" class="comment-form" data-post-id="${post.id}">
                     <input type="hidden" name="_token" value="${csrfToken}">
                     <textarea name="content" placeholder="Write a comment..." rows="1" maxlength="500"></textarea>
-                    <button type="submit" class="btn">Comment</button>
+                    <button type="submit" class="btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#006400"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg></button>
                 </form>
             </div>
         `;
         return postElement;
     };
 
-    // Creates a new comment element
     const createCommentElement = (comment, postId, csrfToken) => {
         const commentElement = document.createElement('div');
         commentElement.className = 'comment';
@@ -326,14 +360,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 <input type="hidden" name="_token" value="${csrfToken}">
                 <input type="hidden" name="parent_id" value="${comment.id}">
                 <textarea name="content" placeholder="Write a reply..." rows="1" maxlength="500"></textarea>
-                <button type="submit" class="btn">Reply</button>
+                <button type="submit" class="btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#006400"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg></button>
                 <button type="button" class="btn cancel-reply" data-comment-id="${comment.id}">Cancel</button>
             </form>
         `;
         return commentElement;
     };
 
-    // Restores reply drafts from localStorage
     const restoreReplyDrafts = (scope = main) => {
         scope.querySelectorAll('.reply-form').forEach(form => {
             const postId = form.dataset.postId;
@@ -350,7 +383,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    // Toggles reply form visibility
     const setupReplyButtons = (scope = main) => {
         scope.querySelectorAll('.reply-btn').forEach(btn => {
             btn.removeEventListener('click', toggleReplyForm);
@@ -377,7 +409,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Handles comment form submission
     const attachCommentFormListeners = (scope = main) => {
         scope.querySelectorAll('.comment-form').forEach(form => {
             form.removeEventListener('submit', submitCommentForm);
@@ -411,7 +442,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             const data = await response.json();
             if (data.success) {
-                showAlert(data.success, 'success');
+                showAlert('Comment added successfully', 'success');
                 textarea.value = '';
                 if (parentId) {
                     localStorage.removeItem(`replyDraft_${postId}_${parentId}`);
@@ -433,9 +464,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     toggle.dataset.count = +toggle.dataset.count + 1;
                     comments.style.display = 'block';
                 }
+            } else {
+                showAlert(data.message || 'Failed to add comment', 'error');
             }
-        } catch (error) {
-            console.error('Error submitting comment:', error);
+        } catch {
+            showAlert('Failed to add comment', 'error');
         } finally {
             form.querySelector('button[type="submit"]').disabled = false;
         }
@@ -448,7 +481,6 @@ document.addEventListener("DOMContentLoaded", () => {
         form.style.display = 'none';
     };
 
-    // Attaches event listeners to comment elements
     const attachCommentEventListeners = (scope = main) => {
         scope.querySelectorAll('.comment').forEach(comment => {
             const commentId = comment.dataset.commentId;
@@ -508,13 +540,15 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             const data = await response.json();
             if (data.success) {
-                showAlert(data.success, 'success');
+                showAlert('Comment updated successfully', 'success');
                 commentBody.innerHTML = `<p>${data.comment.content}</p>`;
                 commentBody.style.display = 'block';
                 form.style.display = 'none';
+            } else {
+                showAlert(data.message || 'Failed to update comment', 'error');
             }
-        } catch (error) {
-            console.error('Error updating comment:', error);
+        } catch {
+            showAlert('Failed to update comment', 'error');
         }
     };
 
@@ -532,18 +566,19 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             const data = await response.json();
             if (data.success) {
-                showAlert(data.success, 'success');
+                showAlert('Comment deleted successfully', 'success');
                 comment.remove();
                 const toggle = document.querySelector(`.comment-toggle[data-post-id="${postId}"]`);
                 toggle.querySelector('.comment-count').textContent = +toggle.dataset.count - 1;
                 toggle.dataset.count = +toggle.dataset.count - 1;
+            } else {
+                showAlert(data.message || 'Failed to delete comment', 'error');
             }
-        } catch (error) {
-            console.error('Error deleting comment:', error);
+        } catch {
+            showAlert('Failed to delete comment', 'error');
         }
     };
 
-    // Attaches event listeners to post elements
     const attachPostEventListeners = (post) => {
         const postId = post.dataset.postId;
         const editBtn = post.querySelector('.edit-post-btn');
@@ -551,15 +586,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const postBody = post.querySelector(`#post-body-${postId}`);
         const cancelEdit = post.querySelector(`.cancel-edit[data-post-id="${postId}"]`);
         const editPhotoInput = post.querySelector('.edit-post-photo');
+        const editVideoInput = post.querySelector('.edit-post-video');
         const editImagePreview = post.querySelector(`#edit-image-preview-${postId}`);
-        const removeEditPhoto = post.querySelector(`.remove-photo[data-post-id="${postId}"]`);
+        const editVideoPreview = post.querySelector(`#edit-video-preview-${postId}`);
+        const removeEditMedia = post.querySelector(`.remove-media[data-post-id="${postId}"]`);
+        const deleteForm = post.querySelector('.delete-post-form');
 
         if (editBtn) {
             editBtn.addEventListener('click', () => {
                 postBody.style.display = 'none';
                 editForm.style.display = 'block';
                 if (editImagePreview.src && editImagePreview.src !== window.location.origin + '/storage/logo/defaultPhoto.jpg') {
-                    removeEditPhoto.style.display = 'block';
+                    editImagePreview.style.display = 'block';
+                    editVideoPreview.style.display = 'none';
+                    removeEditMedia.style.display = 'block';
+                } else if (editVideoPreview.src) {
+                    editVideoPreview.style.display = 'block';
+                    editImagePreview.style.display = 'none';
+                    removeEditMedia.style.display = 'block';
                 }
             });
         }
@@ -569,8 +613,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 postBody.style.display = 'block';
                 editForm.style.display = 'none';
                 editImagePreview.src = post.querySelector('.post-img')?.src || '';
-                removeEditPhoto.style.display = editImagePreview.src ? 'block' : 'none';
+                editVideoPreview.src = post.querySelector('.post-video')?.src || '';
+                editImagePreview.style.display = post.querySelector('.post-img') ? 'block' : 'none';
+                editVideoPreview.style.display = post.querySelector('.post-video') ? 'block' : 'none';
+                removeEditMedia.style.display = (editImagePreview.src || editVideoPreview.src) ? 'block' : 'none';
                 editPhotoInput.value = '';
+                editVideoInput.value = '';
             });
         }
 
@@ -582,18 +630,46 @@ document.addEventListener("DOMContentLoaded", () => {
                     reader.onload = e => {
                         editImagePreview.src = e.target.result;
                         editImagePreview.style.display = 'block';
-                        removeEditPhoto.style.display = 'block';
+                        editVideoPreview.style.display = 'none';
+                        removeEditMedia.style.display = 'block';
+                        editVideoInput.value = '';
                     };
                     reader.readAsDataURL(file);
                 }
             });
         }
 
-        if (removeEditPhoto) {
-            removeEditPhoto.addEventListener('click', () => {
+        if (editVideoInput) {
+            editVideoInput.addEventListener('change', () => {
+                const file = editVideoInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        editVideoPreview.src = e.target.result;
+                        editVideoPreview.style.display = 'block';
+                        editImagePreview.style.display = 'none';
+                        removeEditMedia.style.display = 'block';
+                        editPhotoInput.value = '';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        if (removeEditMedia) {
+            removeEditMedia.addEventListener('click', () => {
                 editPhotoInput.value = '';
+                editVideoInput.value = '';
+                editImagePreview.src = '';
+                editVideoPreview.src = '';
                 editImagePreview.style.display = 'none';
-                removeEditPhoto.style.display = 'none';
+                editVideoPreview.style.display = 'none';
+                removeEditMedia.style.display = 'none';
+                const removeMediaInput = document.createElement('input');
+                removeMediaInput.type = 'hidden';
+                removeMediaInput.name = 'remove_media';
+                removeMediaInput.value = '1';
+                editForm.appendChild(removeMediaInput);
             });
         }
 
@@ -608,16 +684,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                     const data = await response.json();
                     if (data.success) {
-                        showAlert(data.success, 'success');
-                        postBody.innerHTML = `<p>${data.post.content}</p>${data.post.photo_path ? `<img src="/storage/${data.post.photo_path}" alt="Post image" class="post-img" loading="lazy" />` : ''}`;
+                        showAlert('Post updated successfully', 'success');
+                        postBody.innerHTML = `
+                            <p>${data.post.content}</p>
+                            ${data.post.media_path ? (data.post.media_type === 'image' ? 
+                                `<img src="/storage/${data.post.media_path}" alt="Post image" class="post-img" loading="lazy" />` : 
+                                `<video src="/storage/${data.post.media_path}" controls class="post-video" style="max-height: 200px; border-radius: var(--radius);"></video>`) : ''}
+                        `;
                         postBody.style.display = 'block';
                         editForm.style.display = 'none';
+                    } else {
+                        showAlert(data.message || 'Failed to update post', 'error');
                     }
-                } catch {}
+                } catch {
+                    showAlert('Failed to update post', 'error');
+                }
             });
         }
 
-        const deleteForm = post.querySelector('.delete-post-form');
         if (deleteForm) {
             deleteForm.addEventListener('submit', async e => {
                 e.preventDefault();
@@ -630,69 +714,32 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                     const data = await response.json();
                     if (data.success) {
-                        showAlert(data.success, 'success');
+                        showAlert('Post deleted successfully', 'success');
                         post.remove();
+                    } else {
+                        showAlert(data.message || 'Failed to delete post', 'error');
                     }
-                } catch {}
+                } catch {
+                    showAlert('Failed to delete post', 'error');
+                }
             });
         }
     };
 
-    // Sets up infinite scroll for loading more posts
-    const setupInfiniteScroll = () => {
-        let page = 2, loading = false;
-        window.addEventListener('scroll', async () => {
-            if (loading || !document.querySelector('.posts-feed').childElementCount) return;
-            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
-                loading = true;
-                try {
-                    const response = await fetch(`/posts?page=${page}`, {
-                        method: 'GET',
-                        headers: { 'X-CSRF-TOKEN': csrfToken }
-                    });
-                    const data = await response.json();
-                    if (data.posts?.length) {
-                        const postsFeed = document.querySelector('.posts-feed');
-                        data.posts.forEach(post => {
-                            const postElement = createPostElement(post, csrfToken);
-                            if (post.comments?.length) {
-                                const commentsContainer = postElement.querySelector(`#comments-${post.id}`);
-                                commentsContainer.innerHTML = post.comments.map(c => {
-                                    const commentElement = createCommentElement(c, post.id, csrfToken);
-                                    return commentElement.outerHTML;
-                                }).join('') + commentsContainer.innerHTML;
-                            }
-                            postsFeed.appendChild(postElement);
-                            attachPostEventListeners(postElement);
-                            setupReactionButtons(postElement);
-                            attachCommentFormListeners(postElement);
-                            setupCommentToggle(postElement);
-                            setupReplyButtons(postElement);
-                            restoreReplyDrafts(postElement);
-                            attachCommentEventListeners(postElement);
-                        });
-                        page++;
-                    }
-                    loading = false;
-                } catch {}
-            }
-        });
-    };
-
-    // Initialize all features
+    // Initialize all event listeners
     setupMobileMenu();
-    setupImagePreview();
+    setupMediaPreview();
     setupCharCounter();
     setupCommentToggle();
     setupReactionButtons();
     setupViewCounter();
     setupPostForm();
+    attachCommentFormListeners();
+    attachCommentEventListeners();
+    setupReplyButtons();
+    restoreReplyDrafts();
+
     main.querySelectorAll('.post-card').forEach(post => {
         attachPostEventListeners(post);
-        attachCommentEventListeners(post);
-        attachCommentFormListeners(post);
-        setupReplyButtons(post);
-        restoreReplyDrafts(post);
     });
-    setupInfiniteScroll();
 });

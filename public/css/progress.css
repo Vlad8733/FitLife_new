@@ -51,11 +51,6 @@ body {
     stroke: var(--bg);
 }
 
-#mobile-toggle:hover {
-    background: var(--highlight);
-    transform: translateY(-1px);
-}
-
 #mobile-toggle:focus {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
@@ -111,11 +106,6 @@ section h3 {
     transition: transform var(--transition), box-shadow var(--transition);
 }
 
-.photo-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
-}
-
 .photo-card h4 {
     font-size: 1.25rem;
     font-weight: 600;
@@ -168,11 +158,6 @@ section h3 {
     transition: background-color var(--transition), transform var(--transition);
 }
 
-.calculate-btn:hover, .update-btn:hover {
-    background: var(--highlight);
-    transform: translateY(-1px);
-}
-
 .calculate-btn:focus, .update-btn:focus {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
@@ -192,11 +177,6 @@ section h3 {
     font-size: 0.9rem;
     cursor: pointer;
     transition: background-color var(--transition), transform var(--transition);
-}
-
-.delete-btn:hover {
-    background: #cc4444;
-    transform: translateY(-1px);
 }
 
 .delete-btn:focus {
@@ -224,11 +204,6 @@ section[aria-labelledby="photos-heading"] {
     transition: transform var(--transition), box-shadow var(--transition);
 }
 
-.photo-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
-}
-
 .photo-img {
     max-height: 200px;
     object-fit: cover;
@@ -236,10 +211,6 @@ section[aria-labelledby="photos-heading"] {
     border: 2px solid var(--accent);
     transition: border-color var(--transition);
     cursor: pointer;
-}
-
-.photo-img:hover {
-    border-color: var(--highlight);
 }
 
 .photo-description, .photo-date {
@@ -355,10 +326,6 @@ section[aria-labelledby="photos-heading"] {
 
 .lightbox-nav.next {
     right: 8px;
-}
-
-.lightbox-nav:hover {
-    background: var(--highlight);
 }
 
 .lightbox-nav:focus {
