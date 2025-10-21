@@ -9,10 +9,10 @@
     --radius: 12px; /* Rounded corners */
     --shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow */
     --transition: 0.3s ease; /* Smooth transitions */
-    --highlight: #00cc00; /* Darker green for hover */
+    --highlight: #00cc00; /* Darker green (used for hover) */
     --danger: #ff5555; /* Red for errors */
     --success: #00ff00; /* Green for success */
-    --hover-bg: #2a2a2a; /* Hover background */
+    --hover-bg: #2a2a2a; /* Hover background (unused) */
     --focus: #33ff33; /* Focus state green */
     --action-icon: #3b82f6; /* Blue for action icons */
 }
@@ -96,7 +96,7 @@ section h3 {
 
 .profile-card {
     background: var(--card-bg);
-    padding: 16px;
+    padding: 24px; /* Increased padding for better spacing */
     border-radius: var(--radius);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
@@ -106,51 +106,75 @@ section h3 {
 
 /* Banner and Avatar */
 .profile-banner {
-    margin-bottom: 16px;
+    margin-bottom: 24px; /* Increased margin for better separation */
 }
 
 .banner-bg {
-    height: 180px; /* Increased from 150px to make banner taller */
+    height: 200px; /* Slightly increased for better visual balance */
     background-size: cover;
     background-position: center;
     border-radius: var(--radius);
     position: relative;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* Align to left */
     align-items: flex-end;
+    padding: 16px; /* Added padding for better spacing */
+}
+
+.avatar-wrapper {
+    position: relative;
+    display: inline-block;
 }
 
 .banner-avatar {
-    width: 100px;
-    height: 100px;
+    width: 120px; /* Increased from 100px */
+    height: 120px; /* Increased from 100px */
     border-radius: 50%;
-    border: 3px solid var(--card-bg);
-    position: absolute;
-    bottom: 35px;
+    border: 4px solid var(--card-bg); /* Slightly thicker border */
     object-fit: cover;
+    position: relative;
+    bottom: 0; /* Adjusted position */
 }
 
-.change-banner-label {
+.change-banner-label,
+.change-avatar-label {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--accent);
-    color: var(--bg);
+    background: #000000; /* Changed to black */
+    color: #ffffff; /* White text for contrast */
     padding: 6px 12px;
     border-radius: var(--radius);
     cursor: pointer;
     font-size: 0.85rem;
-    transition: background-color var(--transition), transform var(--transition);
+    transition: opacity var(--transition);
+    opacity: 0; /* Hidden by default */
 }
 
-.change-banner-label:hover {
-    background: var(--highlight);
-    transform: translateY(-1px);
+.change-banner-label {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centered in banner */
 }
 
-.change-banner-label:focus {
+.change-avatar-label {
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+}
+
+.banner-bg:hover .change-banner-label {
+    opacity: 1; /* Show only Change Banner on banner hover */
+}
+
+.avatar-wrapper:hover .change-avatar-label {
+    opacity: 1; /* Show only Change Avatar on avatar hover */
+}
+
+.change-banner-label:focus,
+.change-avatar-label:focus {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
+    opacity: 1; /* Ensure visible on focus */
 }
 
 /* Profile Form */
@@ -163,8 +187,8 @@ section h3 {
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Slightly wider columns */
+    gap: 20px; /* Increased gap for better readability */
     width: 100%;
 }
 
@@ -174,6 +198,10 @@ section h3 {
     gap: 8px;
 }
 
+.form-group.full-width {
+    grid-column: 1 / -1; /* Full width for bio */
+}
+
 .form-group label {
     font-size: 0.9rem;
     color: var(--text);
@@ -181,18 +209,21 @@ section h3 {
 }
 
 .form-group input,
-.form-group select {
+.form-group select,
+.form-group textarea {
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 8px;
+    padding: 10px; /* Slightly increased padding */
     color: var(--text);
     font-size: 0.9rem;
     transition: border-color var(--transition);
+    resize: vertical; /* For textarea */
 }
 
 .form-group input:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group textarea:focus {
     border-color: var(--accent);
     outline: none;
     box-shadow: 0 0 8px var(--accent);
@@ -212,7 +243,7 @@ section h3 {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 16px;
+    padding: 12px 20px; /* Slightly larger for better touch targets */
     border-radius: var(--radius);
     border: none;
     font-size: 0.9rem;
@@ -231,11 +262,6 @@ section h3 {
     stroke: var(--bg);
 }
 
-.save-btn:hover {
-    background: var(--highlight);
-    transform: translateY(-1px);
-}
-
 .save-btn:focus {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
@@ -250,11 +276,6 @@ section h3 {
     width: 24px;
     height: 24px;
     stroke: var(--bg);
-}
-
-.delete-btn:hover {
-    background: #cc0000;
-    transform: translateY(-1px);
 }
 
 .delete-btn:focus {
@@ -272,11 +293,6 @@ a {
     color: var(--accent);
     text-decoration: none;
     transition: color var(--transition), text-decoration var(--transition);
-}
-
-a:hover {
-    color: var(--highlight);
-    text-decoration: underline;
 }
 
 /* ========== TYPOGRAPHY ========== */
@@ -310,7 +326,7 @@ p {
 }
 
 /* ========== ACCESSIBILITY ========== */
-a:focus, button:focus, input:focus, select:focus {
+a:focus, button:focus, input:focus, select:focus, textarea:focus {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
 }
@@ -339,10 +355,6 @@ a:focus, button:focus, input:focus, select:focus {
 ::-webkit-scrollbar-thumb {
     background: var(--accent);
     border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--highlight);
 }
 
 /* ========== UTILITY CLASSES ========== */
@@ -479,26 +491,27 @@ a:focus, button:focus, input:focus, select:focus {
     }
 
     .profile-card {
-        padding: 12px;
+        padding: 16px; /* Adjusted for mobile */
     }
 
     .banner-bg {
-        height: 140px; /* Increased from 120px to make banner taller */
+        height: 160px; /* Adjusted for mobile */
+        padding: 12px;
     }
 
     .banner-avatar {
-        width: 80px;
-        height: 80px;
-        bottom: -32px; /* Raised from -40px to lift avatar higher */
+        width: 100px;
+        height: 100px;
     }
 
     .form-group input,
-    .form-group select {
+    .form-group select,
+    .form-group textarea {
         font-size: 0.85rem;
     }
 
     .save-btn, .delete-btn {
-        padding: 8px 12px;
+        padding: 10px 16px;
         font-size: 0.85rem;
     }
 
@@ -533,12 +546,13 @@ a:focus, button:focus, input:focus, select:focus {
     }
 
     .form-group input,
-    .form-group select {
+    .form-group select,
+    .form-group textarea {
         font-size: 0.8rem;
     }
 
     .save-btn, .delete-btn {
-        padding: 6px 10px;
+        padding: 8px 12px;
         font-size: 0.8rem;
     }
 
@@ -547,13 +561,13 @@ a:focus, button:focus, input:focus, select:focus {
     }
 
     .banner-bg {
-        height: 120px; /* Increased from 100px to make banner taller */
+        height: 140px;
+        padding: 8px;
     }
 
     .banner-avatar {
-        width: 60px;
-        height: 60px;
-        bottom: -24px; /* Raised from -30px to lift avatar higher */
+        width: 80px;
+        height: 80px;
     }
 }
 
@@ -566,7 +580,7 @@ a:focus, button:focus, input:focus, select:focus {
         --muted: #cccccc;
     }
 
-    .profile-card, .form-group input, .form-group select {
+    .profile-card, .form-group input, .form-group select, .form-group textarea {
         border-color: var(--accent);
     }
 

@@ -33,12 +33,15 @@
                 <!-- Banner and avatar section -->
                 <div class="profile-banner">
                     <div class="banner-bg" style="background-image: url('{{ $user->banner ? asset("storage/{$user->banner}") : asset('storage/banner/default-banner.jpg') }}');">
-                        <img
-                            src="{{ $user->avatar ? asset("storage/{$user->avatar}") : asset('storage/logo/defaultPhoto.jpg') }}"
-                            alt="Profile Photo"
-                            class="banner-avatar"
-                            id="bannerAvatar"
-                        >
+                        <div class="avatar-wrapper">
+                            <img
+                                src="{{ $user->avatar ? asset("storage/{$user->avatar}") : asset('storage/logo/defaultPhoto.jpg') }}"
+                                alt="Profile Photo"
+                                class="banner-avatar"
+                                id="bannerAvatar"
+                            >
+                            <label for="avatar" class="change-avatar-label">Change Avatar</label>
+                        </div>
                         <label for="banner" class="change-banner-label">Change Banner</label>
                     </div>
                 </div>
@@ -58,10 +61,9 @@
                             @enderror
                         </div>
 
-                        <!-- Avatar input -->
+                        <!-- Hidden avatar input (now triggered by label in banner) -->
                         <div class="form-group">
-                            <label for="avatar">Profile Photo</label>
-                            <input type="file" id="avatar" name="avatar" accept="image/*">
+                            <input type="file" id="avatar" name="avatar" accept="image/*" style="display: none;">
                             @error('avatar')
                                 <p class="error-text">{{ $message }}</p>
                             @enderror
@@ -93,7 +95,6 @@
                                 <p id="email-error" class="error-text">{{ $message }}</p>
                             @enderror
                         </div>
-
                     </div>
 
                     <!-- Submit button for profile update -->
