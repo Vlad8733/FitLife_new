@@ -110,8 +110,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
     Route::post('/posts/{post}/reaction', [PostController::class, 'toggleReaction'])->name('posts.toggleReaction');
     Route::post('/posts/{post}/comment', [PostController::class, 'comment'])->name('posts.comment');
-    Route::post('/posts/{post}/views', [PostController::class, 'incrementView'])->name('posts.views');
-    Route::get('/posts/{post}/views', [PostController::class, 'getViews'])->name('posts.getViews');
+    Route::post('/posts/{post}/views', [PostController::class, 'incrementViews'])->name('posts.views');
 
     // Comments routes
     Route::put('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');

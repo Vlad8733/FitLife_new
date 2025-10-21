@@ -235,7 +235,7 @@
 <body>
     <div class="register-wrapper" role="main" aria-label="FitLife Register">
         <div class="register-card">
-            <img src="{{ asset('storage/logo/logoFitLife.png') }}" alt="FitLife Logo" class="logo">
+            <img src="{{ asset('favicon.PNG') }}" alt="FitLife Logo" class="logo">
             <h2>Create Your Account</h2>
             <p class="subtitle">Join <span>FitLife</span> and start your journey</p>
             <form method="POST" action="{{ route('register') }}">

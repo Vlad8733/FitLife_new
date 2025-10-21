@@ -108,7 +108,7 @@ section h3 {
     margin-bottom: 60px;
     display: flex;
     align-items: center;
-    justify-content: center; /* Center avatar if no banner */
+    /*justify-content: center; /* Center avatar if no banner */
 }
 
 .banner-section__image {
@@ -120,14 +120,14 @@ section h3 {
 
 .avatar-section {
     position: absolute;
-    bottom: 50px; /* Adjusted to position avatar partially overlapping banner */
-    left: 50%;
+    bottom: 15px; /* Adjusted to position avatar partially overlapping banner */
+    left: 10%;
     transform: translateX(-50%); /* Center horizontally */
 }
 
 .avatar-section__image {
-    width: 100px;
-    height: 100px;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
     border: 3px solid var(--card-bg);
     object-fit: cover;

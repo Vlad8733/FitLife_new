@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const showAlert = (message, type) => {
         if (!els.alert) return;
-        els.alert.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+        els.alert.innerHTML = `<div class="alert alert--${type}">${message}</div>`;
         els.alert.style.display = 'block';
         setTimeout(() => {
             els.alert.style.display = 'none';
@@ -67,9 +67,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         els.postPhoto.addEventListener('change', e => {
             const file = e.target.files[0];
+            console.log('Photo input changed:', file);
             if (file) {
                 const reader = new FileReader();
                 reader.onload = e => {
+                    console.log('FileReader result:', e.target.result);
                     els.imagePreview.src = e.target.result;
                     els.imagePreview.style.display = 'block';
                     els.videoPreview.style.display = 'none';
@@ -77,15 +79,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     els.removeMedia.style.display = 'block';
                     els.postVideo.value = '';
                 };
+                reader.onerror = () => console.error('FileReader error');
                 reader.readAsDataURL(file);
             }
         });
 
         els.postVideo.addEventListener('change', e => {
             const file = e.target.files[0];
+            console.log('Video input changed:', file);
             if (file) {
                 const reader = new FileReader();
                 reader.onload = e => {
+                    console.log('FileReader result:', e.target.result);
                     els.videoPreview.src = e.target.result;
                     els.videoPreview.style.display = 'block';
                     els.imagePreview.style.display = 'none';
@@ -93,6 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     els.removeMedia.style.display = 'block';
                     els.postPhoto.value = '';
                 };
+                reader.onerror = () => console.error('FileReader error');
                 reader.readAsDataURL(file);
             }
         });
@@ -125,6 +131,30 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
+    const setupShowRepliesButtons = (scope = main) => {
+        scope.querySelectorAll('.show-replies-btn').forEach(btn => {
+            btn.removeEventListener('click', toggleReplies);
+            btn.addEventListener('click', toggleReplies);
+        });
+    };
+
+    const toggleReplies = (e) => {
+        const commentId = e.currentTarget.dataset.commentId;
+        const repliesContainer = document.getElementById(`replies-${commentId}`);
+        const btnText = e.currentTarget.querySelector('span');
+        const replyCount = parseInt(btnText.textContent.match(/\d+/)[0]);
+
+        if (repliesContainer.style.display === 'block') {
+            repliesContainer.style.display = 'none';
+            btnText.textContent = `Show ${replyCount} ${replyCount === 1 ? 'Reply' : 'Replies'}`;
+            e.currentTarget.querySelector('svg').style.transform = 'rotate(0deg)';
+        } else {
+            repliesContainer.style.display = 'block';
+            btnText.textContent = `Hide ${replyCount} ${replyCount === 1 ? 'Reply' : 'Replies'}`;
+            e.currentTarget.querySelector('svg').style.transform = 'rotate(180deg)';
+        }
+    };
+
     const handleReaction = async (btn, type, id, isComment) => {
         try {
             const response = await fetch(isComment ? `/comments/${id}/toggle-reaction` : `/posts/${id}/reaction`, {
@@ -146,8 +176,9 @@ document.addEventListener("DOMContentLoaded", () => {
             dislikeBtn.querySelector('.count-dislike').textContent = data.dislikeCount;
             likeBtn.querySelector('svg').setAttribute('fill', data.type === 'like' ? '#ef4444' : 'currentColor');
             dislikeBtn.querySelector('svg').setAttribute('fill', data.type === 'dislike' ? '#ffffffff' : 'currentColor');
-        } catch {
-            showAlert('Failed to toggle reaction', 'error');
+        } catch (error) {
+            console.error('Reaction error:', error);
+            showAlert('Failed to toggle reaction: ' + error.message, 'error');
         }
     };
 
@@ -193,11 +224,16 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!els.postForm) return;
         els.postForm.addEventListener('submit', async e => {
             e.preventDefault();
+            const formData = new FormData(els.postForm);
+            console.log('FormData contents:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
             try {
                 const response = await fetch(els.postForm.action, {
                     method: 'POST',
                     headers: { 'X-CSRF-TOKEN': csrfToken },
-                    body: new FormData(els.postForm)
+                    body: formData
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -218,12 +254,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     attachCommentFormListeners(newPost);
                     setupCommentToggle(newPost);
                     setupReplyButtons(newPost);
+                    setupShowRepliesButtons(newPost);
                     restoreReplyDrafts(newPost);
                 } else {
                     showAlert(data.message || 'Failed to create post', 'error');
                 }
-            } catch {
-                showAlert('Failed to create post', 'error');
+            } catch (error) {
+                console.error('Post creation error:', error);
+                showAlert('Failed to create post: ' + error.message, 'error');
             }
         });
     };
@@ -261,7 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     ${post.media_path && post.media_type === 'video' ? 
                         `<video id="edit-video-preview-${post.id}" src="/storage/${post.media_path}" controls style="max-height: 200px; border-radius: var(--radius);"></video>` : 
                         `<video id="edit-video-preview-${post.id}" controls style="display: none; max-height: 200px; border-radius: var(--radius);" alt="Video preview"></video>`}
-                    <button type="button" class="remove-media" data-post-id="${post.id}">×</button>
+                    <button type="button" class="remove-media" data-post-id="${post.id}" style="display: ${post.media_path ? 'block' : 'none'};">×</button>
                 </div>
                 <label class="file-label" title="Attach photo">
                     <input type="file" name="photo" accept="image/*" class="edit-post-photo">
@@ -293,7 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </button>
                 <button class="action-btn comment-toggle" data-post-id="${post.id}" data-count="${post.comment_count || 0}">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#3b82f6">
-                        <path d="M240-400h480v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM880-80 720-240H160q-33 0-56.5-23.5T80-320v-480q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v720ZM160-320h594l46 45v-525H160v480Zm0 0v-480 480Z"/>
+                        <path d="M240-400h480v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM880-80 720-240H160q-33 0-56.5-23.5T80-320v-480q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v720ZM160-320h594l46 45v-525H160v480Zm0-480 0 480-0 0Z"/>
                     </svg>
                     <span class="comment-count">${post.comment_count || 0}</span> Comments
                 </button>
@@ -319,15 +357,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const createCommentElement = (comment, postId, csrfToken) => {
         const commentElement = document.createElement('div');
-        commentElement.className = 'comment';
+        commentElement.className = `comment ${comment.parent_id ? 'reply' : ''}`;
         commentElement.id = `comment-${comment.id}`;
         commentElement.dataset.commentId = comment.id;
-        commentElement.style.marginLeft = comment.parent_id ? '20px' : '0';
         commentElement.innerHTML = `
             <div class="comment-head">
                 <strong>${comment.user_name}</strong>
-                <div class="username">@${comment.user?.username || ''}</div>
-                <span class="time">${comment.created_at_diff || 'just now'}</span>
+                <div class="username fs-sm text-muted">@${comment.user?.username || ''}</div>
+                ${comment.parent_id ? `<div class="in-reply-to fs-sm text-muted">In reply to @${comment.parent_username || ''}</div>` : ''}
+                <span class="time fs-sm text-muted">${comment.created_at_diff || 'just now'}</span>
             </div>
             <div class="comment-body">
                 <p>${comment.content}</p>
@@ -352,17 +390,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     </svg>
                     <span class="count-dislike">${comment.dislike_count || 0}</span>
                 </button>
-                <button type="button" class="action-btn reply-btn" data-comment-id="${comment.id}" data-post-id="${postId}">Reply</button>
+                <button type="button" class="action-btn reply-btn" data-comment-id="${comment.id}" data-post-id="${postId}">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000fa">
+                        <path d="M760-200v-160q0-50-35-85t-85-35H273l144 144-57 56-240-240 240-240 57 56-144 144h367q83 0 141.5 58.5T840-360v160h-80Z"/>
+                    </svg>
+                    <span>Reply</span>
+                </button>
                 ${comment.can_update ? `<button type="button" class="action-btn edit-comment-btn" data-comment-id="${comment.id}">Edit</button>` : ''}
                 ${comment.can_delete ? `<form action="/comments/${comment.id}" method="POST" class="inline-form delete-comment-form"><input type="hidden" name="_token" value="${csrfToken}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="action-btn delete-btn">Delete</button></form>` : ''}
+                ${comment.reply_count > 0 ? `
+                <button type="button" class="action-btn show-replies-btn" data-comment-id="${comment.id}">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#44ff00ff">
+                        <path d="M480-200q-33 0-56.5-23.5T400-280v-400l-160 160-56-56 240-240 240 240-56 56-160-160v400q0 33-23.5 56.5T480-200Z"/>
+                    </svg>
+                    <span>Show ${comment.reply_count} ${comment.reply_count === 1 ? 'Reply' : 'Replies'}</span>
+                </button>` : ''}
             </div>
             <form action="/posts/${postId}/comment" method="POST" class="comment-form reply-form" data-post-id="${postId}" data-parent-id="${comment.id}" style="display: none; margin-top: 10px;">
                 <input type="hidden" name="_token" value="${csrfToken}">
                 <input type="hidden" name="parent_id" value="${comment.id}">
                 <textarea name="content" placeholder="Write a reply..." rows="1" maxlength="500"></textarea>
-                <button type="submit" class="btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#006400"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg></button>
+                <button type="submit" class="btn">Reply</button>
                 <button type="button" class="btn cancel-reply" data-comment-id="${comment.id}">Cancel</button>
             </form>
+            <div class="replies-container" id="replies-${comment.id}" style="display: none;"></div>
         `;
         return commentElement;
     };
@@ -409,6 +460,30 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    const initializeReplies = (scope = main) => {
+        scope.querySelectorAll('.comment').forEach(comment => {
+            const commentId = comment.dataset.commentId;
+            const repliesContainer = comment.querySelector(`#replies-${commentId}`);
+            if (repliesContainer && repliesContainer.children.length > 0) {
+                let showRepliesBtn = comment.querySelector(`.show-replies-btn[data-comment-id="${commentId}"]`);
+                const replyCount = repliesContainer.querySelectorAll('.reply').length;
+                if (!showRepliesBtn && replyCount > 0) {
+                    showRepliesBtn = document.createElement('button');
+                    showRepliesBtn.className = 'action-btn show-replies-btn';
+                    showRepliesBtn.dataset.commentId = commentId;
+                    showRepliesBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#44ff00ff">
+                            <path d="M480-200q-33 0-56.5-23.5T400-280v-400l-160 160-56-56 240-240 240 240-56 56-160-160v400q0 33-23.5 56.5T480-200Z"/>
+                        </svg>
+                        <span>Show ${replyCount} ${replyCount === 1 ? 'Reply' : 'Replies'}</span>
+                    `;
+                    comment.querySelector('.comment-actions').appendChild(showRepliesBtn);
+                    setupShowRepliesButtons(comment);
+                }
+            }
+        });
+    };
+
     const attachCommentFormListeners = (scope = main) => {
         scope.querySelectorAll('.comment-form').forEach(form => {
             form.removeEventListener('submit', submitCommentForm);
@@ -449,16 +524,70 @@ document.addEventListener("DOMContentLoaded", () => {
                     form.style.display = 'none';
                 }
                 const comments = document.getElementById(`comments-${postId}`);
+                if (!comments) {
+                    console.error(`Comments container for post ${postId} not found`);
+                    showAlert('Failed to add comment: Post container missing', 'error');
+                    return;
+                }
                 const existingComment = document.getElementById(`comment-${data.comment.id}`);
                 if (!existingComment) {
                     const comment = createCommentElement(data.comment, postId, csrfToken);
-                    const parent = data.comment.parent_id ? document.querySelector(`#comment-${data.comment.parent_id}`) : comments;
-                    parent.insertBefore(comment, parent.lastElementChild || parent.firstChild);
+                    let parent;
+                    if (data.comment.parent_id) {
+                        parent = document.getElementById(`replies-${data.comment.parent_id}`);
+                        if (!parent) {
+                            parent = document.createElement('div');
+                            parent.className = 'replies-container';
+                            parent.id = `replies-${data.comment.parent_id}`;
+                            parent.style.display = 'none';
+                            const parentComment = document.getElementById(`comment-${data.comment.parent_id}`);
+                            if (parentComment) {
+                                parentComment.appendChild(parent);
+                            } else {
+                                console.error(`Parent comment ${data.comment.parent_id} not found`);
+                                showAlert('Failed to add reply: Parent comment missing', 'error');
+                                return;
+                            }
+                        }
+                    } else {
+                        parent = comments;
+                    }
+                    parent.appendChild(comment);
                     attachCommentEventListeners(comment);
                     attachCommentFormListeners(comment);
                     setupReactionButtons(comment);
                     setupReplyButtons(comment);
+                    setupShowRepliesButtons(comment);
                     restoreReplyDrafts(comment);
+
+                    if (data.comment.parent_id) {
+                        let showRepliesBtn = document.querySelector(`.show-replies-btn[data-comment-id="${data.comment.parent_id}"]`);
+                        const parentComment = document.getElementById(`comment-${data.comment.parent_id}`);
+                        if (showRepliesBtn) {
+                            const replyCount = parseInt(showRepliesBtn.querySelector('span').textContent.match(/\d+/)[0]) + 1;
+                            showRepliesBtn.querySelector('span').textContent = `Show ${replyCount} ${replyCount === 1 ? 'Reply' : 'Replies'}`;
+                            parent.querySelector(`#replies-${data.comment.parent_id}`).style.display = 'block';
+                            showRepliesBtn.querySelector('svg').style.transform = 'rotate(180deg)';
+                        } else {
+                            showRepliesBtn = document.createElement('button');
+                            showRepliesBtn.className = 'action-btn show-replies-btn';
+                            showRepliesBtn.dataset.commentId = data.comment.parent_id;
+                            showRepliesBtn.innerHTML = `
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#44ff00ff">
+                                    <path d="M480-200q-33 0-56.5-23.5T400-280v-400l-160 160-56-56 240-240 240 240-56 56-160-160v400q0 33-23.5 56.5T480-200Z"/>
+                                </svg>
+                                <span>Show 1 Reply</span>
+                            `;
+                            if (parentComment) {
+                                parentComment.querySelector('.comment-actions').appendChild(showRepliesBtn);
+                                setupShowRepliesButtons(parentComment);
+                                parent.querySelector(`#replies-${data.comment.parent_id}`).style.display = 'block';
+                                showRepliesBtn.querySelector('span').textContent = `Hide 1 Reply`;
+                                showRepliesBtn.querySelector('svg').style.transform = 'rotate(180deg)';
+                            }
+                        }
+                    }
+
                     const toggle = document.querySelector(`.comment-toggle[data-post-id="${postId}"]`);
                     toggle.querySelector('.comment-count').textContent = +toggle.dataset.count + 1;
                     toggle.dataset.count = +toggle.dataset.count + 1;
@@ -467,8 +596,9 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 showAlert(data.message || 'Failed to add comment', 'error');
             }
-        } catch {
-            showAlert('Failed to add comment', 'error');
+        } catch (error) {
+            console.error('Comment submission error:', error);
+            //showAlert('Failed to add comment: ' + error.message, 'error');
         } finally {
             form.querySelector('button[type="submit"]').disabled = false;
         }
@@ -547,8 +677,9 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 showAlert(data.message || 'Failed to update comment', 'error');
             }
-        } catch {
-            showAlert('Failed to update comment', 'error');
+        } catch (error) {
+            console.error('Comment update error:', error);
+            showAlert('Failed to update comment: ' + error.message, 'error');
         }
     };
 
@@ -571,11 +702,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 const toggle = document.querySelector(`.comment-toggle[data-post-id="${postId}"]`);
                 toggle.querySelector('.comment-count').textContent = +toggle.dataset.count - 1;
                 toggle.dataset.count = +toggle.dataset.count - 1;
+                if (data.parent_id) {
+                    const showRepliesBtn = document.querySelector(`.show-replies-btn[data-comment-id="${data.parent_id}"]`);
+                    if (showRepliesBtn) {
+                        const replyCount = parseInt(showRepliesBtn.querySelector('span').textContent.match(/\d+/)[0]) - 1;
+                        if (replyCount > 0) {
+                            showRepliesBtn.querySelector('span').textContent = `Show ${replyCount} ${replyCount === 1 ? 'Reply' : 'Replies'}`;
+                        } else {
+                            showRepliesBtn.remove();
+                            document.getElementById(`replies-${data.parent_id}`).remove();
+                        }
+                    }
+                }
             } else {
                 showAlert(data.message || 'Failed to delete comment', 'error');
             }
-        } catch {
-            showAlert('Failed to delete comment', 'error');
+        } catch (error) {
+            console.error('Comment deletion error:', error);
+            showAlert('Failed to delete comment: ' + error.message, 'error');
         }
     };
 
@@ -625,6 +769,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (editPhotoInput) {
             editPhotoInput.addEventListener('change', () => {
                 const file = editPhotoInput.files[0];
+                console.log('Edit photo input changed:', file);
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = e => {
@@ -634,6 +779,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         removeEditMedia.style.display = 'block';
                         editVideoInput.value = '';
                     };
+                    reader.onerror = () => console.error('FileReader error');
                     reader.readAsDataURL(file);
                 }
             });
@@ -642,6 +788,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (editVideoInput) {
             editVideoInput.addEventListener('change', () => {
                 const file = editVideoInput.files[0];
+                console.log('Edit video input changed:', file);
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = e => {
@@ -651,6 +798,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         removeEditMedia.style.display = 'block';
                         editPhotoInput.value = '';
                     };
+                    reader.onerror = () => console.error('FileReader error');
                     reader.readAsDataURL(file);
                 }
             });
@@ -696,8 +844,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     } else {
                         showAlert(data.message || 'Failed to update post', 'error');
                     }
-                } catch {
-                    showAlert('Failed to update post', 'error');
+                } catch (error) {
+                    console.error('Post update error:', error);
+                    showAlert('Failed to update post: ' + error.message, 'error');
                 }
             });
         }
@@ -719,14 +868,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     } else {
                         showAlert(data.message || 'Failed to delete post', 'error');
                     }
-                } catch {
-                    showAlert('Failed to delete post', 'error');
+                } catch (error) {
+                    console.error('Post deletion error:', error);
+                    showAlert('Failed to delete post: ' + error.message, 'error');
                 }
             });
         }
     };
 
-    // Initialize all event listeners
+    // Initialize all event listeners and replies
     setupMobileMenu();
     setupMediaPreview();
     setupCharCounter();
@@ -737,7 +887,9 @@ document.addEventListener("DOMContentLoaded", () => {
     attachCommentFormListeners();
     attachCommentEventListeners();
     setupReplyButtons();
+    setupShowRepliesButtons();
     restoreReplyDrafts();
+    initializeReplies();
 
     main.querySelectorAll('.post-card').forEach(post => {
         attachPostEventListeners(post);

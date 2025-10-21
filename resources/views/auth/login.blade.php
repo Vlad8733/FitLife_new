@@ -264,7 +264,7 @@
     <div class="login-wrapper" role="main" aria-label="FitLife Login">
         <!-- Login card with form -->
         <div class="login-card">
-            <img src="{{ asset('storage/logo/logoFitLife.png') }}" alt="FitLife Logo" class="logo">
+            <img src="{{ asset('favicon.PNG') }}" alt="FitLife Logo" class="logo">
             <h2>Welcome Back</h2>
             <p class="subtitle">Log in to your <span>FitLife account</span></p>
 

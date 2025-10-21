@@ -852,7 +852,7 @@
 
 <body>
     <header>
-        <img src="{{ asset('faviconFULL.PNG') }}" alt="FitLife Logo" style="width: 50px; height: auto; display: block;">
+        <img src="{{ asset('favicon.PNG') }}" alt="FitLife Logo" style="width: 50px; height: auto; display: block;">
         <div class="nav-links">
             <a href="#features">Features</a>
             <a href="#testimonials">Testimonials</a>
@@ -892,7 +892,7 @@
                     <img src="{{ asset('storage/WelcomePhoto/training.jpg') }}" alt="Person lifting weights" tabindex="0">
                     <div class="content">
                         <h3>Personalized Workouts</h3>
-                        <p>Create custom workout plans tailored to your goals—strength, endurance, or weight loss. Access video tutorials, track progress, and sync with wearables for real-time analytics.</p>
+                        <p>Create custom workout plans tailored to your goals strength, endurance, or weight loss. Access video tutorials, track progress, and sync with wearables for real-time analytics.</p>
                     </div>
                 </div>
                 <div class="feature-card">
@@ -914,6 +914,20 @@
                     <div class="content">
                         <h3>Vibrant Community</h3>
                         <p>Join a supportive network to share goals, participate in challenges, and connect with fitness enthusiasts worldwide.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <img src="{{ asset('storage/WelcomePhoto/progress.jpg') }}" alt="Progress tracking dashboard" tabindex="0">
+                    <div class="content">
+                        <h3>Progress Tracking</h3>
+                        <p>Visualize your fitness journey with detailed progress charts and analytics. Set milestones and celebrate your achievements with data-driven insights.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <img src="{{ asset('storage/WelcomePhoto/goalsetting.jpg') }}" alt="Mindfulness meditation" tabindex="0">
+                    <div class="content">
+                        <h3>Goal Setting</h3>
+                        <p>Set and track your fitness goals with ease. Define milestones, monitor achievements, and stay motivated with personalized progress updates.</p>
                     </div>
                 </div>
             </div>

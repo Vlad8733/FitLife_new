@@ -9,11 +9,28 @@ return new class extends Migration {
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
+            
+            // Автор поста
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+
+            // Основной текст/описание поста
             $table->text('content')->nullable();
+
+            // Путь к медиа (фото или видео)
             $table->string('media_path')->nullable();
-            $table->string('media_type')->nullable(); // 'image' or 'video'
-            $table->unsignedInteger('views')->default(0);
+
+            // Тип медиа: image или video
+            $table->enum('media_type', ['image', 'video'])->nullable();
+
+            // Количество просмотров
+            $table->unsignedBigInteger('views')->default(0);
+
+            // Количество лайков (если хочешь, можешь вынести в отдельную таблицу)
+            $table->unsignedBigInteger('likes_count')->default(0);
+
+            // Количество комментариев (для оптимизации, необязательно)
+            $table->unsignedBigInteger('comments_count')->default(0);
+
             $table->timestamps();
         });
     }
