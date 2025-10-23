@@ -244,10 +244,22 @@ class PostController extends Controller
         }
     }
 
-    public function incrementViews(Post $post)
+    public function incrementViews(Request $request, Post $post)
     {
         try {
-            $post->increment('views');
+            if (!Auth::check()) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
+
+            $userId = Auth::id();
+            $cacheKey = "post_view_{$post->id}_{$userId}";
+
+            if (!Cache::has($cacheKey)) {
+                $post->increment('views');
+                Cache::put($cacheKey, true, now()->addMinutes(60));
+                Cache::forget("posts_page_1");
+            }
+
             return response()->json([
                 'success' => true,
                 'views' => $post->views,
@@ -256,7 +268,7 @@ class PostController extends Controller
             \Log::error('View increment failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to increment views',
+                'message' => 'Failed to increment views: ' . $e->getMessage(),
             ], 500);
         }
     }

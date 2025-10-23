@@ -509,7 +509,8 @@ a:focus, button:focus, select:focus, input:focus {
 
 /* ========== SCROLLBAR ========== */
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -628,57 +629,92 @@ a:focus, button:focus, select:focus, input:focus {
 .fw-extrabold { font-weight: 700; }
 
 /* ========== RESPONSIVE DESIGN ========== */
-@media (max-width: 1024px) {
-    #fitlife-container main {
-        padding: 16px;
-    }
-
-    .meals-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    }
-
-    .meal-card {
-        padding: 10px;
-    }
-
-    .result-icon svg {
-        width: 20px;
-        height: 20px;
-    }
-}
-
 @media (max-width: 768px) {
     #fitlife-container main {
         padding: 12px;
+    }
+
+    header {
+        padding: 16px 0;
     }
 
     header h1 {
         font-size: 1.5rem;
     }
 
+    header .muted {
+        font-size: 0.85rem;
+    }
+
     section h3 {
         font-size: 1.3rem;
+        margin-bottom: 12px;
     }
 
     .meal-grid-form {
         padding: 12px;
     }
 
+    .meals-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+    }
+
+    .meal-card {
+        padding: 10px;
+    }
+
     .meal-card h4 {
         font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+
+    .meal-items {
+        gap: 6px;
     }
 
     .food-select, .quantity-input {
         font-size: 0.85rem;
+        padding: 6px;
+    }
+
+    .quantity-input {
+        width: 70px;
     }
 
     .calorie-preview, .total-calories {
         font-size: 0.8rem;
+        min-width: 50px;
     }
 
-    .calculate-btn, .add-food-btn {
+    .remove-food-btn {
+        width: 22px;
+        height: 22px;
+    }
+
+    .remove-food-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .add-food-btn, .calculate-btn {
         padding: 6px 12px;
         font-size: 0.85rem;
+    }
+
+    .calculate-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .result-card {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .result-icon svg {
+        width: 20px;
+        height: 20px;
     }
 
     .result-body h4 {
@@ -689,15 +725,34 @@ a:focus, button:focus, select:focus, input:focus {
         font-size: 1.3rem;
     }
 
+    .result-body .muted {
+        font-size: 0.85rem;
+    }
+
     .history-table th, .history-table td {
-        font-size: 0.8rem;
         padding: 10px;
+        font-size: 0.8rem;
+    }
+
+    .notification {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+        min-width: 200px;
+    }
+
+    .pagination a {
+        padding: 6px 10px;
+        font-size: 0.85rem;
     }
 }
 
 @media (max-width: 480px) {
     #fitlife-container main {
         padding: 8px;
+    }
+
+    header {
+        padding: 12px 0;
     }
 
     header h1 {
@@ -710,14 +765,16 @@ a:focus, button:focus, select:focus, input:focus {
 
     section h3 {
         font-size: 1.1rem;
-    }
-
-    .meals-grid {
-        grid-template-columns: 1fr;
+        margin-bottom: 10px;
     }
 
     .meal-grid-form {
         padding: 10px;
+    }
+
+    .meals-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
     }
 
     .meal-card {
@@ -726,10 +783,16 @@ a:focus, button:focus, select:focus, input:focus {
 
     .meal-card h4 {
         font-size: 1rem;
+        margin-bottom: 6px;
+    }
+
+    .meal-items {
+        gap: 4px;
     }
 
     .food-select, .quantity-input {
         font-size: 0.8rem;
+        padding: 5px;
     }
 
     .quantity-input {
@@ -738,6 +801,7 @@ a:focus, button:focus, select:focus, input:focus {
 
     .calorie-preview, .total-calories {
         font-size: 0.75rem;
+        min-width: 45px;
     }
 
     .remove-food-btn {
@@ -746,8 +810,8 @@ a:focus, button:focus, select:focus, input:focus {
     }
 
     .remove-food-btn svg {
-        width: 14px;
-        height: 14px;
+        width: 12px;
+        height: 12px;
     }
 
     .add-food-btn, .calculate-btn {
@@ -755,8 +819,14 @@ a:focus, button:focus, select:focus, input:focus {
         font-size: 0.8rem;
     }
 
+    .calculate-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
     .result-card {
-        padding: 12px;
+        padding: 10px;
+        gap: 10px;
     }
 
     .result-icon svg {
@@ -776,9 +846,154 @@ a:focus, button:focus, select:focus, input:focus {
         font-size: 0.8rem;
     }
 
+    .history-table th, .history-table td {
+        padding: 8px;
+        font-size: 0.75rem;
+    }
+
+    .history-table .no-data {
+        padding: 12px;
+    }
+
     .notification {
+        top: 12px;
+        right: 12px;
+        padding: 8px 12px;
         font-size: 0.8rem;
         min-width: 180px;
+    }
+
+    .pagination a {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 360px) {
+    #fitlife-container main {
+        padding: 6px;
+    }
+
+    header {
+        padding: 10px 0;
+    }
+
+    header h1 {
+        font-size: 1.2rem;
+    }
+
+    header .muted {
+        font-size: 0.75rem;
+    }
+
+    section h3 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+
+    .meal-grid-form {
+        padding: 8px;
+    }
+
+    .meals-grid {
+        gap: 8px;
+    }
+
+    .meal-card {
+        padding: 6px;
+    }
+
+    .meal-card h4 {
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+    }
+
+    .meal-items {
+        gap: 3px;
+    }
+
+    .food-select, .quantity-input {
+        font-size: 0.75rem;
+        padding: 4px;
+    }
+
+    .quantity-input {
+        width: 55px;
+    }
+
+    .calorie-preview, .total-calories {
+        font-size: 0.7rem;
+        min-width: 40px;
+    }
+
+    .remove-food-btn {
+        width: 18px;
+        height: 18px;
+    }
+
+    .remove-food-btn svg {
+        width: 10px;
+        height: 10px;
+    }
+
+    .add-food-btn, .calculate-btn {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+    }
+
+    .calculate-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .result-card {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .result-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .result-body h4 {
+        font-size: 0.9rem;
+    }
+
+    .result-body .value {
+        font-size: 1.1rem;
+    }
+
+    .result-body .muted {
+        font-size: 0.75rem;
+    }
+
+    .history-table th, .history-table td {
+        padding: 6px;
+        font-size: 0.7rem;
+    }
+
+    .history-table .no-data {
+        padding: 10px;
+        font-size: 0.75rem;
+    }
+
+    .notification {
+        top: 10px;
+        right: 10px;
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        min-width: 160px;
+    }
+
+    .pagination a {
+        padding: 4px 6px;
+        font-size: 0.75rem;
+    }
+
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
     }
 }
 

@@ -973,10 +973,9 @@
     <footer>
         <div class="logo">FitLife</div>
         <p>© {{ date('Y') }} FitLife. All rights reserved.</p>
-
         <div class="links">
-            <a href="https://fitlife.com/privacy" target="_blank">Privacy Policy</a>
-            <a href="https://fitlife.com/terms" target="_blank">Terms of Service</a>
+            <a href="{{ route('privacy-policy') }}">Privacy Policy</a>
+            <a href="{{ route('terms-of-service') }}">Terms of Service</a>
             <a href="mailto:support@fitlife.com">Contact Us</a>
         </div>
     </footer>

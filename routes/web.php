@@ -21,6 +21,16 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+// Privacy Policy
+Route::get('/privacy-policy', function () {
+    return view('privacy-policy');
+})->name('privacy-policy');
+
+// Terms of Service
+Route::get('/terms-of-service', function () {
+    return view('terms-of-service');
+})->name('terms-of-service');
+
 // Authentication routes
 require __DIR__ . '/auth.php';
 

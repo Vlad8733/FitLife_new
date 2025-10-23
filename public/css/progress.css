@@ -516,6 +516,7 @@ a:focus, button:focus, input:focus, .photo-img:focus {
 @media (max-width: 1024px) {
     #fitlife-container main {
         padding: 16px;
+        padding-bottom: 80px; /* Clear fixed navbar */
     }
 
     .gallery-grid {
@@ -530,6 +531,11 @@ a:focus, button:focus, input:focus, .photo-img:focus {
 @media (max-width: 768px) {
     #fitlife-container main {
         padding: 12px;
+        padding-bottom: 80px; /* Clear fixed navbar */
+    }
+
+    header {
+        padding: 16px 0;
     }
 
     header h1 {
@@ -542,6 +548,7 @@ a:focus, button:focus, input:focus, .photo-img:focus {
 
     section h3 {
         font-size: 1.3rem;
+        margin-bottom: 12px;
     }
 
     .photo-card {
@@ -550,15 +557,34 @@ a:focus, button:focus, input:focus, .photo-img:focus {
 
     .photo-card h4 {
         font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+
+    .photo-form {
+        gap: 12px;
+    }
+
+    .form-group label {
+        font-size: 0.85rem;
     }
 
     .form-group input {
         font-size: 0.85rem;
+        padding: 6px;
     }
 
     .calculate-btn, .update-btn, .delete-btn {
         padding: 8px 12px;
         font-size: 0.85rem;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
+    }
+
+    .photo-item {
+        padding: 10px;
     }
 
     .photo-img {
@@ -567,6 +593,32 @@ a:focus, button:focus, input:focus, .photo-img:focus {
 
     .photo-description, .photo-date {
         font-size: 0.8rem;
+        margin-top: 6px;
+    }
+
+    .no-data {
+        font-size: 0.9rem;
+        padding: 12px;
+    }
+
+    .lightbox-content {
+        padding: 12px;
+        max-width: 95%;
+        max-height: 95%;
+    }
+
+    #lightbox-img {
+        max-height: 50vh;
+    }
+
+    #lightbox-desc, #lightbox-date {
+        font-size: 0.85rem;
+    }
+
+    .lightbox-close {
+        width: 22px;
+        height: 22px;
+        font-size: 0.9rem;
     }
 
     .lightbox-nav {
@@ -574,11 +626,28 @@ a:focus, button:focus, input:focus, .photo-img:focus {
         height: 32px;
         font-size: 1rem;
     }
+
+    .lightbox-nav.prev {
+        left: 6px;
+    }
+
+    .lightbox-nav.next {
+        right: 6px;
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
 }
 
 @media (max-width: 480px) {
     #fitlife-container main {
         padding: 8px;
+        padding-bottom: 80px; /* Clear fixed navbar */
+    }
+
+    header {
+        padding: 12px 0;
     }
 
     header h1 {
@@ -591,6 +660,7 @@ a:focus, button:focus, input:focus, .photo-img:focus {
 
     section h3 {
         font-size: 1.1rem;
+        margin-bottom: 10px;
     }
 
     .photo-card {
@@ -599,14 +669,20 @@ a:focus, button:focus, input:focus, .photo-img:focus {
 
     .photo-card h4 {
         font-size: 1rem;
+        margin-bottom: 6px;
+    }
+
+    .photo-form {
+        gap: 10px;
     }
 
     .form-group label {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
 
     .form-group input {
         font-size: 0.8rem;
+        padding: 5px;
     }
 
     .calculate-btn, .update-btn, .delete-btn {
@@ -615,7 +691,12 @@ a:focus, button:focus, input:focus, .photo-img:focus {
     }
 
     .gallery-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: 1fr; /* Single column for small screens */
+        gap: 10px;
+    }
+
+    .photo-item {
+        padding: 8px;
     }
 
     .photo-img {
@@ -624,22 +705,162 @@ a:focus, button:focus, input:focus, .photo-img:focus {
 
     .photo-description, .photo-date {
         font-size: 0.75rem;
+        margin-top: 4px;
+    }
+
+    .no-data {
+        font-size: 0.85rem;
+        padding: 10px;
     }
 
     .lightbox-content {
-        padding: 12px;
+        padding: 10px;
+        max-width: 98%;
+        max-height: 98%;
+    }
+
+    #lightbox-img {
+        max-height: 45vh;
+    }
+
+    #lightbox-desc, #lightbox-date {
+        font-size: 0.8rem;
     }
 
     .lightbox-close {
         width: 20px;
         height: 20px;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
 
     .lightbox-nav {
         width: 28px;
         height: 28px;
         font-size: 0.9rem;
+    }
+
+    .lightbox-nav.prev {
+        left: 4px;
+    }
+
+    .lightbox-nav.next {
+        right: 4px;
+    }
+
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+}
+
+@media (max-width: 360px) {
+    #fitlife-container main {
+        padding: 6px;
+        padding-bottom: 80px; /* Clear fixed navbar */
+    }
+
+    header {
+        padding: 10px 0;
+    }
+
+    header h1 {
+        font-size: 1.2rem;
+    }
+
+    header .muted {
+        font-size: 0.75rem;
+    }
+
+    section h3 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+
+    .photo-card {
+        padding: 8px;
+    }
+
+    .photo-card h4 {
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+    }
+
+    .photo-form {
+        gap: 8px;
+    }
+
+    .form-group label {
+        font-size: 0.75rem;
+    }
+
+    .form-group input {
+        font-size: 0.75rem;
+        padding: 4px;
+    }
+
+    .calculate-btn, .update-btn, .delete-btn {
+        padding: 5px 8px;
+        font-size: 0.75rem;
+    }
+
+    .gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .photo-item {
+        padding: 6px;
+    }
+
+    .photo-img {
+        max-height: 120px;
+    }
+
+    .photo-description, .photo-date {
+        font-size: 0.7rem;
+        margin-top: 3px;
+    }
+
+    .no-data {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+
+    .lightbox-content {
+        padding: 8px;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    #lightbox-img {
+        max-height: 40vh;
+    }
+
+    #lightbox-desc, #lightbox-date {
+        font-size: 0.75rem;
+    }
+
+    .lightbox-close {
+        width: 18px;
+        height: 18px;
+        font-size: 0.8rem;
+    }
+
+    .lightbox-nav {
+        width: 24px;
+        height: 24px;
+        font-size: 0.8rem;
+    }
+
+    .lightbox-nav.prev {
+        left: 2px;
+    }
+
+    .lightbox-nav.next {
+        right: 2px;
+    }
+
+    ::-webkit-scrollbar {
+        width: 4px;
     }
 }
 
@@ -677,6 +898,7 @@ a:focus, button:focus, input:focus, .photo-img:focus {
 @media print {
     #fitlife-container main {
         padding: 8px;
+        padding-bottom: 0; /* No navbar in print */
     }
 
     .photo-card, .photo-item, .lightbox-content {

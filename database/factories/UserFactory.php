@@ -18,8 +18,6 @@ class UserFactory extends Factory
     {
         $name = $this->faker->name();
         $baseUsername = Str::slug($name); // "Test User" -> "test-user"
-
-        // Ограничиваем username 20 символами
         $username = substr($baseUsername . rand(1, 9999), 0, 20);
 
         return [
@@ -29,13 +27,31 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'username' => $username,
+            'age' => $this->faker->numberBetween(18, 65),
+            'weight' => $this->faker->numberBetween(50, 120),
+            'height' => $this->faker->numberBetween(150, 200),
+            'role' => 'user', // по умолчанию обычный пользователь
+            'goal_type' => $this->faker->randomElement(['lose_weight', 'gain_muscle', 'maintain']),
         ];
     }
 
+    /**
+     * Состояние для неподтвержденного email
+     */
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * Состояние для администратора
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'admin',
         ]);
     }
 }
