@@ -12,19 +12,16 @@ use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
-    // Show edit profile form
     public function edit()
     {
         return view('profile.edit', ['user' => Auth::user()]);
     }
 
-    // Show user profile
     public function show(User $user)
     {
         return view('profile.show', compact('user'));
     }
 
-    // Update user profile info
     public function update(Request $request)
     {
         $user = Auth::user();
@@ -48,37 +45,24 @@ class ProfileController extends Controller
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        Log::info('Profile update request:', [
-            'has_banner' => $request->hasFile('banner'),
-            'has_avatar' => $request->hasFile('avatar'),
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-        ]);
-
         $data = $request->only('name', 'username', 'email');
 
-        // Handle banner upload
         if ($request->hasFile('banner')) {
             $this->deleteFile($user->banner);
             $data['banner'] = $request->file('banner')->store('banner', 'public');
-            Log::info('New banner path: ' . $data['banner']);
         }
 
-        // Handle avatar upload
         if ($request->hasFile('avatar')) {
             $this->deleteFile($user->avatar);
             $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
-            Log::info('New avatar path: ' . $data['avatar']);
         }
 
         $user->update($data);
-        Log::info('User updated:', $data);
 
-        return redirect()->back()->with('status', 'Profile updated successfully!');
+        // ✅ Исправленный редирект и статус
+        return redirect('/profile')->with('status', 'profile-updated');
     }
 
-    // Update user password
     public function updatePassword(Request $request)
     {
         $request->validate([
@@ -97,22 +81,28 @@ class ProfileController extends Controller
         return redirect()->back()->with('status', 'Password updated successfully!');
     }
 
-    // Delete user account
     public function destroy(Request $request)
     {
+        $request->validate([
+            'current_password' => ['required', 'current_password'],
+        ]);
+
         $user = Auth::user();
-        $user->delete();
+
         Auth::logout();
+
+        $user->delete();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return redirect('/')->with('status', 'Account deleted successfully!');
     }
 
-    // Helper: delete a file if it exists
     private function deleteFile($path)
     {
         if ($path && Storage::disk('public')->exists($path)) {
             Storage::disk('public')->delete($path);
-            Log::info('Deleted file: ' . $path);
         }
     }
 }

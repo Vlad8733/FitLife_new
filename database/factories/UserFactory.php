@@ -2,56 +2,91 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use App\Models\User;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * Фабрика для создания пользователей.
+ * Применяется при тестировании и сидировании базы данных.
  */
 class UserFactory extends Factory
 {
-    protected static ?string $password;
+    /**
+     * Модель, с которой связана фабрика.
+     *
+     * @var string
+     */
+    protected $model = User::class;
 
+    /**
+     * Определяет значения по умолчанию для полей модели User.
+     *
+     * @return array<string, mixed>
+     */
     public function definition(): array
     {
-        $name = $this->faker->name();
-        $baseUsername = Str::slug($name); // "Test User" -> "test-user"
-        $username = substr($baseUsername . rand(1, 9999), 0, 20);
-
         return [
-            'name' => $name,
-            'email' => $this->faker->unique()->safeEmail(),
+            // Основная информация
+            'name' => fake()->name(),
+            'username' => fake()->unique()->userName(),
+
+            // Контактные данные
+            'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+
+            // Безопасность
+            'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
-            'username' => $username,
-            'age' => $this->faker->numberBetween(18, 65),
-            'weight' => $this->faker->numberBetween(50, 120),
-            'height' => $this->faker->numberBetween(150, 200),
-            'role' => 'user', // по умолчанию обычный пользователь
-            'goal_type' => $this->faker->randomElement(['lose_weight', 'gain_muscle', 'maintain']),
+
+            // Дополнительные данные
+            'bio' => fake()->sentence(),
+            'avatar' => fake()->imageUrl(200, 200, 'people'),
+
+            // Временные метки
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 
     /**
-     * Состояние для неподтвержденного email
+     * Состояние для неактивного пользователя.
+     *
+     * @return static
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
 
     /**
-     * Состояние для администратора
+     * Состояние администратора.
+     *
+     * @return static
      */
     public function admin(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'role' => 'admin',
+        return $this->state(fn(array $attributes) => [
+            'is_admin' => true,
         ]);
     }
+
+    /**
+     * Состояние пользователя с профилем (био и аватар).
+     *
+     * @return static
+     */
+    public function withProfile(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->update([
+                'bio' => fake()->realText(100),
+                'avatar' => fake()->imageUrl(200, 200, 'people'),
+            ]);
+        });
+    }
 }
+    

@@ -60,7 +60,6 @@
         <section id="history-section" aria-labelledby="history-heading">
             <h3 id="history-heading">Meal History</h3>
 
-            {{-- Проверяем сначала данные из контроллера, затем из сессии --}}
             @php
                 $logs = $mealLogs ?? session('mealLogs') ?? collect();
             @endphp

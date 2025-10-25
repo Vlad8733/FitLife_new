@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>FitLife - Privacy Policy</title>
     <link rel="icon" href="{{ asset('favicon.PNG') }}" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -86,16 +86,28 @@
             transition: var(--transition);
         }
 
-        header.scrolled {
-            box-shadow: var(--shadow);
-            padding: 1rem 4rem;
-        }
-
         .logo {
             font-size: 1.75rem;
             font-weight: 600;
             color: var(--accent);
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo img {
+            width: 50px;
+            height: auto;
+        }
+
+        .menu-toggle {
+            font-size: 1.5rem;
+            color: var(--accent);
+            cursor: pointer;
+            background: none;
+            border: none;
+            display: none;
         }
 
         .nav-links {
@@ -278,41 +290,89 @@
             border: 0;
         }
 
+        @media (prefers-contrast: high) {
+            :root {
+                --accent: #33ff33;
+                --highlight: #66ff66;
+                --border: #000000;
+                --muted: #cccccc;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .content-section {
+                transition: none;
+                animation: none;
+            }
+        }
+
+        @media print {
+            header, footer, .menu-toggle {
+                display: none;
+            }
+
+            .content-section {
+                background: none;
+                box-shadow: none;
+                border: 1px solid #000;
+            }
+        }
+
+        /* Mobile and Tablet Optimizations */
         @media (max-width: 768px) {
             header {
-                padding: 1rem 2rem;
-                flex-direction: column;
-                align-items: flex-start;
+                padding: 1rem;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
             }
 
             .logo {
-                margin-bottom: 1rem;
+                font-size: 1.5rem;
+            }
+
+            .logo img {
+                width: 40px;
+            }
+
+            .menu-toggle {
+                display: block;
             }
 
             .nav-links {
-                flex-direction: column;
-                gap: 1rem;
-                width: 100%;
                 display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--card-bg);
+                flex-direction: column;
+                padding: 1rem;
+                border-bottom: 1px solid var(--border);
+                box-shadow: var(--shadow);
             }
 
             .nav-links.active {
                 display: flex;
             }
 
+            .nav-links a {
+                padding: 0.75rem;
+                font-size: 1rem;
+            }
+
             .auth-buttons {
-                flex-direction: column;
-                width: 100%;
-                gap: 0.8rem;
+                flex-direction: row;
+                gap: 0.5rem;
             }
 
             .button {
-                width: 100%;
-                justify-content: center;
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
             }
 
             .content-section {
-                padding: 6rem 1.5rem 4rem;
+                padding: 5rem 1rem 3rem;
             }
 
             .content-section h1 {
@@ -321,6 +381,26 @@
 
             .content-section h2 {
                 font-size: 1.5rem;
+            }
+
+            .content-section p, .content-section li {
+                font-size: 0.9rem;
+            }
+
+            footer {
+                padding: 2rem 1rem;
+            }
+
+            footer .logo {
+                font-size: 1.3rem;
+            }
+
+            footer p {
+                font-size: 0.8rem;
+            }
+
+            footer .links a {
+                font-size: 0.9rem;
             }
         }
 
@@ -334,63 +414,36 @@
             }
 
             .content-section p, .content-section li {
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (prefers-contrast: high) {
-            :root {
-                --accent: #33ff33;
-                --highlight: #66ff66;
-                --border: #000000;
-                --muted: #cccccc;
-            }
-
-            .content-section, footer {
-                border-color: var(--accent);
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .content-section {
-                animation: none;
-                transition: none;
-            }
-        }
-
-        @media print {
-            header, footer {
-                display: none;
-            }
-
-            .content-section {
-                background: none;
-                box-shadow: none;
-                border: 1px solid #000;
+                font-size: 0.8rem;
             }
         }
     </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Header scroll effect
             window.addEventListener('scroll', () => {
                 const header = document.querySelector('header');
-                header.classList.toggle('scrolled', window.scrollY > 50);
             });
 
-            const menuToggle = document.createElement('i');
-            menuToggle.classList.add('fas', 'fa-bars');
-            menuToggle.style.cursor = 'pointer';
-            menuToggle.style.fontSize = '1.5rem';
-            menuToggle.style.color = 'var(--accent)';
-            menuToggle.style.display = 'none';
-            document.querySelector('header').appendChild(menuToggle);
-
-            if (window.innerWidth <= 768) {
-                menuToggle.style.display = 'block';
-            }
+            // Mobile menu toggle
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
 
             menuToggle.addEventListener('click', () => {
-                document.querySelector('.nav-links').classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+
+            // Close mobile menu on link click
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                });
+            });
+
+            // Prevent pinch zoom on iOS
+            document.addEventListener('gesturestart', (e) => {
+                e.preventDefault();
             });
         });
     </script>
@@ -398,7 +451,10 @@
 
 <body>
     <header>
-        <img src="{{ asset('favicon.PNG') }}" alt="FitLife Logo" style="width: 50px; height: auto; display: block;">
+        <div class="logo">
+            <img src="{{ asset('favicon.PNG') }}" alt="FitLife Logo">
+        </div>
+        <button class="menu-toggle"><i class="fas fa-bars"></i></button>
         <div class="nav-links">
             <a href="{{ route('welcome') }}">Home</a>
             <a href="#features">Features</a>
@@ -488,7 +544,6 @@
     </main>
 
     <footer>
-        <div class="logo">FitLife</div>
         <p>© {{ date('Y') }} FitLife. All rights reserved.</p>
         <div class="links">
             <a href="{{ route('privacy-policy') }}">Privacy Policy</a>

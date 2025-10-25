@@ -10,8 +10,9 @@ return new class extends Migration
     {
         Schema::create('goal_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('goal_id')->constrained('goals')->onDelete('cascade');
+            $table->foreignIdFor(\App\Models\Goal::class)->constrained()->cascadeOnDelete();
             $table->decimal('value', 10, 2);
+            $table->integer('change');
             $table->date('date');
             $table->timestamps();
         });

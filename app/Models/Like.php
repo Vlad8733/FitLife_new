@@ -4,26 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Like extends Model
 {
     use HasFactory;
 
-    // Mass assignable attributes
     protected $fillable = [
         'post_id',
         'user_id',
         'type',
+        'is_like',
     ];
 
-    // Relation: Like belongs to a Post
-    public function post()
+    protected $casts = [
+        'is_like' => 'boolean',
+    ];
+
+    public function post(): BelongsTo
     {
         return $this->belongsTo(Post::class);
     }
 
-    // Relation: Like belongs to a User
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

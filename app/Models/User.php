@@ -10,7 +10,6 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    // Mass assignable attributes
     protected $fillable = [
         'name',
         'username',
@@ -26,13 +25,11 @@ class User extends Authenticatable
         'role',
     ];
 
-    // Hidden attributes for serialization
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    // Attribute casting
     protected function casts(): array
     {
         return [
@@ -41,7 +38,10 @@ class User extends Authenticatable
         ];
     }
 
-    // Relations
+    public function isFriendsWith(User $user)
+    {
+    return $this->friends()->where('friend_id', $user->id)->exists();
+    }
 
     public function biography()
     {
@@ -61,6 +61,16 @@ class User extends Authenticatable
     public function sleeps()
     {
         return $this->hasMany(Sleep::class);
+    }
+
+    public function goals()
+    {
+        return $this->hasMany(Goal::class);
+    }
+
+    public function goalLogs()
+    {
+        return $this->hasManyThrough(GoalLog::class, Goal::class);
     }
 
     public function friends()
@@ -91,13 +101,11 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
-    // Check if the user is friends with another user
     public function isFriendWith(User $user): bool
     {
         return $this->friends()->where('friend_id', $user->id)->exists();
     }
 
-    // Check if a pending friend request has been sent to another user
     public function hasPendingRequestTo(User $user): bool
     {
         return $this->sentFriendRequests()
@@ -106,12 +114,16 @@ class User extends Authenticatable
                     ->exists();
     }
 
-    // Check if a pending friend request has been received from another user
     public function hasPendingRequestFrom(User $user): bool
     {
         return $this->receivedFriendRequests()
                     ->where('user_id', $user->id)
                     ->where('status', 'pending')
                     ->exists();
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
     }
 }

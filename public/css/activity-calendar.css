@@ -288,6 +288,7 @@
     box-shadow: var(--shadow);
     animation: slideIn 0.5s ease-out;
     position: relative;
+    gap: 8px;
 }
 
 .event-item::before {
@@ -301,28 +302,35 @@
     border-radius: var(--radius) 0 0 var(--radius);
 }
 
+.event-item__icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
 .event-item__details {
     font-size: 0.9rem;
     color: var(--text);
     display: flex;
     align-items: center;
     gap: 6px;
+    flex: 1;
 }
 
-.event-item__type--workout::before { content: '💪'; }
-.event-item__type--running::before { content: '🏃'; }
-.event-item__type--yoga::before { content: '🧘'; }
-.event-item__type--cycling::before { content: '🚴'; }
-.event-item__type--swimming::before { content: '🏊'; }
-.event-item__type--weightlifting::before { content: '🏋️'; }
-.event-item__type--hiking::before { content: '🥾'; }
-.event-item__type--boxing::before { content: '🥊'; }
-.event-item__type--dance::before { content: '💃'; }
-.event-item__type--crossfit::before { content: '🏋️‍♂️'; }
-.event-item__type--walking::before { content: '🚶'; }
-.event-item__type--meditation::before { content: '🧘‍♂️'; }
-.event-item__type--rest::before { content: '🛌'; }
-.event-item__type--goal::before { content: '🎯'; }
+/* ИСПРАВЛЕНО: ТОЛЬКО ИКОНКИ, БЕЗ ТЕКСТА "Weightlifting" */
+.event-item__type--workout .event-item__icon::before { content: 'Weightlifting'; }
+.event-item__type--running .event-item__icon::before { content: 'Running'; }
+.event-item__type--yoga .event-item__icon::before { content: 'Yoga'; }
+.event-item__type--cycling .event-item__icon::before { content: 'Cycling'; }
+.event-item__type--swimming .event-item__icon::before { content: 'Swimming'; }
+.event-item__type--weightlifting .event-item__icon::before { content: 'Weightlifting'; }
+.event-item__type--hiking .event-item__icon::before { content: 'Hiking'; }
+.event-item__type--boxing .event-item__icon::before { content: 'Boxing'; }
+.event-item__type--dance .event-item__icon::before { content: 'Dance'; }
+.event-item__type--crossfit .event-item__icon::before { content: 'CrossFit'; }
+.event-item__type--walking .event-item__icon::before { content: 'Walking'; }
+.event-item__type--meditation .event-item__icon::before { content: 'Meditation'; }
+.event-item__type--rest .event-item__icon::before { content: 'Rest'; }
+.event-item__type--goal .event-item__icon::before { content: 'Goal'; }
 
 /* Animations */
 @keyframes slideIn {
@@ -334,10 +342,10 @@
     animation: slideIn 0.5s ease-out;
 }
 
-/* Responsive Design */
+/* Responsive Design — ОТСТУПЫ ДЛЯ МОБИЛЬНЫХ */
 @media (max-width: 768px) {
     main {
-        padding: 12px;
+        padding: 60px 12px 100px 12px; /* 60px сверху — под аватарку, 100px снизу — под навбар */
     }
 
     .calendar-controls {
@@ -377,11 +385,15 @@
         padding: 8px 12px;
         font-size: 0.85rem;
     }
+
+    .event-item__details {
+        font-size: 0.85rem;
+    }
 }
 
 @media (max-width: 480px) {
     main {
-        padding: 8px;
+        padding: 50px 8px 90px 8px;
     }
 
     .calendar-controls {
@@ -463,4 +475,4 @@
         border: 1px solid #000;
         box-shadow: none;
     }
-}
+}   

@@ -5,41 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'FitLife')</title>
-    <link rel="icon" href="{{ asset('favicon.PNG') }}" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
         :root {
-            --bg: #121212; /* Dark background */
-            --text: #e5e5e5; /* Light text */
-            --accent: #00ff00; /* Salatovy green accent */
-            --muted: #a0a0a0; /* Muted text */
-            --card-bg: #1f1f1f; /* Dark card background */
-            --border: rgba(51, 51, 51, 0.5); /* Semi-transparent border for glass effect */
-            --radius: 24px; /* Heavily rounded corners for notch-like effect */
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* Softer shadow for glass effect */
-            --transition: 0.4s cubic-bezier(0.2, 0.8, 0.4, 1); /* Smoother, liquid-like transitions */
-            --svg-fill: var(--text); /* Default SVG fill */
-            --svg-fill-hover: var(--accent); /* SVG fill on hover */
-            --svg-fill-active: #ffffff; /* SVG fill for active item */
-            --highlight: #00cc00; /* Darker green for hover */
-            --notch-bg: rgba(26, 26, 26, 0.7); /* Translucent for glass liquid effect */
+            --bg: #121212;
+            --text: #e5e5e5;
+            --accent: #00ff00;
+            --card-bg: #1f1f1f;
+            --border: rgba(51, 51, 51, 0.5);
+            --radius: 24px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --notch-bg: rgba(26, 26, 26, 0.7);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        /* === USER INFO (вверху справа) === */
+        .user-info {
+            position: fixed;
+            top: 16px; right: 16px;
+            z-index: 1100;
+            background: var(--notch-bg);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius);
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            max-width: 200px;
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
+        .user-info img {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+        }
+
+        .user-info span {
+            font-weight: 500;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 130px;
+        }
+
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: var(--notch-bg);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            min-width: 160px;
+            z-index: 1200;
+            flex-direction: column;
+            padding: 8px;
+        }
+
+        .user-dropdown.active { display: flex; }
+
+        .user-dropdown a,
+        .user-dropdown button {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px;
             color: var(--text);
-            overflow-x: hidden;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: var(--radius);
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
         }
 
-        /* ========== NAVIGATION ========== */
+        .user-dropdown a:hover,
+        .user-dropdown button:hover {
+            background: rgba(31, 31, 31, 0.5);
+            color: var(--accent);
+        }
+
+        .user-dropdown svg {
+            width: 18px; height: 18px; fill: var(--text);
+        }
+
+        .user-dropdown a:hover svg,
+        .user-dropdown button:hover svg {
+            fill: var(--accent);
+        }
+
+        /* === NAVIGATION === */
         #navbar {
             position: sticky;
             top: 16px;
@@ -51,370 +116,172 @@
 
         .navbar-container {
             background: var(--notch-bg);
-            backdrop-filter: blur(12px); /* Frosted glass blur */
-            -webkit-backdrop-filter: blur(12px); /* For Safari support */
+            backdrop-filter: blur(12px);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 12px 24px;
-            max-width: 1150px; /* Increased width for longer notch */
-            width: calc(100% - 32px); /* Stretch to nearly full viewport width */
+            justify-content: center;
+            padding: 12px 20px;
+            max-width: 1150px;
+            width: calc(100% - 32px);
             border: 1px solid var(--border);
-        }
-
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .navbar-brand img {
-            width: 36px;
-            height: auto;
-            border-radius: 8px;
-        }
-
-        .navbar-brand h2 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--text);
         }
 
         .nav-menu {
             display: flex;
-            align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
 
         .nav-menu a {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
             padding: 8px 12px;
             color: var(--text);
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 500;
             border-radius: var(--radius);
-            transition: var(--transition);
+            min-width: 70px;
         }
 
         .nav-menu a svg {
-            width: 18px;
-            height: 18px;
-            fill: var(--svg-fill);
+            width: 20px; height: 20px; fill: var(--text);
         }
 
         .nav-menu a:hover {
-            background: rgba(31, 31, 31, 0.5); /* Semi-transparent hover for glass effect */
-            color: var(--accent);
-        }
-
-        .nav-menu a:hover svg {
-            fill: var(--svg-fill-hover);
-        }
-
-        .nav-menu a.active {
-            background: var(--accent);
-            color: var(--svg-fill-active);
-        }
-
-        .nav-menu a.active svg {
-            fill: var(--svg-fill-active);
-        }
-
-        /* ========== MAIN CONTENT ========== */
-        main {
-            padding: 24px;
-            max-width: 2000px; /* Match navbar width */
-            margin: 0 auto;
-        }
-
-        /* ========== USER INFO ========== */
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: fixed;
-            top: 16px;
-            right: 16px;
-            z-index: 1100;
-            background: var(--notch-bg);
-            backdrop-filter: blur(12px); /* Frosted glass blur */
-            -webkit-backdrop-filter: blur(12px); /* For Safari support */
-            border-radius: var(--radius);
-            padding: 8px 12px; /* Compact padding */
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            cursor: pointer;
-        }
-
-        .user-info img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--accent);
-            transition: border-color var(--transition);
-        }
-
-        .user-info img:hover {
-            border-color: var(--highlight);
-        }
-
-        .user-info span {
-            font-weight: 500;
-            font-size: 0.85rem;
-            color: var(--text);
-        }
-
-        .user-info:hover {
-            background: rgba(31, 31, 31, 0.5); /* Hover effect for glass */
-        }
-
-        /* ========== DROPDOWN MENU ========== */
-        .user-dropdown {
-            display: none;
-            position: absolute;
-            top: calc(100% + 8px);
-            right: 0;
-            background: var(--notch-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            z-index: 1200;
-            min-width: 180px;
-            flex-direction: column;
-            padding: 8px;
-        }
-
-        .user-dropdown.active {
-            display: flex;
-        }
-
-        .user-dropdown a,
-        .user-dropdown button {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            color: var(--text);
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            border-radius: var(--radius);
-            transition: var(--transition);
-            width: 100%;
-            background: none;
-            border: none;
-            cursor: pointer;
-            text-align: left;
-        }
-
-        .user-dropdown a svg,
-        .user-dropdown button svg {
-            width: 18px;
-            height: 18px;
-            fill: var(--svg-fill);
-        }
-
-        .user-dropdown a:hover,
-        .user-dropdown button:hover {
             background: rgba(31, 31, 31, 0.5);
             color: var(--accent);
         }
 
-        .user-dropdown a:hover svg,
-        .user-dropdown button:hover svg {
-            fill: var(--svg-fill-hover);
-        }
+        .nav-menu a:hover svg { fill: var(--accent); }
 
-        .user-dropdown a.active {
+        .nav-menu a.active {
             background: var(--accent);
-            color: var(--svg-fill-active);
+            color: white;
         }
 
-        .user-dropdown a.active svg {
-            fill: var(--svg-fill-active);
+        .nav-menu a.active svg { fill: white; }
+
+        /* === MAIN CONTENT === */
+        main {
+            padding: 24px 16px 100px;
+            max-width: 2000px;
+            margin: 0 auto;
         }
 
-        /* ========== ALERTS ========== */
-        .alert {
-            padding: 12px 20px;
-            margin: 16px 0;
-            border-radius: var(--radius);
-            font-size: 0.9rem;
-            z-index: 2;
-            box-shadow: var(--shadow);
-        }
+        main h1, main h2, main h3 { margin-top: 0; }
 
-        .alert.success {
-            background: #e6ffed;
-            color: #2e7d32;
-        }
-
-        .alert.error {
-            background: #fee2e2;
-            color: #dc2626;
-        }
-
-        /* ========== MOBILE TOGGLE ========== */
-        #mobile-toggle {
-            display: none;
-            background: var(--accent);
-            color: var(--svg-fill-active);
-            border: none;
-            padding: 8px;
-            border-radius: 50%;
-            cursor: pointer;
-            position: fixed;
-            top: 16px;
-            left: 16px;
-            z-index: 1100;
-        }
-
-        #mobile-toggle svg {
-            width: 20px;
-            height: 20px;
-            stroke: var(--svg-fill-active);
-        }
-
-        /* ========== RESPONSIVE DESIGN ========== */
+        /* === MOBILE: НАВБАР ВНИЗУ + УМНЫЕ ОТСТУПЫ === */
         @media (max-width: 768px) {
-            .navbar-container {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 16px;
-                width: calc(100% - 16px); /* Slightly less stretch on mobile */
-                backdrop-filter: blur(12px); /* Maintain glass effect */
-                -webkit-backdrop-filter: blur(12px);
+            #navbar {
+                position: fixed;
+                bottom: 16px;
+                top: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                width: calc(100% - 32px);
+                padding: 0;
+                z-index: 1000;
             }
+
+            .navbar-container {
+                flex-direction: row;
+                overflow-x: auto;
+                overflow-y: hidden;
+                white-space: nowrap;
+                padding: 12px 16px;
+                width: 100%;
+                max-width: none;
+                justify-content: flex-start;
+                gap: 8px;
+                scrollbar-width: none;
+            }
+
+            .navbar-container::-webkit-scrollbar { display: none; }
 
             .nav-menu {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-                margin-top: 16px;
-            }
-
-            .nav-menu.active {
                 display: flex;
+                flex-direction: row;
+                gap: 8px;
+                width: max-content;
             }
 
             .nav-menu a {
-                padding: 12px;
-                width: 100%;
-                justify-content: flex-start;
+                min-width: 90px;
+                padding: 10px 6px;
+                font-size: 0.7rem;
             }
 
-            #mobile-toggle {
-                display: block;
+            .nav-menu a svg {
+                width: 18px; height: 18px;
             }
 
             .user-info {
-                position: static;
-                margin-top: 16px;
-                width: 100%;
-                justify-content: space-between;
-                padding: 12px;
-                border-radius: var(--radius);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-            }
-
-            .user-dropdown {
-                position: static;
-                width: 100%;
-                margin-top: 8px;
-                display: none;
-            }
-
-            .user-dropdown.active {
-                display: flex;
-            }
-
-            main {
-                padding: 16px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .navbar-brand h2 {
-                font-size: 1.2rem;
-            }
-
-            .user-info img {
-                width: 28px;
-                height: 28px;
+                top: 16px; right: 16px;
+                max-width: 160px;
             }
 
             .user-info span {
                 font-size: 0.8rem;
+                max-width: 100px;
             }
 
-            .nav-menu a,
-            .user-dropdown a,
-            .user-dropdown button {
-                font-size: 0.8rem;
-                padding: 10px;
+            .user-dropdown {
+                right: 16px;
+                min-width: 150px;
             }
-        }
 
-        /* ========== ACCESSIBILITY ========== */
-        a:focus, button:focus {
-            outline: 2px solid var(--accent);
-            outline-offset: 2px;
-        }
-
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-        }
-
-        /* ========== HIGH CONTRAST MODE ========== */
-        @media (prefers-contrast: high) {
-            :root {
-                --accent: #33ff33;
-                --highlight: #66ff66;
-                --border: #000000;
-                --notch-bg: rgba(26, 26, 26, 0.9); /* Less transparency for contrast */
+            main {
+                padding: 60px 16px 100px 16px; /* 60px — ровно под аватарку */
             }
         }
 
-        /* ========== REDUCED MOTION ========== */
-        @media (prefers-reduced-motion: reduce) {
-            .nav-menu a,
-            .user-dropdown a,
-            .user-dropdown button,
-            .user-info img,
-            .user-info {
-                transition: none;
-            }
+        @media (max-width: 480px) {
+            main { padding: 50px 12px 90px 12px; }
+            .nav-menu a { min-width: 80px; font-size: 0.65rem; }
+            .nav-menu a svg { width: 16px; height: 16px; }
+            .user-info img { width: 28px; height: 28px; }
+            .user-info span { font-size: 0.75rem; max-width: 85px; }
         }
     </style>
-
     @yield('styles')
 </head>
 <body>
     <div id="fitlife-container">
         @auth
+        <div class="user-info" id="user-info" aria-controls="user-dropdown" aria-expanded="false">
+            <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) . '?t=' . time() : asset('storage/logo/defaultPhoto.jpg') }}" alt="Avatar">
+            <span title="{{ Auth::user()->name }}">{{ Auth::user()->name }}</span>
+
+            <div class="user-dropdown" id="user-dropdown">
+                <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/></svg>
+                    <span>Profile</span>
+                </a>
+
+                @if(Auth::user()->role === 'admin')
+                <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard.*') ? 'active' : '' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M680-280q25 0 42.5-17.5T740-340q0-25-17.5-42.5T680-400q-25 0-42.5 17.5T620-340q0 25 17.5 42.5T680-280Zm0 120q31 0 57-14.5t42-38.5q-22-13-47-20t-52-7q-27 0-52 7t-47 20q16 24 42 38.5t57 14.5ZM480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v227q-19-8-39-14.5t-41-9.5v-147l-240-90-240 90v188q0 47 12.5 94t35 89.5Q310-290 342-254t71 60q11 32 29 61t41 52q-1 0-1.5.5t-1.5.5Zm200 0q-83 0-141.5-58.5T480-280q0-83 58.5-141.5T680-480q83 0 141.5 58.5T880-280q0 83-58.5 141.5T680-80ZM480-494Z"/></svg>
+                    <span>Admin Panel</span>
+                </a>
+                @endif
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
         <nav id="navbar">
             <div class="navbar-container">
-                <button id="mobile-toggle" aria-controls="nav-menu" aria-expanded="false">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
-                <div class="nav-menu" id="nav-menu">
+                <div class="nav-menu">
                     @foreach([
                         ['route' => 'dashboard', 'label' => 'Home', 'icon' => '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M200-160v-366L88-440l-48-64 440-336 160 122v-82h120v174l160 122-48 64-112-86v366H520v-240h-80v240H200Zm80-80h80v-240h240v240h80v-347L480-739 280-587v347Zm120-319h160q0-32-24-52.5T480-632q-32 0-56 20.5T400-559Zm-40 319v-240h240v240-240H360v240Z"/></svg>'],
                         ['route' => 'posts.index', 'label' => 'Community', 'icon' => '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M38-428q-18-36-28-73T0-576q0-112 76-188t188-76q63 0 120 26.5t96 73.5q39-47 96-73.5T696-840q112 0 188 76t76 188q0 38-10 75t-28 73q-11-19-26-34t-35-24q9-23 14-45t5-45q0-78-53-131t-131-53q-81 0-124.5 44.5T480-616q-48-56-91.5-100T264-760q-78 0-131 53T80-576q0 23 5 45t14 45q-20 9-35 24t-26 34ZM0-80v-63q0-44 44.5-70.5T160-240q13 0 25 .5t23 2.5q-14 20-21 43t-7 49v65H0Zm240 0v-65q0-65 66.5-105T480-290q108 0 174 40t66 105v65H240Zm540 0v-65q0-26-6.5-49T754-237q11-2 22.5-2.5t23.5-.5q72 0 116 26.5t44 70.5v63H780ZM480-210q-57 0-102 15t-53 35h311q-9-20-53.5-35T480-210Zm-320-70q-33 0-56.5-23.5T80-360q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T160-280Zm640 0q-33 0-56.5-23.5T720-360q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T800-280Zm-320-40q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600-440q0 50-34.5 85T480-320Zm0-160q-17 0-28.5 11.5T440-440q0 17 11.5 28.5T480-400q17 0 28.5-11.5T520-440q0-17-11.5-28.5T480-480Zm0 40Zm1 280Z"/></svg>'],
@@ -428,46 +295,11 @@
                         ['route' => 'biography.edit', 'label' => 'Biography', 'icon' => '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M480-240q-56 0-107 17.5T280-170v10h400v-10q-42-35-93-52.5T480-240Zm0-80q69 0 129 21t111 59v-560H240v560q51-38 111-59t129-21Zm0-160q-25 0-42.5-17.5T420-540q0-25 17.5-42.5T480-600q25 0 42.5 17.5T540-540q0 25-17.5 42.5T480-480ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h480q33 0 56.5 23.5T800-800v640q0 33-23.5 56.5T720-80H240Zm240-320q58 0 99-41t41-99q0-58-41-99t-99-41q-58 0-99 41t-41 99q0 58 41 99t99 41Zm0-140Z"/></svg>'],
                     ] as $item)
                         <a href="{{ route($item['route']) }}"
-                           class="{{ request()->routeIs($item['route'] . ($item['route'] === 'dashboard' || $item['route'] === 'profile.edit' ? '' : '.*')) ? 'active' : '' }}"
-                           {{ request()->routeIs($item['route'] . ($item['route'] === 'dashboard' || $item['route'] === 'profile.edit' ? '' : '.*')) ? 'aria-current=page' : '' }}>
+                           class="{{ request()->routeIs($item['route'] . ($item['route'] === 'dashboard' ? '' : '.*')) ? 'active' : '' }}">
                             {!! $item['icon'] !!}
                             <span>{{ $item['label'] }}</span>
                         </a>
                     @endforeach
-                </div>
-            </div>
-            <div class="user-info" id="user-info" aria-controls="user-dropdown" aria-expanded="false">
-                <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) . '?t=' . time() : asset('storage/logo/defaultPhoto.jpg') }}"
-                     alt="Avatar">
-                <span>{{ Auth::user()->name }}</span>
-                <div class="user-dropdown" id="user-dropdown">
-                    <a href="{{ route('profile.edit') }}"
-                       class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}"
-                       {{ request()->routeIs('profile.edit') ? 'aria-current=page' : '' }}>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
-                            <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/>
-                        </svg>
-                        <span>Profile</span>
-                    </a>
-                    @if(Auth::user()->role === 'admin')
-                        <a href="{{ route('admin.dashboard') }}"
-                           class="{{ request()->routeIs('admin.dashboard.*') ? 'active' : '' }}"
-                           {{ request()->routeIs('admin.dashboard.*') ? 'aria-current=page' : '' }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
-                                <path d="M680-280q25 0 42.5-17.5T740-340q0-25-17.5-42.5T680-400q-25 0-42.5 17.5T620-340q0 25 17.5 42.5T680-280Zm0 120q31 0 57-14.5t42-38.5q-22-13-47-20t-52-7q-27 0-52 7t-47 20q16 24 42 38.5t57 14.5ZM480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v227q-19-8-39-14.5t-41-9.5v-147l-240-90-240 90v188q0 47 12.5 94t35 89.5Q310-290 342-254t71 60q11 32 29 61t41 52q-1 0-1.5.5t-1.5.5Zm200 0q-83 0-141.5-58.5T480-280q0-83 58.5-141.5T680-480q83 0 141.5 58.5T880-280q0 83-58.5 141.5T680-80ZM480-494Z"/>
-                            </svg>
-                            <span>Admin Panel</span>
-                        </a>
-                    @endif
-                    <form method="POST" action="{{ route('logout') }}" class="logout-form">
-                        @csrf
-                        <button type="submit" aria-label="Logout">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
-                                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
-                            </svg>
-                            <span>Logout</span>
-                        </button>
-                    </form>
                 </div>
             </div>
         </nav>
@@ -475,10 +307,14 @@
 
         <main>
             @if(session('success'))
-                <div class="alert success">{{ session('success') }}</div>
+                <div style="padding:12px 20px; margin:16px 0; background:#e6ffed; color:#2e7d32; border-radius:16px; font-size:0.9rem;">
+                    {{ session('success') }}
+                </div>
             @endif
             @if(session('error'))
-                <div class="alert error">{{ session('error') }}</div>
+                <div style="padding:12px 20px; margin:16px 0; background:#fee2e2; color:#dc2626; border-radius:16px; font-size:0.9rem;">
+                    {{ session('error') }}
+                </div>
             @endif
 
             @yield('content')
@@ -487,56 +323,28 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Mobile menu toggle
-            const mobileToggle = document.getElementById('mobile-toggle');
-            const navMenu = document.getElementById('nav-menu');
-
-            if (mobileToggle && navMenu) {
-                mobileToggle.addEventListener('click', () => {
-                    const isOpen = navMenu.classList.toggle('active');
-                    mobileToggle.setAttribute('aria-expanded', isOpen);
-                });
-
-                document.addEventListener('click', e => {
-                    if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && !mobileToggle.contains(e.target)) {
-                        navMenu.classList.remove('active');
-                        mobileToggle.setAttribute('aria-expanded', 'false');
-                    }
-                });
-
-                document.addEventListener('keydown', e => {
-                    if (e.key === 'Escape' && navMenu.classList.contains('active')) {
-                        navMenu.classList.remove('active');
-                        mobileToggle.setAttribute('aria-expanded', 'false');
-                    }
-                });
-            }
-
-            // User dropdown toggle
             const userInfo = document.getElementById('user-info');
-            const userDropdown = document.getElementById('user-dropdown');
+            const dropdown = document.getElementById('user-dropdown');
 
-            if (userInfo && userDropdown) {
-                userInfo.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Prevent closing immediately
-                    const isOpen = userDropdown.classList.toggle('active');
-                    userInfo.setAttribute('aria-expanded', isOpen);
-                });
+            userInfo?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('active');
+                userInfo.setAttribute('aria-expanded', dropdown.classList.contains('active'));
+            });
 
-                document.addEventListener('click', e => {
-                    if (userDropdown.classList.contains('active') && !userInfo.contains(e.target)) {
-                        userDropdown.classList.remove('active');
-                        userInfo.setAttribute('aria-expanded', 'false');
-                    }
-                });
+            document.addEventListener('click', () => {
+                if (dropdown.classList.contains('active')) {
+                    dropdown.classList.remove('active');
+                    userInfo.setAttribute('aria-expanded', 'false');
+                }
+            });
 
-                document.addEventListener('keydown', e => {
-                    if (e.key === 'Escape' && userDropdown.classList.contains('active')) {
-                        userDropdown.classList.remove('active');
-                        userInfo.setAttribute('aria-expanded', 'false');
-                    }
-                });
-            }
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && dropdown.classList.contains('active')) {
+                    dropdown.classList.remove('active');
+                    userInfo.setAttribute('aria-expanded', 'false');
+                }
+            });
         });
     </script>
 

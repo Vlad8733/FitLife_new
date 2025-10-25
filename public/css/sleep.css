@@ -1,20 +1,20 @@
 /* Root variables for consistent theming */
 :root {
-    --bg: #121212; /* Dark background */
-    --text: #e5e5e5; /* Light text */
-    --accent: #00ff00; /* Salatovy green accent */
-    --muted: #a0a0a0; /* Muted text */
-    --card-bg: #1f1f1f; /* Dark card background */
-    --border: #333333; /* Dark border */
-    --radius: 12px; /* Rounded corners */
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-    --transition: 0.3s ease; /* Smooth transitions */
-    --highlight: #00cc00; /* Darker green for hover */
-    --danger: #ff5555; /* Red for errors */
-    --success: #00ff00; /* Green for success */
-    --hover-bg: #2a2a2a; /* Hover background */
-    --focus: #33ff33; /* Focus state green */
-    --action-icon: #3b82f6; /* Blue for action icons */
+    --bg: #121212;
+    --text: #e5e5e5;
+    --accent: #00ff00;
+    --muted: #a0a0a0;
+    --card-bg: #1f1f1f;
+    --border: #333333;
+    --radius: 12px;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    --transition: 0.3s ease;
+    --highlight: #00cc00;
+    --danger: #ff5555;
+    --success: #00ff00;
+    --hover-bg: #2a2a2a;
+    --focus: #33ff33;
+    --action-icon: #3b82f6;
 }
 
 /* ========== GLOBAL ========== */
@@ -34,7 +34,7 @@ body {
 
 /* ========== MOBILE TOGGLE BUTTON ========== */
 #mobile-toggle {
-    display: none; /* Handled by layouts.app, styled for consistency */
+    display: none;
     background: var(--accent);
     color: var(--bg);
     padding: 8px 16px;
@@ -89,7 +89,7 @@ header .muted {
     color: var(--muted);
 }
 
-/* ========== SUCCESS SECTION ========== */
+/* ========== SUCCESS SECTION — РАСТЯНУТ НА ПК ========== */
 section[aria-labelledby="success-heading"] {
     margin: 32px 0;
 }
@@ -112,6 +112,8 @@ section h3 {
     align-items: center;
     gap: 16px;
     transition: transform var(--transition), box-shadow var(--transition);
+    width: 100%;
+    max-width: 100%;
 }
 
 .result-card:hover {
@@ -152,18 +154,21 @@ section h3 {
     color: var(--muted);
 }
 
-/* ========== SLEEP FORM SECTION ========== */
+/* ========== SLEEP FORM SECTION — РАСТЯНУТ НА ПК ========== */
 section[aria-labelledby="sleep-form-heading"] {
     margin: 32px 0;
 }
 
 .sleep-card {
     background: var(--card-bg);
-    padding: 16px;
+    padding: 24px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
     transition: transform var(--transition), box-shadow var(--transition);
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
 }
 
 .sleep-card:hover {
@@ -175,35 +180,51 @@ section[aria-labelledby="sleep-form-heading"] {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--accent);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    text-align: center;
 }
 
+/* ФОРМА — РАСТЯНУТА НА ПК */
 .sleep-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+    width: 100%;
 }
 
 .form-group label {
     font-size: 0.9rem;
     color: var(--text);
     font-weight: 500;
+    text-align: center;
 }
 
+/* ПОЛЯ ВВОДА — РАСТЯНУТЫ */
 .form-group input {
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 8px;
+    padding: 12px;
     color: var(--text);
-    font-size: 0.9rem;
+    font-size: 1rem;
+    text-align: center;
     transition: border-color var(--transition);
+    width: 100%;
+}
+
+.form-group input::placeholder {
+    color: var(--muted);
+    font-size: 0.9rem;
+    opacity: 0.7;
 }
 
 .form-group input:focus {
@@ -212,18 +233,33 @@ section[aria-labelledby="sleep-form-heading"] {
     box-shadow: 0 0 8px var(--accent);
 }
 
+/* ПЛЕЙСХОЛДЕРЫ */
+#sleep-date::placeholder { content: "дд.мм.гггг"; }
+#sleep-start::placeholder { content: "--:--"; }
+#sleep-end::placeholder { content: "--:--"; }
+
+/* КНОПКА — ПО ЦЕНТРУ */
 .calculate-btn {
     background: var(--accent);
     color: var(--bg);
-    padding: 10px 16px;
+    padding: 12px 24px;
     border-radius: var(--radius);
     border: none;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     cursor: pointer;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
+    margin: 16px auto 0;
     transition: background-color var(--transition), transform var(--transition);
+    width: fit-content;
+}
+
+.calculate-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--bg);
 }
 
 .calculate-btn:hover {
@@ -241,7 +277,7 @@ section[aria-labelledby="sleep-form-heading"] {
     cursor: not-allowed;
 }
 
-/* ========== HISTORY SECTION ========== */
+/* ========== HISTORY SECTION — РАСТЯНУТА НА ПК ========== */
 section[aria-labelledby="history-heading"] {
     margin: 32px 0;
 }
@@ -253,30 +289,34 @@ section[aria-labelledby="history-heading"] {
     border-radius: var(--radius);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
+    margin-top: 16px;
+    table-layout: fixed;
 }
 
 .history-table th,
 .history-table td {
-    padding: 12px;
-    text-align: left;
+    padding: 14px;
+    text-align: center;
     border-bottom: 1px solid var(--border);
+    word-wrap: break-word;
 }
 
 .history-table th {
     font-weight: 600;
     color: var(--accent);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
 }
 
 .history-table td {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--text);
 }
 
 .history-table .no-data {
     text-align: center;
     color: var(--muted);
-    padding: 16px;
+    padding: 20px;
+    font-size: 0.95rem;
 }
 
 .history-table tr:hover {
@@ -289,7 +329,7 @@ section[aria-labelledby="average-heading"] {
 }
 
 .count-up {
-    transition: all 0.1s ease; /* Smooth count-up animation */
+    transition: all 0.1s ease;
 }
 
 /* ========== LINKS ========== */
@@ -383,113 +423,29 @@ a:focus, button:focus, input:focus {
 .border-danger { border-color: var(--danger); }
 .border-success { border-color: var(--success); }
 
-.p-05 { padding: 2px; }
-.p-1 { padding: 4px; }
-.p-2 { padding: 8px; }
-.p-3 { padding: 16px; }
-.p-4 { padding: 24px; }
-.p-5 { padding: 32px; }
-.m-05 { margin: 2px; }
-.m-1 { margin: 4px; }
-.m-2 { margin: 8px; }
-.m-3 { margin: 16px; }
-.m-4 { margin: 24px; }
-.m-5 { margin: 32px; }
+.p-05 { padding: 2px; } .p-1 { padding: 4px; } .p-2 { padding: 8px; } .p-3 { padding: 16px; } .p-4 { padding: 24px; } .p-5 { padding: 32px; }
+.m-05 { margin: 2px; } .m-1 { margin: 4px; } .m-2 { margin: 8px; } .m-3 { margin: 16px; } .m-4 { margin: 24px; } .m-5 { margin: 32px; }
+.pt-05 { padding-top: 2px; } .pt-1 { padding-top: 4px; } .pt-2 { padding-top: 8px; } .pt-3 { padding-top: 16px; } .pt-4 { padding-top: 24px; }
+.pb-05 { padding-bottom: 2px; } .pb-1 { padding-bottom: 4px; } .pb-2 { padding-bottom: 8px; } .pb-3 { padding-bottom: 16px; } .pb-4 { padding-bottom: 24px; }
+.pl-05 { padding-left: 2px; } .pl-1 { padding-left: 4px; } .pl-2 { padding-left: 8px; } .pl-3 { padding-left: 16px; } .pl-4 { padding-left: 24px; }
+.pr-05 { padding-right: 2px; } .pr-1 { padding-right: 4px; } .pr-2 { padding-right: 8px; } .pr-3 { padding-right: 16px; } .pr-4 { padding-right: 24px; }
+.mt-05 { margin-top: 2px; } .mt-1 { margin-top: 4px; } .mt-2 { margin-top: 8px; } .mt-3 { margin-top: 16px; } .mt-4 { margin-top: 24px; }
+.mb-05 { margin-bottom: 2px; } .mb-1 { margin-bottom: 4px; } .mb-2 { margin-bottom: 8px; } .mb-3 { margin-bottom: 16px; } .mb-4 { margin-bottom: 24px; }
+.ml-05 { margin-left: 2px; } .ml-1 { margin-left: 4px; } .ml-2 { margin-left: 8px; } .ml-3 { margin-left: 16px; } .ml-4 { margin-left: 24px; }
+.mr-05 { margin-right: 2px; } .mr-1 { margin-right: 4px; } .mr-2 { margin-right: 8px; } .mr-3 { margin-right: 16px; } .mr-4 { margin-right: 24px; }
 
-.pt-05 { padding-top: 2px; }
-.pt-1 { padding-top: 4px; }
-.pt-2 { padding-top: 8px; }
-.pt-3 { padding-top: 16px; }
-.pt-4 { padding-top: 24px; }
-.pb-05 { padding-bottom: 2px; }
-.pb-1 { padding-bottom: 4px; }
-.pb-2 { padding-bottom: 8px; }
-.pb-3 { padding-bottom: 16px; }
-.pb-4 { padding-bottom: 24px; }
-.pl-05 { padding-left: 2px; }
-.pl-1 { padding-left: 4px; }
-.pl-2 { padding-left: 8px; }
-.pl-3 { padding-left: 16px; }
-.pl-4 { padding-left: 24px; }
-.pr-05 { padding-right: 2px; }
-.pr-1 { padding-right: 4px; }
-.pr-2 { padding-right: 8px; }
-.pr-3 { padding-right: 16px; }
-.pr-4 { padding-right: 24px; }
+.fs-xs { font-size: 0.75rem; } .fs-sm { font-size: 0.85rem; } .fs-md { font-size: 1rem; } .fs-lg { font-size: 1.25rem; } .fs-xl { font-size: 1.5rem; } .fs-2xl { font-size: 1.75rem; }
+.br-4 { border-radius: 4px; } .br-8 { border-radius: 8px; } .br-12 { border-radius: 12px; } .br-16 { border-radius: 16px; } .br-20 { border-radius: 20px; }
+.shadow-xs { box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1); } .shadow-sm { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+.shadow-md { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); } .shadow-lg { box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3); }
+.opacity-25 { opacity: 0.25; } .opacity-50 { opacity: 0.5; } .opacity-75 { opacity: 0.75; } .opacity-100 { opacity: 1; }
+.text-left { text-align: left; } .text-center { text-align: center; } .text-right { text-align: right; }
+.fw-light { font-weight: 300; } .fw-normal { font-weight: 400; } .fw-medium { font-weight: 500; } .fw-bold { font-weight: 600; } .fw-extrabold { font-weight: 700; }
 
-.mt-05 { margin-top: 2px; }
-.mt-1 { margin-top: 4px; }
-.mt-2 { margin-top: 8px; }
-.mt-3 { margin-top: 16px; }
-.mt-4 { margin-top: 24px; }
-.mb-05 { margin-bottom: 2px; }
-.mb-1 { margin-bottom: 4px; }
-.mb-2 { margin-bottom: 8px; }
-.mb-3 { margin-bottom: 16px; }
-.mb-4 { margin-bottom: 24px; }
-.ml-05 { margin-left: 2px; }
-.ml-1 { margin-left: 4px; }
-.ml-2 { margin-left: 8px; }
-.ml-3 { margin-left: 16px; }
-.ml-4 { margin-left: 24px; }
-.mr-05 { margin-right: 2px; }
-.mr-1 { margin-right: 4px; }
-.mr-2 { margin-right: 8px; }
-.mr-3 { margin-right: 16px; }
-.mr-4 { margin-right: 24px; }
-
-.fs-xs { font-size: 0.75rem; }
-.fs-sm { font-size: 0.85rem; }
-.fs-md { font-size: 1rem; }
-.fs-lg { font-size: 1.25rem; }
-.fs-xl { font-size: 1.5rem; }
-.fs-2xl { font-size: 1.75rem; }
-
-.br-4 { border-radius: 4px; }
-.br-8 { border-radius: 8px; }
-.br-12 { border-radius: 12px; }
-.br-16 { border-radius: 16px; }
-.br-20 { border-radius: 20px; }
-
-.shadow-xs { box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1); }
-.shadow-sm { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
-.shadow-md { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); }
-.shadow-lg { box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3); }
-
-.opacity-25 { opacity: 0.25; }
-.opacity-50 { opacity: 0.5; }
-.opacity-75 { opacity: 0.75; }
-.opacity-100 { opacity: 1; }
-
-.text-left { text-align: left; }
-.text-center { text-align: center; }
-.text-right { text-align: right; }
-
-.fw-light { font-weight: 300; }
-.fw-normal { font-weight: 400; }
-.fw-medium { font-weight: 500; }
-.fw-bold { font-weight: 600; }
-.fw-extrabold { font-weight: 700; }
-
-/* ========== RESPONSIVE DESIGN ========== */
-@media (max-width: 1024px) {
-    #fitlife-container main {
-        padding: 16px;
-    }
-
-    .result-icon svg {
-        width: 20px;
-        height: 20px;
-    }
-
-    .history-table th, .history-table td {
-        padding: 10px;
-    }
-}
-
+/* ========== RESPONSIVE — ОТСТУПЫ КАК В ACTIVITY-CALENDAR ========== */
 @media (max-width: 768px) {
-    #fitlife-container main {
-        padding: 12px;
+    main {
+        padding: 60px 12px 100px 12px;
     }
 
     header h1 {
@@ -505,7 +461,7 @@ a:focus, button:focus, input:focus {
     }
 
     .sleep-card {
-        padding: 12px;
+        padding: 16px;
     }
 
     .sleep-card h4 {
@@ -513,11 +469,12 @@ a:focus, button:focus, input:focus {
     }
 
     .form-group input {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
+        padding: 10px;
     }
 
     .calculate-btn {
-        padding: 8px 12px;
+        padding: 10px 16px;
         font-size: 0.85rem;
     }
 
@@ -530,13 +487,14 @@ a:focus, button:focus, input:focus {
     }
 
     .history-table th, .history-table td {
+        padding: 10px;
         font-size: 0.8rem;
     }
 }
 
 @media (max-width: 480px) {
-    #fitlife-container main {
-        padding: 8px;
+    main {
+        padding: 50px 8px 90px 8px;
     }
 
     header h1 {
@@ -552,23 +510,20 @@ a:focus, button:focus, input:focus {
     }
 
     .sleep-card {
-        padding: 10px;
+        padding: 12px;
     }
 
     .sleep-card h4 {
         font-size: 1rem;
     }
 
-    .form-group label {
-        font-size: 0.85rem;
-    }
-
     .form-group input {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
+        padding: 8px;
     }
 
     .calculate-btn {
-        padding: 6px 10px;
+        padding: 8px 14px;
         font-size: 0.8rem;
     }
 
@@ -594,12 +549,66 @@ a:focus, button:focus, input:focus {
     }
 
     .history-table th, .history-table td {
-        font-size: 0.75rem;
         padding: 8px;
+        font-size: 0.75rem;
     }
 }
 
-/* ========== HIGH CONTRAST MODE ========== */
+@media (max-width: 360px) {
+    main {
+        padding: 45px 6px 85px 6px;
+    }
+
+    header h1 {
+        font-size: 1.2rem;
+    }
+
+    .sleep-card {
+        padding: 10px;
+    }
+
+    .sleep-card h4 {
+        font-size: 0.9rem;
+    }
+
+    .form-group input {
+        font-size: 0.8rem;
+        padding: 7px;
+    }
+
+    .calculate-btn {
+        padding: 7px 12px;
+        font-size: 0.75rem;
+    }
+
+    .result-card {
+        padding: 10px;
+    }
+
+    .result-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .result-body h4 {
+        font-size: 0.9rem;
+    }
+
+    .result-body .value {
+        font-size: 1.1rem;
+    }
+
+    .result-body .muted {
+        font-size: 0.75rem;
+    }
+
+    .history-table th, .history-table td {
+        padding: 6px;
+        font-size: 0.7rem;
+    }
+}
+
+/* ========== HIGH CONTRAST & REDUCED MOTION & PRINT ========== */
 @media (prefers-contrast: high) {
     :root {
         --accent: #33ff33;
@@ -617,7 +626,6 @@ a:focus, button:focus, input:focus {
     }
 }
 
-/* ========== REDUCED MOTION ========== */
 @media (prefers-reduced-motion: reduce) {
     .sleep-card, .result-card, .history-table, .calculate-btn, .count-up {
         transition: none;
@@ -625,9 +633,8 @@ a:focus, button:focus, input:focus {
     }
 }
 
-/* ========== PRINT STYLES ========== */
 @media print {
-    #fitlife-container main {
+    main {
         padding: 8px;
     }
 

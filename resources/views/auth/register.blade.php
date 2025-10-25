@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>FitLife - Register</title>
     <link rel="icon" href="{{ asset('favicon.PNG') }}" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
     <style>
         :root {
             --bg: #121212;
@@ -21,9 +22,19 @@
             --highlight: #00cc00;
             --danger: #ff5555;
             --success: #00ff00;
-            --hover-bg: #2a2a2a;
             --focus: #33ff33;
-            --action-icon: #3b82f6;
+            --hover-bg: #000000;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg: #f4faff;
+                --text: #2c3e50;
+                --card-bg: #ffffff;
+                --border: #e0e0e0;
+                --muted: #7f8c8d;
+                --hover-bg: #f0f0f0;
+            }
         }
 
         * {
@@ -32,21 +43,127 @@
             box-sizing: border-box;
         }
 
-        html,
-        body {
-            height: 100%;
+        html, body {
             width: 100%;
+            min-height: 100vh;
             overflow-x: hidden;
-        }
-
-        body {
+            scroll-behavior: smooth;
             font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
             display: flex;
+            flex-direction: column;
+        }
+
+        body {
+            flex: 1 0 auto;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--border);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--highlight);
+        }
+
+        header {
+            background: var(--card-bg);
+            padding: 1.5rem 4rem;
+            border-bottom: 1px solid var(--border);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo img {
+            width: 50px;
+            height: auto;
+        }
+
+        .menu-toggle {
+            font-size: 1.5rem;
+            color: var(--accent);
+            cursor: pointer;
+            background: none;
+            border: none;
+            display: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .button {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .button.login {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        .button.signup {
+            background: var(--highlight);
+            color: var(--bg);
+        }
+
+        .button:focus {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+        main {
+            flex: 1 0 auto;
+            display: flex;
             align-items: center;
             justify-content: center;
+            padding-top: 5rem;
         }
 
         .register-wrapper {
@@ -62,23 +179,26 @@
             border: 1px solid var(--border);
             box-shadow: var(--shadow);
             text-align: center;
-            transition: var(--transition);
+            animation: slideIn 0.5s ease-out;
         }
 
+        /* Логотип в форме — по центру */
         .register-card .logo {
             width: 80px;
-            margin-bottom: 1rem;
+            margin: 0 auto 1rem auto;
+            display: block;
             border-radius: var(--radius);
         }
 
         .register-card h2 {
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: 600;
+            color: var(--accent);
             margin-bottom: 0.5rem;
         }
 
         .register-card .subtitle {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: var(--muted);
             margin-bottom: 1.5rem;
         }
@@ -100,19 +220,18 @@
         .register-card input[type="email"],
         .register-card input[type="password"] {
             width: 100%;
-            padding: 8px;
+            padding: 0.75rem;
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: var(--text);
             background: var(--card-bg);
             transition: var(--transition);
         }
 
         .register-card input:focus {
-            outline: none;
+            outline: 2px solid var(--focus);
             border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
 
         .register-card input::placeholder {
@@ -137,41 +256,162 @@
             color: var(--accent);
             font-size: 0.9rem;
             text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer a:hover {
-            color: #2563eb;
-            text-decoration: underline;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 0.5rem;
             background: var(--accent);
-            color: #fff;
+            color: var(--bg);
             border: none;
-            padding: 10px 16px;
+            padding: 0.75rem 1.5rem;
             border-radius: var(--radius);
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
+            box-shadow: var(--shadow);
         }
 
-        .btn svg {
-            width: 20px;
-            height: 20px;
-            stroke: #fff;
+        .btn i {
+            font-size: 1rem;
         }
 
-        .btn:hover {
-            background: #2563eb;
-            transform: translateY(-1px);
+        .btn:focus {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+        footer {
+            background: var(--card-bg);
+            padding: 1rem 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+
+        footer .links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        footer .links a {
+            color: var(--accent);
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        a:focus, button:focus, input:focus {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        @media (prefers-contrast: high) {
+            :root {
+                --accent: #33ff33;
+                --highlight: #66ff66;
+                --border: #000000;
+                --muted: #cccccc;
+            }
+
+            .register-card, .error {
+                border: 2px solid var(--accent);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .register-card, .btn, .button {
+                animation: none;
+            }
+        }
+
+        @media print {
+            header, footer, .menu-toggle {
+                display: none;
+            }
+
+            .register-card {
+                background: none;
+                box-shadow: none;
+                border: 1px solid #000;
+            }
         }
 
         @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .logo img {
+                width: 40px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--card-bg);
+                flex-direction: column;
+                padding: 1rem;
+                border-bottom: 1px solid var(--border);
+                box-shadow: var(--shadow);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 0.75rem;
+                font-size: 1rem;
+            }
+
+            .auth-buttons {
+                flex-direction: row;
+                gap: 0.5rem;
+            }
+
+            .button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
             .register-wrapper {
                 padding: 1rem;
             }
@@ -181,107 +421,165 @@
             }
 
             .register-card h2 {
-                font-size: 1.4rem;
+                font-size: 1.8rem;
+            }
+
+            .register-card .subtitle {
+                font-size: 0.9rem;
+            }
+
+            .register-card label, .register-card input, .footer a, .btn {
+                font-size: 0.9rem;
+            }
+
+            footer {
+                padding: 1rem;
+            }
+
+            footer p {
+                font-size: 0.8rem;
+            }
+
+            footer .links a {
+                font-size: 0.9rem;
             }
         }
 
         @media (max-width: 480px) {
-            .register-card {
-                padding: 1rem;
-            }
-
             .register-card h2 {
-                font-size: 1.3rem;
+                font-size: 1.6rem;
             }
 
             .register-card .subtitle {
                 font-size: 0.85rem;
             }
-        }
 
-        @media (prefers-reduced-motion: reduce) {
-
-            .register-card,
-            .btn {
-                transition: none;
-            }
-        }
-
-        @media (prefers-contrast: high) {
-            .register-card {
-                border: 2px solid var(--text);
+            .register-card label, .register-card input, .footer a, .btn {
+                font-size: 0.8rem;
             }
 
-            .register-card input {
-                border: 2px solid var(--text);
-            }
-
-            .btn {
-                background: var(--text);
-                color: var(--bg);
-            }
-
-            .btn svg {
-                stroke: var(--bg);
-            }
-
-            .footer a {
-                color: var(--text);
+            .register-card .logo {
+                width: 60px;
             }
         }
     </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile menu toggle
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+
+            menuToggle.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+            });
+
+            // Close mobile menu on link click
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                });
+            });
+
+            // Prevent pinch zoom on iOS
+            document.addEventListener('gesturestart', (e) => {
+                e.preventDefault();
+            });
+        });
+    </script>
 </head>
 
 <body>
-    <div class="register-wrapper" role="main" aria-label="FitLife Register">
-        <div class="register-card">
-            <img src="{{ asset('favicon.PNG') }}" alt="FitLife Logo" class="logo">
-            <h2>Create Your Account</h2>
-            <p class="subtitle">Join <span>FitLife</span> and start your journey</p>
-            <form method="POST" action="{{ route('register') }}">
-                @csrf
-                <label for="name">Name</label>
-                <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus
-                    autocomplete="name">
-                @error('name')
-                    <span class="error">{{ $message }}</span>
-                @enderror
-                <label for="username">Username</label>
-                <input id="username" type="text" name="username" value="{{ old('username') }}" required
-                    autocomplete="username">
-                @error('username')
-                    <span class="error">{{ $message }}</span>
-                @enderror
-                <label for="email">Email</label>
-                <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email">
-                @error('email')
-                    <span class="error">{{ $message }}</span>
-                @enderror
-                <label for="password">Password</label>
-                <input id="password" type="password" name="password" required autocomplete="new-password">
-                @error('password')
-                    <span class="error">{{ $message }}</span>
-                @enderror
-                <label for="password_confirmation">Confirm Password</label>
-                <input id="password_confirmation" type="password" name="password_confirmation" required
-                    autocomplete="new-password">
-                @error('password_confirmation')
-                    <span class="error">{{ $message }}</span>
-                @enderror
-                <div class="footer">
-                    <a href="{{ route('login') }}">Already registered?</a>
-                    <button type="submit" class="btn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
-                            <path d="M17 21v-8H7v8" />
-                            <path d="M7 3v5h8" />
-                        </svg>
-                        Register
-                    </button>
-                </div>
-            </form>
+    <header>
+        <div class="logo">
+            <img src="{{ asset('favicon.PNG') }}" alt="FitLife Logo">
         </div>
-    </div>
-</body>
+        <button class="menu-toggle"><i class="fas fa-bars"></i></button>
+        <div class="nav-links">
+            <a href="{{ route('welcome') }}">Home</a>
+            <a href="#features">Features</a>
+            <a href="#testimonials">Testimonials</a>
+            <a href="#about">About</a>
+        </div>
+        <div class="auth-buttons">
+            @if(Route::has('login'))
+                @auth
+                    <a href="{{ route('dashboard') }}" class="button login">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="button login">
+                        <i class="fas fa-sign-in-alt"></i> Log In
+                    </a>
+                    @if(Route::has('register'))
+                        <a href="{{ route('register') }}" class="button signup">
+                            <i class="fas fa-user-plus"></i> Sign Up
+                        </a>
+                    @endif
+                @endauth
+            @endif
+        </div>
+    </header>
 
+    <main>
+        <div class="register-wrapper" role="main" aria-label="FitLife Register">
+            <div class="register-card">
+                <!-- Логотип по центру -->
+                <img src="{{ asset('favicon.PNG') }}" alt="FitLife Logo" class="logo">
+                <h2>Create Your Account</h2>
+                <p class="subtitle">Join <span>FitLife</span> and start your journey</p>
+
+                <form method="POST" action="{{ route('register') }}">
+                    @csrf
+
+                    <label for="name">Name</label>
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name">
+                    @error('name')
+                        <span class="error">{{ $message }}</span>
+                    @enderror
+
+                    <label for="username">Username</label>
+                    <input id="username" type="text" name="username" value="{{ old('username') }}" required autocomplete="username">
+                    @error('username')
+                        <span class="error">{{ $message }}</span>
+                    @enderror
+
+                    <label for="email">Email</label>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email">
+                    @error('email')
+                        <span class="error">{{ $message }}</span>
+                    @enderror
+
+                    <label for="password">Password</label>
+                    <input id="password" type="password" name="password" required autocomplete="new-password">
+                    @error('password')
+                        <span class="error">{{ $message }}</span>
+                    @enderror
+
+                    <label for="password_confirmation">Confirm Password</label>
+                    <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password">
+                    @error('password_confirmation')
+                        <span class="error">{{ $message }}</span>
+                    @enderror
+
+                    <div class="footer">
+                        <a href="{{ route('login') }}">Already registered?</a>
+                        <button type="submit" class="btn">
+                            <i class="fas fa-user-plus"></i> Register
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© {{ date('Y') }} FitLife. All rights reserved.</p>
+        <div class="links">
+            <a href="{{ route('privacy-policy') }}">Privacy Policy</a>
+            <a href="{{ route('terms-of-service') }}">Terms of Service</a>
+            <a href="mailto:support@fitlife.com">Contact Us</a>
+        </div>
+    </footer>
+</body>
 </html>

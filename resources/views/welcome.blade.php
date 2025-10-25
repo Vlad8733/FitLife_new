@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>FitLife - Your Path to Wellness</title>
     <link rel="icon" href="{{ asset('favicon.PNG') }}" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -10,23 +10,22 @@
 
     <style>
         :root {
-            --bg: #121212; /* Dark background */
-            --text: #e5e5e5; /* Light text */
-            --accent: #00ff00; /* Salatovy green accent */
-            --muted: #a0a0a0; /* Muted text */
-            --card-bg: #1f1f1f; /* Dark card background */
-            --border: #333333; /* Dark border */
-            --radius: 12px; /* Rounded corners */
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-            --transition: 0.3s ease; /* Smooth transitions */
-            --highlight: #00cc00; /* Darker green for hover */
-            --danger: #ff5555; /* Red for alerts */
-            --success: #00ff00; /* Green for success */
-            --focus: #33ff33; /* Focus state green */
-            --hover-bg: #000000; /* Hover background */
+            --bg: #121212;
+            --text: #e5e5e5;
+            --accent: #00ff00;
+            --muted: #a0a0a0;
+            --card-bg: #1f1f1f;
+            --border: #333333;
+            --radius: 12px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --transition: 0.3s ease;
+            --highlight: #00cc00;
+            --danger: #ff5555;
+            --success: #00ff00;
+            --focus: #33ff33;
+            --hover-bg: #000000;
         }
 
-        /* Light mode support */
         @media (prefers-color-scheme: light) {
             :root {
                 --bg: #f4faff;
@@ -55,7 +54,6 @@
             line-height: 1.6;
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 10px;
         }
@@ -74,7 +72,6 @@
             background: var(--highlight);
         }
 
-        /* Header */
         header {
             background: var(--card-bg);
             padding: 1.5rem 4rem;
@@ -89,16 +86,28 @@
             transition: var(--transition);
         }
 
-        header.scrolled {
-            box-shadow: var(--shadow);
-            padding: 1rem 4rem;
-        }
-
         .logo {
             font-size: 1.75rem;
             font-weight: 600;
             color: var(--accent);
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo img {
+            width: 50px;
+            height: auto;
+        }
+
+        .menu-toggle {
+            font-size: 1.5rem;
+            color: var(--accent);
+            cursor: pointer;
+            background: none;
+            border: none;
+            display: none;
         }
 
         .nav-links {
@@ -171,65 +180,51 @@
             outline-offset: 2px;
         }
 
-        /* Hero Section */
         .hero {
             background: linear-gradient(135deg, var(--card-bg) 0%, var(--border) 100%);
-            padding: 20rem 2rem 6rem;
+            padding: 8rem 2rem 5rem;
             text-align: center;
             position: relative;
-            overflow: hidden;
-            min-height: 80vh;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(0, 255, 0, 0.1) 0%, transparent 70%);
-            opacity: 0.3;
         }
 
         .hero h1 {
             font-size: 3.5rem;
             font-weight: 700;
             color: var(--text);
-            margin-bottom: 1rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1.5rem;
+            animation: slideIn 0.5s ease-out;
         }
 
         .hero p {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             color: var(--muted);
-            max-width: 800px;
+            max-width: 600px;
             margin: 0 auto 2rem;
-            font-weight: 300;
+            animation: slideIn 0.7s ease-out;
         }
 
         .hero .call-to-action {
             background: var(--accent);
             color: var(--bg);
-            padding: 1rem 2.5rem;
+            padding: 1rem 2rem;
             border-radius: var(--radius);
             font-weight: 600;
             text-decoration: none;
-            transition: var(--transition);
             box-shadow: var(--shadow);
+            transition: var(--transition);
+            animation: slideIn 0.9s ease-out;
         }
 
         .hero .call-to-action:hover {
             background: var(--highlight);
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
         }
 
-        /* Sections */
         .section {
             padding: 5rem 2rem;
-            max-width: 1300px;
+            max-width: 1200px;
             margin: 0 auto;
-            min-height: 50vh; /* Ensure sections are visible */
         }
 
         .section h2 {
@@ -238,14 +233,12 @@
             color: var(--text);
             text-align: center;
             margin-bottom: 1rem;
-            border-bottom: 2px solid var(--accent);
-            padding-bottom: 0.5rem;
         }
 
         .section p {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--muted);
-            max-width: 900px;
+            max-width: 600px;
             margin: 0 auto 2rem;
             text-align: center;
         }
@@ -254,7 +247,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            margin-top: 3rem;
+            margin-top: 2rem;
         }
 
         .feature-card {
@@ -264,20 +257,18 @@
             box-shadow: var(--shadow);
             transition: var(--transition);
             overflow: hidden;
-            position: relative;
+        }
+
+        .feature-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: var(--transition);
         }
 
         .feature-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            border-color: var(--accent);
-        }
-
-        .feature-card img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            transition: var(--transition);
         }
 
         .feature-card:hover img {
@@ -289,19 +280,17 @@
         }
 
         .feature-card h3 {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 600;
             color: var(--accent);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .feature-card p {
             font-size: 1rem;
             color: var(--muted);
-            text-align: left;
         }
 
-        /* Testimonials Section */
         .testimonials {
             background: var(--bg);
             padding: 5rem 2rem;
@@ -309,10 +298,9 @@
 
         .testimonial-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            max-width: 1300px;
-            margin: 2rem auto 0;
+            margin-top: 2rem;
         }
 
         .testimonial-card {
@@ -321,13 +309,13 @@
             padding: 2rem;
             border: 1px solid var(--border);
             box-shadow: var(--shadow);
-            transition: var(--transition);
             text-align: center;
+            transition: var(--transition);
         }
 
         .testimonial-card:hover {
             transform: translateY(-5px);
-            border-color: var(--accent);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
         }
 
         .testimonial-card i {
@@ -337,7 +325,7 @@
         }
 
         .testimonial-card p {
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: var(--muted);
             font-style: italic;
             margin-bottom: 1rem;
@@ -349,142 +337,10 @@
             color: var(--success);
         }
 
-        /* Pricing Section */
-        .pricing {
-            padding: 5rem 2rem;
-            background: linear-gradient(to bottom, var(--bg), var(--card-bg));
-        }
-
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            max-width: 1300px;
-            margin: 2rem auto 0;
-        }
-
-        .pricing-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 2rem;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            text-align: center;
-        }
-
-        .pricing-card.popular {
-            border: 2px solid var(--accent);
-            transform: scale(1.05);
-        }
-
-        .pricing-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
-        }
-
-        .pricing-card h3 {
-            font-size: 1.6rem;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 0.5rem;
-        }
-
-        .pricing-card .price {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin-bottom: 1rem;
-        }
-
-        .pricing-card ul {
-            list-style: none;
-            margin-bottom: 1.5rem;
-        }
-
-        .pricing-card li {
-            font-size: 1rem;
-            color: var(--muted);
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .pricing-card li i {
-            color: var(--success);
-        }
-
-        .pricing-card .call-to-action {
-            background: var(--accent);
-            color: var(--bg);
-            padding: 0.8rem 2rem;
-            border-radius: var(--radius);
-            font-weight: 600;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .pricing-card .call-to-action:hover {
-            background: var(--highlight);
-        }
-
-        /* FAQ Section */
-        .faq {
+        .section#about {
             padding: 5rem 2rem;
         }
 
-        .faq-accordion {
-            max-width: 900px;
-            margin: 2rem auto 0;
-        }
-
-        .faq-item {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            margin-bottom: 1rem;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .faq-question {
-            padding: 1.5rem 2rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            color: var(--text);
-            transition: var(--transition);
-        }
-
-        .faq-question:hover {
-            background: var(--hover-bg);
-        }
-
-        .faq-question i {
-            color: var(--accent);
-            transition: var(--transition);
-        }
-
-        .faq-question.active i {
-            transform: rotate(180deg);
-        }
-
-        .faq-answer {
-            display: none;
-            padding: 0 2rem 1.5rem;
-            font-size: 1rem;
-            color: var(--muted);
-        }
-
-        .faq-answer.active {
-            display: block;
-        }
-
-        /* Lightbox */
         #lightbox {
             display: none;
             position: fixed;
@@ -501,7 +357,7 @@
         }
 
         .lightbox-content {
-            max-width: 900px;
+            max-width: 90%;
             width: 100%;
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -512,15 +368,10 @@
 
         #lightbox-img {
             width: 100%;
-            max-height: 70vh;
+            max-height: 80vh;
             object-fit: contain;
             border-radius: var(--radius);
             border: 2px solid var(--accent);
-            transition: var(--transition);
-        }
-
-        #lightbox-img:hover {
-            border-color: var(--highlight);
         }
 
         .lightbox-close {
@@ -532,12 +383,6 @@
             font-size: 1.5rem;
             color: var(--accent);
             cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .lightbox-close:hover {
-            color: var(--highlight);
-            transform: scale(1.1);
         }
 
         .lightbox-nav {
@@ -547,15 +392,9 @@
             background: var(--accent);
             color: var(--bg);
             border: none;
-            padding: 0.5rem;
+            padding: 0.75rem;
             border-radius: var(--radius);
             cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .lightbox-nav:hover {
-            background: var(--highlight);
-            transform: translateY(-50%) scale(1.1);
         }
 
         .lightbox-nav.prev {
@@ -566,13 +405,11 @@
             right: 0.5rem;
         }
 
-        /* Footer */
         footer {
             background: var(--card-bg);
             padding: 3rem 2rem;
             border-top: 1px solid var(--border);
             text-align: center;
-            min-height: 200px; /* Ensure footer is visible */
         }
 
         footer .logo {
@@ -584,24 +421,6 @@
             font-size: 0.9rem;
             color: var(--muted);
             margin-bottom: 0.5rem;
-        }
-
-        footer .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        footer .social-links a {
-            color: var(--text);
-            font-size: 1.3rem;
-            transition: var(--transition);
-        }
-
-        footer .social-links a:hover {
-            color: var(--accent);
-            transform: scale(1.2);
         }
 
         footer .links {
@@ -621,17 +440,11 @@
             text-decoration: underline;
         }
 
-        /* Animations */
         @keyframes slideIn {
             from { transform: translateY(20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
 
-        .hero h1, .section, .feature-card, .testimonial-card, .pricing-card, .faq-item {
-            animation: slideIn 0.5s ease-out;
-        }
-
-        /* Accessibility */
         a:focus, button:focus, .feature-card img:focus {
             outline: 2px solid var(--focus);
             outline-offset: 2px;
@@ -648,94 +461,6 @@
             border: 0;
         }
 
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .hero h1 {
-                font-size: 3rem;
-            }
-
-            .section h2 {
-                font-size: 2rem;
-            }
-
-            .feature-card img {
-                height: 200px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            header {
-                padding: 1rem 2rem;
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .logo {
-                margin-bottom: 1rem;
-            }
-
-            .nav-links {
-                flex-direction: column;
-                gap: 1rem;
-                width: 100%;
-                display: none;
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .auth-buttons {
-                flex-direction: column;
-                width: 100%;
-                gap: 0.8rem;
-            }
-
-            .button {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .hero {
-                padding: 6rem 1.5rem 4rem;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero p {
-                font-size: 1.1rem;
-            }
-
-            .feature-grid, .testimonial-grid, .pricing-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .pricing-card.popular {
-                transform: none;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .section h2 {
-                font-size: 1.8rem;
-            }
-
-            .section p {
-                font-size: 1rem;
-            }
-
-            .feature-card img {
-                height: 180px;
-            }
-        }
-
-        /* High Contrast Mode */
         @media (prefers-contrast: high) {
             :root {
                 --accent: #33ff33;
@@ -743,23 +468,17 @@
                 --border: #000000;
                 --muted: #cccccc;
             }
-
-            .feature-card, .pricing-card, .testimonial-card, .faq-item {
-                border-color: var(--accent);
-            }
         }
 
-        /* Reduced Motion */
         @media (prefers-reduced-motion: reduce) {
-            .feature-card, .pricing-card, .testimonial-card, .faq-item, .hero h1 {
+            .feature-card, .testimonial-card, .hero h1, .hero p, .hero .call-to-action {
                 transition: none;
                 animation: none;
             }
         }
 
-        /* Print Styles */
         @media print {
-            #lightbox {
+            #lightbox, header, .menu-toggle {
                 display: none;
             }
 
@@ -772,38 +491,188 @@
                 border: 1px solid #000;
             }
         }
+
+        /* Mobile and Tablet Optimizations */
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .logo img {
+                width: 40px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--card-bg);
+                flex-direction: column;
+                padding: 1rem;
+                border-bottom: 1px solid var(--border);
+                box-shadow: var(--shadow);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 0.75rem;
+                font-size: 1rem;
+            }
+
+            .auth-buttons {
+                flex-direction: row;
+                gap: 0.5rem;
+            }
+
+            .button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .hero {
+                padding: 5rem 1rem 3rem;
+                min-height: 50vh;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+                max-width: 90%;
+            }
+
+            .hero .call-to-action {
+                padding: 0.75rem 1.5rem;
+            }
+
+            .section {
+                padding: 3rem 1rem;
+            }
+
+            .section h2 {
+                font-size: 1.8rem;
+            }
+
+            .section p {
+                font-size: 0.9rem;
+                max-width: 90%;
+            }
+
+            .feature-grid, .testimonial-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .feature-card img {
+                height: 180px;
+            }
+
+            .feature-card h3 {
+                font-size: 1.4rem;
+            }
+
+            .feature-card p {
+                font-size: 0.9rem;
+            }
+
+            .testimonial-card {
+                padding: 1.5rem;
+            }
+
+            .testimonial-card i {
+                font-size: 1.5rem;
+            }
+
+            .testimonial-card p, .testimonial-card .author {
+                font-size: 0.9rem;
+            }
+
+            footer {
+                padding: 2rem 1rem;
+            }
+
+            footer .logo {
+                font-size: 1.3rem;
+            }
+
+            footer p {
+                font-size: 0.8rem;
+            }
+
+            footer .links a {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 0.9rem;
+            }
+
+            .section h2 {
+                font-size: 1.6rem;
+            }
+
+            .section p {
+                font-size: 0.8rem;
+            }
+
+            .feature-card h3 {
+                font-size: 1.2rem;
+            }
+
+            .feature-card p {
+                font-size: 0.8rem;
+            }
+
+            .testimonial-card p, .testimonial-card .author {
+                font-size: 0.8rem;
+            }
+        }
     </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Header scroll effect
             window.addEventListener('scroll', () => {
                 const header = document.querySelector('header');
-                header.classList.toggle('scrolled', window.scrollY > 50);
             });
 
             // Mobile menu toggle
-            const menuToggle = document.createElement('i');
-            menuToggle.classList.add('fas', 'fa-bars');
-            menuToggle.style.cursor = 'pointer';
-            menuToggle.style.fontSize = '1.5rem';
-            menuToggle.style.color = 'var(--accent)';
-            menuToggle.style.display = 'none';
-            document.querySelector('header').appendChild(menuToggle);
-
-            if (window.innerWidth <= 768) {
-                menuToggle.style.display = 'block';
-            }
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
 
             menuToggle.addEventListener('click', () => {
-                document.querySelector('.nav-links').classList.toggle('active');
+                navLinks.classList.toggle('active');
             });
 
-            // FAQ accordion
-            document.querySelectorAll('.faq-question').forEach(question => {
-                question.addEventListener('click', () => {
-                    question.classList.toggle('active');
-                    const answer = question.nextElementSibling;
-                    answer.classList.toggle('active');
+            // Close mobile menu on link click
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
                 });
             });
 
@@ -846,13 +715,21 @@
                     lightbox.setAttribute('aria-hidden', 'true');
                 }
             });
+
+            // Prevent pinch zoom on iOS
+            document.addEventListener('gesturestart', (e) => {
+                e.preventDefault();
+            });
         });
     </script>
 </head>
 
 <body>
     <header>
-        <img src="{{ asset('favicon.PNG') }}" alt="FitLife Logo" style="width: 50px; height: auto; display: block;">
+        <div class="logo">
+            <img src="{{ asset('favicon.PNG') }}" alt="FitLife Logo">
+        </div>
+        <button class="menu-toggle"><i class="fas fa-bars"></i></button>
         <div class="nav-links">
             <a href="#features">Features</a>
             <a href="#testimonials">Testimonials</a>
@@ -879,55 +756,56 @@
     </header>
 
     <main>
+        <h1 style="position:absolute; left:-9999px;">Welcome</h1>
         <section class="hero">
             <h1>Transform Your Life with FitLife</h1>
-            <p>Discover a smarter way to achieve your fitness goals with our all-in-one platform. Track workouts, nutrition, and sleep, and join a vibrant community to stay motivated.</p>
+            <p>Discover a smarter way to achieve your fitness goals with our all-in-one platform.</p>
         </section>
 
         <section class="section" id="features">
             <h2>Why FitLife?</h2>
-            <p>Empower your wellness journey with tools designed for real results.</p>
+            <p>Tools designed for real results.</p>
             <div class="feature-grid">
                 <div class="feature-card">
                     <img src="{{ asset('storage/WelcomePhoto/training.jpg') }}" alt="Person lifting weights" tabindex="0">
                     <div class="content">
                         <h3>Personalized Workouts</h3>
-                        <p>Create custom workout plans tailored to your goals strength, endurance, or weight loss. Access video tutorials, track progress, and sync with wearables for real-time analytics.</p>
+                        <p>Create custom workout plans tailored to your goals. Access tutorials and sync with wearables.</p>
                     </div>
                 </div>
                 <div class="feature-card">
                     <img src="{{ asset('storage/WelcomePhoto/nutrition.jpg') }}" alt="Healthy meal" tabindex="0">
                     <div class="content">
                         <h3>Smart Nutrition</h3>
-                        <p>Log meals with our extensive food database, calculate macros, and get personalized diet plans. Discover recipes and hydration tips to fuel your body.</p>
+                        <p>Log meals, calculate macros, and get personalized diet plans with recipes.</p>
                     </div>
                 </div>
                 <div class="feature-card">
                     <img src="{{ asset('storage/WelcomePhoto/sleep.jpg') }}" alt="Peaceful bedroom" tabindex="0">
                     <div class="content">
                         <h3>Restful Sleep</h3>
-                        <p>Monitor sleep patterns and get insights to improve rest. Sync with devices to analyze sleep quality and optimize recovery.</p>
+                        <p>Monitor sleep patterns and get insights to optimize recovery.</p>
                     </div>
                 </div>
                 <div class="feature-card">
                     <img src="{{ asset('storage/WelcomePhoto/community.jpg') }}" alt="Group exercise" tabindex="0">
                     <div class="content">
                         <h3>Vibrant Community</h3>
-                        <p>Join a supportive network to share goals, participate in challenges, and connect with fitness enthusiasts worldwide.</p>
+                        <p>Join a supportive network to share goals and participate in challenges.</p>
                     </div>
                 </div>
                 <div class="feature-card">
                     <img src="{{ asset('storage/WelcomePhoto/progress.jpg') }}" alt="Progress tracking dashboard" tabindex="0">
                     <div class="content">
                         <h3>Progress Tracking</h3>
-                        <p>Visualize your fitness journey with detailed progress charts and analytics. Set milestones and celebrate your achievements with data-driven insights.</p>
+                        <p>Visualize your journey with progress charts and analytics.</p>
                     </div>
                 </div>
                 <div class="feature-card">
                     <img src="{{ asset('storage/WelcomePhoto/goalsetting.jpg') }}" alt="Mindfulness meditation" tabindex="0">
                     <div class="content">
                         <h3>Goal Setting</h3>
-                        <p>Set and track your fitness goals with ease. Define milestones, monitor achievements, and stay motivated with personalized progress updates.</p>
+                        <p>Set and track fitness goals with personalized updates.</p>
                     </div>
                 </div>
             </div>
@@ -935,29 +813,29 @@
 
         <section class="testimonials section" id="testimonials">
             <h2>What Our Users Say</h2>
-            <p>Real stories from people who transformed their lives with FitLife.</p>
+            <p>Real stories from FitLife users.</p>
             <div class="testimonial-grid">
                 <div class="testimonial-card">
                     <i class="fas fa-quote-left"></i>
-                    <p>"FitLife made fitness fun and achievable. I lost 15 pounds and feel stronger than ever!"</p>
-                    <div class="author">- Anna K., Fitness Enthusiast</div>
+                    <p>"FitLife made fitness fun. I lost 15 pounds!"</p>
+                    <div class="author">- Anna K.</div>
                 </div>
                 <div class="testimonial-card">
                     <i class="fas fa-quote-left"></i>
-                    <p>"The nutrition tracker is a game-changer. It helped me balance my diet effortlessly."</p>
-                    <div class="author">- Mark S., Busy Professional</div>
+                    <p>"The nutrition tracker is a game-changer."</p>
+                    <div class="author">- Mark S.</div>
                 </div>
                 <div class="testimonial-card">
                     <i class="fas fa-quote-left"></i>
-                    <p>"Better sleep improved my workouts. FitLife's insights are incredible!"</p>
-                    <div class="author">- Lisa M., Marathon Runner</div>
+                    <p>"Better sleep improved my workouts."</p>
+                    <div class="author">- Lisa M.</div>
                 </div>
             </div>
         </section>
 
         <section class="section" id="about">
             <h2>About FitLife</h2>
-            <p>Since 2020, FitLife has empowered millions to live healthier lives with intuitive tools and a supportive community. Our mission is to make wellness accessible to all.</p>
+            <p>Since 2020, FitLife has empowered millions to live healthier lives.</p>
         </section>
     </main>
 
@@ -971,7 +849,6 @@
     </div>
 
     <footer>
-        <div class="logo">FitLife</div>
         <p>© {{ date('Y') }} FitLife. All rights reserved.</p>
         <div class="links">
             <a href="{{ route('privacy-policy') }}">Privacy Policy</a>
